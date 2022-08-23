@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoTracker.Web", "Crypto
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoTracker.DataAccess", "CryptoTracker.DataAccess\CryptoTracker.DataAccess.csproj", "{4B7A689E-0445-4377-9827-65C9B7A35DDF}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CryptoTracker.Db", "CryptoTracker.Db\CryptoTracker.Db.sqlproj", "{D94CD69D-C20E-4B0F-9202-28796512B606}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,14 +26,6 @@ Global
 		{4B7A689E-0445-4377-9827-65C9B7A35DDF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4B7A689E-0445-4377-9827-65C9B7A35DDF}.ReleaseBuild|Any CPU.ActiveCfg = ReleaseBuild|Any CPU
 		{4B7A689E-0445-4377-9827-65C9B7A35DDF}.ReleaseBuild|Any CPU.Build.0 = ReleaseBuild|Any CPU
-		{D94CD69D-C20E-4B0F-9202-28796512B606}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D94CD69D-C20E-4B0F-9202-28796512B606}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D94CD69D-C20E-4B0F-9202-28796512B606}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{D94CD69D-C20E-4B0F-9202-28796512B606}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D94CD69D-C20E-4B0F-9202-28796512B606}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D94CD69D-C20E-4B0F-9202-28796512B606}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{D94CD69D-C20E-4B0F-9202-28796512B606}.ReleaseBuild|Any CPU.ActiveCfg = ReleaseBuild|Any CPU
-		{D94CD69D-C20E-4B0F-9202-28796512B606}.ReleaseBuild|Any CPU.Deploy.0 = ReleaseBuild|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
