@@ -3,6 +3,7 @@
 <PageTitle>Weather forecast</PageTitle>
 
 @using CryptoTracker.Web.Data
+
 @inject WeatherForecastService ForecastService
 
 <h1>Weather forecast</h1>
@@ -44,5 +45,6 @@ else
     protected override async Task OnInitializedAsync()
     {
         forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        await CryptoTracker.DataAccess.CoinMarketCap.Data.CoinMarketCapData.GetTrendingLatest();
     }
 }

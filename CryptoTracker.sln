@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoTracker.DataAccess", 
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CryptoTracker.Db", "CryptoTracker.Db\CryptoTracker.Db.sqlproj", "{84A6F788-C029-4DA1-9E49-4953B05A8332}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoTracker.Tests", "CryptoTracker.Tests\CryptoTracker.Tests.csproj", "{27DCFCC4-EB88-422D-8FC4-D93D1A8A775A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoTracker.Tests", "CryptoTracker.Tests\CryptoTracker.Tests.csproj", "{27DCFCC4-EB88-422D-8FC4-D93D1A8A775A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
