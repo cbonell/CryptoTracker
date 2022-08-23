@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoTracker.Web", "CryptoTracker.Web\CryptoTracker.Web.csproj", "{3BA96517-41B6-4F61-928C-C8B44A952F85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoTracker.Web", "CryptoTracker.Web\CryptoTracker.Web.csproj", "{3BA96517-41B6-4F61-928C-C8B44A952F85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoTracker.DataAccess", "CryptoTracker.DataAccess\CryptoTracker.DataAccess.csproj", "{4B7A689E-0445-4377-9827-65C9B7A35DDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoTracker.DataAccess", "CryptoTracker.DataAccess\CryptoTracker.DataAccess.csproj", "{4B7A689E-0445-4377-9827-65C9B7A35DDF}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CryptoTracker.Db", "CryptoTracker.Db\CryptoTracker.Db.sqlproj", "{D94CD69D-C20E-4B0F-9202-28796512B606}"
 EndProject
