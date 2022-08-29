@@ -1,0 +1,36 @@
+﻿@page "/Coin/{Id:int}"
+
+Name: @data.Name <img src="@data.LogoPath"/> <br />
+Symbol: @data.Symbol <br />
+Description: @data.Description <br />
+Website: 
+@foreach(string web in data.Urls.Website)
+{
+    <a href="@web">@web</a>
+}<br />
+Technical Document: 
+@foreach(string doc in data.Urls.TechnicalDoc)
+{
+    <a href="@doc">@doc</a>
+}<br />
+Tags: 
+@foreach(string tag in data.Tags)
+{
+    @(@tag + ",")
+}<br />
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    CoinMarketCapMetaDataModel data { get; set; }
+
+    public Coin()
+    {
+        data = new CoinMarketCapMetaDataModel();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        data = await CoinMarketCapMetaData.GetCoinMetaData(Id);
+    }
+}

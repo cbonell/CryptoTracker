@@ -70,6 +70,7 @@
     <Build Include="Stored Procedures\User\CreateUser.sql" />
     <Build Include="Stored Procedures\User\DeleteUser.sql" />
     <Build Include="Stored Procedures\User\UpdateUser.sql" />
+    <Build Include="Tables\CoinMarketCapIdMap.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CryptoTracker.Db.publish.xml" />
