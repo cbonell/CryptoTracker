@@ -1,27 +1,30 @@
 ﻿@page "/Coins"
-
-<h3>Coins</h3>
-
-<table>
-    <tr>
-        <th>Id</th>
-        <th>Rank</th>
-        <th>Name</th>
-        <th>Slug</th>
-    </tr>
-    @foreach(CoinMarketCapIDMapModel coin in CoinsData)
-    {
-    <tr>
-        <td>@coin.Id</td>
-        <td><a href="/Coin/@coin.Id">@coin.Rank</a></td>
-        <td>@coin.Name</td>
-        <td>@coin.Slug</td>
-    </tr>
+@using CryptoTracker.Web.Components
+<PageTitle>Market Watch</PageTitle>
+<h3 class="text-center">Market Watch</h3>
+@if(loading)
+{
+    <LoadingSpinner/>
+}
+else
+{
+<RadzenDataGrid Data="@CoinsData" TItem="CoinMarketCapIDMapModel" AllowPaging="true" AllowSorting="true">
+        <Columns>
+            <RadzenDataGridColumn TItem="CoinMarketCapIDMapModel" Property="Name" Title="Name" CssClass="text-center">
+                <Template Context="coin">
+                <a href="/Coin/@coin.Id" target="_blank">@coin.Name</a>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="CoinMarketCapIDMapModel" Property="Rank" Title="Rank" CssClass="text-center"/>
+            <RadzenDataGridColumn TItem="CoinMarketCapIDMapModel" Property="Slug" Title="Slug" CssClass="text-center"/>
+        </Columns>
+    </RadzenDataGrid>
     }
-</table>
+
 
 @code {
     protected IEnumerable<CoinMarketCapIDMapModel> CoinsData { get; set; }
+    bool loading = false;
 
     public Coins()
     {
@@ -30,6 +33,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        loading = true;
         CoinsData = await CoinMarketCapIDMapData.GetCoinMap();
+        loading = false;
     }
 }

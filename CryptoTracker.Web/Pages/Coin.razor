@@ -1,27 +1,30 @@
 ﻿@page "/Coin/{Id:int}"
+@using CryptoTracker.Web.Components
 
-Name: @data.Name <img src="@data.LogoPath"/> <br />
-Symbol: @data.Symbol <br />
-Description: @data.Description <br />
-Website: 
-@foreach(string web in data.Urls.Website)
+<PageTitle>@data.Name - Details</PageTitle>
+
+@if (loading)
 {
-    <a href="@web">@web</a>
-}<br />
-Technical Document: 
-@foreach(string doc in data.Urls.TechnicalDoc)
+    <LoadingSpinner />
+}
+else
 {
-    <a href="@doc">@doc</a>
-}<br />
-Tags: 
-@foreach(string tag in data.Tags)
-{
-    @(@tag + ",")
-}<br />
+    <div class="container">
+        <div class="row">
+            <div class="col-8 border">
+                <CoinDetails Coin="data" />
+            </div>
+            <div class="col-sm-4">
+                <CoinPurchasePanel />
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     [Parameter]
     public int Id { get; set; }
-
+    bool loading = false;
     CoinMarketCapMetaDataModel data { get; set; }
 
     public Coin()
@@ -31,6 +34,8 @@ Tags:
 
     protected override async Task OnInitializedAsync()
     {
+        loading = true;
         data = await CoinMarketCapMetaData.GetCoinMetaData(Id);
+        loading = false;
     }
 }
