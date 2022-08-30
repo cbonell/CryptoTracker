@@ -1,5 +1,6 @@
 ﻿<img src="@Coin.LogoPath" /> @Coin.Name (@Coin.Symbol)
 <br />
+<CoinPriceChart/>
 Description: <p>@Coin.Description</p>
 <br />
 Website:
@@ -11,7 +12,7 @@ Website:
 Tags:
 @foreach (string tag in Coin.Tags)
 {
-    <CryptoTracker.Web.Components.Pill>@tag</CryptoTracker.Web.Components.Pill>
+    <Pill>@tag</Pill>
 }
 <br />
 @code {

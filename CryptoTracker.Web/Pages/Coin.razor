@@ -1,31 +1,13 @@
 ﻿@page "/Coin/{Id:int}"
-
-@*Name: @data.Name <img src="@data.LogoPath"/> <br />
-Symbol: @data.Symbol <br />
-Description: @data.Description <br />
-Website: 
-@foreach(string web in data.Urls.Website)
-{
-    <a href="@web">@web</a>
-}<br />
-Technical Document: 
-@foreach(string doc in data.Urls.TechnicalDoc)
-{
-    <a href="@doc">@doc</a>
-}<br />
-Tags: 
-@foreach(string tag in data.Tags)
-{
-   <CryptoTracker.Web.Components.Pill>@tag</CryptoTracker.Web.Components.Pill>
-}<br />*@
+@using CryptoTracker.Web.Components
 
 @if(loading)
 {
-    <CryptoTracker.Web.Components.LoadingSpinner/>
+    <LoadingSpinner/>
 }
 else
 {
-    <CryptoTracker.Web.Components.CoinDetails Coin="data"/>
+    <CoinDetails Coin="data"/>
 }
 
 @code {

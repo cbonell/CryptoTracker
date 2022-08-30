@@ -1,9 +1,10 @@
 ﻿@page "/Coins"
+@using CryptoTracker.Web.Components
 
 <h3 class="text-center">Market Watch</h3>
 @if(loading)
 {
-    <CryptoTracker.Web.Components.LoadingSpinner/>
+    <LoadingSpinner/>
 }
 else
 {
