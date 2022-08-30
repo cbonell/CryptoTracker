@@ -1,13 +1,22 @@
 ﻿@page "/Coin/{Id:int}"
 @using CryptoTracker.Web.Components
 
-@if(loading)
+@if (loading)
 {
-    <LoadingSpinner/>
+    <LoadingSpinner />
 }
 else
 {
-    <CoinDetails Coin="data"/>
+    <div class="container">
+        <div class="row">
+            <div class="col-8 border">
+                <CoinDetails Coin="data" />
+            </div>
+            <div class="col-sm-4">
+                <CoinPurchasePanel />
+            </div>
+        </div>
+    </div>
 }
 
 @code {
