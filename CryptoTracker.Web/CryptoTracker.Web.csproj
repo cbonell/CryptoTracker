@@ -11,4 +11,8 @@
     <ProjectReference Include="..\CryptoTracker.DataAccess\CryptoTracker.DataAccess.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Radzen.Blazor" Version="3.20.7" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,25 @@
+﻿<img src="@Coin.LogoPath" /> @Coin.Name (@Coin.Symbol)
+<br />
+Description: <p>@Coin.Description</p>
+<br />
+Website:
+@foreach (string web in Coin.Urls.Website)
+{
+    <a href="@web">@web</a>
+}
+<br />
+Tags:
+@foreach (string tag in Coin.Tags)
+{
+    <CryptoTracker.Web.Components.Pill>@tag</CryptoTracker.Web.Components.Pill>
+}
+<br />
+@code {
+    [Parameter]
+    public CoinMarketCapMetaDataModel Coin { get; set; }
+
+    public CoinDetails()
+    {
+        Coin = new CoinMarketCapMetaDataModel();
+    }
+}
