@@ -1,0 +1,10 @@
+﻿CREATE TABLE [dbo].[CoinMarketCapIdMap]
+(
+	[Id] INT NOT NULL PRIMARY KEY,
+	[Rank] INT NOT NULL,
+	[Name] VARCHAR(255) NOT NULL,
+	[Symbol] VARCHAR(255) NOT NULL,
+	[Slug] VARCHAR(255) NOT NULL,
+
+	CONSTRAINT UC_CoinMarketCapIdMap UNIQUE (Id,Name)
+)

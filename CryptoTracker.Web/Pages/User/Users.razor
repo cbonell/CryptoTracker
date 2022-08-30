@@ -1,0 +1,46 @@
+﻿@page "/users"
+
+@inject IUserData userData
+
+<h3>Users</h3>
+@foreach (UserModel user in UserModels)
+{
+    <p>Name: @user.FirstName @user.LastName</p>
+    <br />
+}
+
+<h3>Create User</h3>
+<EditForm Model="newUser" OnSubmit="CreateUser">
+    First Name
+    <InputText @bind-Value="newUser.FirstName"/><br />
+    Last Name
+    <InputText  @bind-Value="newUser.LastName"/><br />
+    @*Temp Disabled until confirming site security*@
+    @*<button type="submit">Save</button>*@
+</EditForm>
+
+@code {
+    IEnumerable<UserModel> UserModels { get; set; }
+    UserModel newUser;
+    public Users()
+    {
+        UserModels = Enumerable.Empty<UserModel>();
+        newUser = new UserModel();
+    }
+
+    protected override async Task OnInitializedAsync() => await LoadData();
+
+    private async Task LoadData()
+    {
+        UserModels = await userData.GetUsers();
+    }
+
+    private async Task CreateUser()
+    {
+        await userData.CreateUser(newUser);
+        UserModels.Append(newUser);
+        newUser = new UserModel();
+        await LoadData();
+    }
+
+}

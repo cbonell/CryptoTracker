@@ -57,9 +57,20 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Tables" />
+    <Folder Include="Functions" />
+    <Folder Include="Stored Procedures" />
+    <Folder Include="Stored Procedures\User" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\User.sql" />
+    <Build Include="Tables\UserEmail.sql" />
+    <Build Include="Functions\ChkValidEmail.sql" />
+    <Build Include="Stored Procedures\User\GetUsers.sql" />
+    <Build Include="Stored Procedures\User\GetUser.sql" />
+    <Build Include="Stored Procedures\User\CreateUser.sql" />
+    <Build Include="Stored Procedures\User\DeleteUser.sql" />
+    <Build Include="Stored Procedures\User\UpdateUser.sql" />
+    <Build Include="Tables\CoinMarketCapIdMap.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CryptoTracker.Db.publish.xml" />

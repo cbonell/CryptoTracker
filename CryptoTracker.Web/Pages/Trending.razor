@@ -1,0 +1,24 @@
+﻿@page "/Trending"
+
+@using CryptoTracker.DataAccess.CoinMarketCap.Data
+@using CryptoTracker.DataAccess.CoinMarketCap.Model
+
+<h2>Top Ten Trending Coins</h2>
+@foreach(DataModel data in TrendingCoins)
+{
+    <p>Name: @data.Name, Id: @data.Id</p> <br>
+}
+
+@code {
+    IEnumerable<DataModel> TrendingCoins { get; set; }
+
+    public Trending()
+    {
+        TrendingCoins = Enumerable.Empty<DataModel>();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        TrendingCoins = await CoinMarketCapData.GetTrendingLatest();
+    }
+}
