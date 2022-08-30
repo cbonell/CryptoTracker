@@ -1,6 +1,8 @@
 ﻿@page "/Coin/{Id:int}"
 @using CryptoTracker.Web.Components
 
+<PageTitle>@data.Name - Details</PageTitle>
+
 @if (loading)
 {
     <LoadingSpinner />
