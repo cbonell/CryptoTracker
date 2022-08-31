@@ -1,0 +1,23 @@
+﻿@using System.Security.Claims
+@using CryptoTracker.DataAccess.Auth0
+@inject AuthenticationStateProvider AuthState
+@inject IUserData ud
+<AuthorizeView>
+    <Authorized>
+        Welcome, @Username <a href="logout">Log out</a>
+    </Authorized>
+    <NotAuthorized>
+        <a href="login?redirectUri=/">Log in</a>
+    </NotAuthorized>
+</AuthorizeView>
+@code {
+    public string? Username { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthState.GetAuthenticationStateAsync();
+        Username = state.User?.Identity?.Name ?? string.Empty;
+
+        await base.OnInitializedAsync();
+    }
+}

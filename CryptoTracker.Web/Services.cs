@@ -1,4 +1,6 @@
-﻿namespace CryptoTracker.Web;
+﻿using Auth0.AspNetCore.Authentication;
+
+namespace CryptoTracker.Web;
 
 public static class Services
 {
@@ -9,5 +11,12 @@ public static class Services
 
         builder.Services.AddTransient<ISqlDataAccess, SqlDataAccess>();
         builder.Services.AddSingleton<IUserData, UserData>();
+
+        builder.Services
+    .AddAuth0WebAppAuthentication(options =>
+    {
+        options.Domain = builder.Configuration["Auth0:Domain"];
+        options.ClientId = builder.Configuration["Auth0:ClientId"];
+    });
     }
 }

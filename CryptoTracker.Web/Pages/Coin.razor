@@ -1,5 +1,8 @@
 ﻿@page "/Coin/{Id:int}"
 @using CryptoTracker.Web.Components
+@using System.Security.Claims
+@using CryptoTracker.DataAccess.Auth0
+@inject AuthenticationStateProvider AuthState
 
 <PageTitle>@data.Name - Details</PageTitle>
 
@@ -12,6 +15,11 @@ else
     <div class="container">
         <div class="row">
             <div class="col-8 border">
+                <AuthorizeView>
+                    <Authorized><button @onclick="AddToFavs">Add to favorites</button></Authorized>
+                    <NotAuthorized>Login in to add to favorites</NotAuthorized>
+                </AuthorizeView>
+                
                 <CoinDetails Coin="data" />
             </div>
             <div class="col-sm-4">
@@ -37,5 +45,17 @@ else
         loading = true;
         data = await CoinMarketCapMetaData.GetCoinMetaData(Id);
         loading = false;
+    }
+
+    private async Task AddToFavs()
+    {
+        var state = await AuthState.GetAuthenticationStateAsync();
+        if (state.User.Identity.IsAuthenticated)
+        {
+            // auth0|630eaeb6003454364c26e456
+            string userId = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            
+            await Auth0.AddUserFavoriteCoin(userId, Id);
+        }
     }
 }
