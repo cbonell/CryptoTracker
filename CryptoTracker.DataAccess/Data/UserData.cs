@@ -1,4 +1,10 @@
-﻿namespace CryptoTracker.DataAccess.Data;
+﻿using RestSharp;
+using System.Text.Json;
+using CryptoTracker.DataAccess.Auth0;
+using CryptoTracker.DataAccess.Auth0.Model;
+using Newtonsoft.Json;
+
+namespace CryptoTracker.DataAccess.Data;
 
 public class UserData : DataBase, IUserData
 {
@@ -15,8 +21,24 @@ public class UserData : DataBase, IUserData
         return results.FirstOrDefault()!;
     }
 
+    public async Task<UserModel> GetUser(string auth0Id)
+    {
+        var results = await _db.LoadData<UserModel, dynamic>(
+                "dbo.GetUserByAuth0Id",
+                new { Auth0Id = auth0Id });
+        return results.FirstOrDefault()!;
+    }
+
+    public async Task<UserModel> GetUserByAuth0UserId(int id)
+    {
+        var results = await _db.LoadData<UserModel, dynamic>(
+                "dbo.GetUser",
+                new { Id = id });
+        return results.FirstOrDefault()!;
+    }
+
     public Task CreateUser(UserModel newUser) =>
-        _db.SaveData<dynamic>("dbo.CreateUser", new { FirstName = newUser.FirstName, LastName = newUser.LastName });
+        _db.SaveData<dynamic>("dbo.CreateUser", new { });
 
     public Task DeleteUser(int id) =>
         _db.SaveData<dynamic>("dbo.DeleteUser", new { UserId = id });
