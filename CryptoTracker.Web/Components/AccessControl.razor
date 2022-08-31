@@ -1,0 +1,31 @@
+﻿@using System.Security.Claims
+@inject AuthenticationStateProvider AuthState
+@inject IUserData ud
+<AuthorizeView>
+    <Authorized>
+        Welcome, @Username <a href="logout">Log out</a>
+    </Authorized>
+    <NotAuthorized>
+        <a href="login?redirectUri=/">Log in</a>
+    </NotAuthorized>
+</AuthorizeView>
+@code {
+    public string? Username { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthState.GetAuthenticationStateAsync();
+        if (state.User.Identity.IsAuthenticated)
+        {
+            // auth0|630eaeb6003454364c26e456
+            string userId = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            await ud.GetUserMetaData();
+        }
+
+        Username = state.User?.Identity?.Name ?? string.Empty;
+
+
+
+        await base.OnInitializedAsync();
+    }
+}
