@@ -15,6 +15,7 @@ public static class Services
         builder.Services.AddSingleton<ICurrencyData, CurrencyData>();
         builder.Services.AddSingleton<IUserWalletData, UserWalletData>();
         builder.Services.AddSingleton<ITradingPurchaseData, TradingPurchaseData>();
+        builder.Services.AddSingleton<IUserFavoriteCoinData, UserFavoriteCoinData>();
 
         builder.Services
     .AddAuth0WebAppAuthentication(options =>

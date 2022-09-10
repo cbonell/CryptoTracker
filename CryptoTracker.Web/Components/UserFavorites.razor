@@ -3,20 +3,38 @@
 @using CryptoTracker.DataAccess.Auth0.Model
 
 @inject AuthenticationStateProvider AuthState
+@inject IUserFavoriteCoinData favoriteCoinData
 
 <AuthorizeView>
     <Authorized>
         <h3>Favorites</h3>
-        @foreach(UserFavoriteCoinModel coin in userFavoriteCoins)
+        @foreach (UserFavoriteCoinModel coin in userFavoriteCoins)
         {
-            <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.CoinId + ".png")"><a href="@("/Coin/" + @coin.CoinId)">@coin.CoinId</a>
+            <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.CoinMarketCapId + ".png")">
+
+            <a href="@("/Coin/" + @coin.CoinId)">@coin.CoinName</a>
         }
+
+        <RadzenDataGrid Data="@userFavoriteCoins" TItem="UserFavoriteCoinModel" AllowPaging="true" AllowSorting="true" PageSize="15">
+            <Columns>
+                <RadzenDataGridColumn TItem="UserFavoriteCoinModel" Property="CoinName" Title="Coin Name" CssClass="text-center">
+                    <Template Context="coin">
+                        <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.CoinMarketCapId + ".png")"> <a href="/Coin/@coin.CoinMarketCapId" target="_blank">@coin.CoinName</a>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="UserFavoriteCoinModel" Property="PurchaseDate" CssClass="text-center">
+                    <Template Context="coin">
+                        <button @onclick="(async () => await RemoveFavorite(coin.CurrencyId))">Remove Favorite</button>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
     </Authorized>
 </AuthorizeView>
 
 @code {
     private IEnumerable<UserFavoriteCoinModel> userFavoriteCoins { get; set; } = Enumerable.Empty<UserFavoriteCoinModel>();
-
+    string userId = "";
     protected override async Task OnInitializedAsync()
     {
         await LoadFavorites();
@@ -29,19 +47,20 @@
         {
             if (state.User.Identity.IsAuthenticated)
             {
-                // auth0|630eaeb6003454364c26e456
                 var tempUserClaim = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
                 if (tempUserClaim != null)
                 {
-                    string userId = tempUserClaim.Value;
-                    UserMetaData userMetaData = (await Auth0.GetUserMetaData(userId))?.UserMetaData!;
-
-                    if(userMetaData != null)
-                    {
-                        userFavoriteCoins = userMetaData.FavoriteCoins;
-                    }
-                }                
+                    userId = tempUserClaim.Value;
+                    userFavoriteCoins = await favoriteCoinData.GetUserFavoriteCoins(userId);
+                }
             }
         }
+    }
+
+    private async Task RemoveFavorite(int currencyId)
+    {
+        await favoriteCoinData.RemoveUserFavoriteCoin(userId, currencyId);
+        userFavoriteCoins = userFavoriteCoins.Where(x => x.CurrencyId != currencyId);
+        StateHasChanged();
     }
 }

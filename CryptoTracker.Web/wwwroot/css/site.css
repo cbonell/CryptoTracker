@@ -44,7 +44,8 @@ html, body {
 /*radzen datagrid styling*/
 
 th.rz-unselectable-text.rz-sortable-column {
-    background-color: var(--secondary-background-color)
+    background-color: var(--secondary-background-color);
+    text-align: center;
 }
 
 .rz-datatable-thead th:not(:last-child), .rz-datatable-thead th.rz-composite-cell, .rz-grid-table thead th:not(:last-child), .rz-grid-table thead th.rz-composite-cell {
@@ -75,6 +76,14 @@ tr.rz-datatable-odd td.text-center {
     border: none;
 }
 
+.rz-datatable-emptymessage {
+    background-color: var(--tertiary-background-color);
+    text-align:center;
+}
+
+.rz-unselectable-text {
+    background-color: var(--tertiary-background-color);
+}
 
 /*radzen paginator*/
 .rz-paginator.rz-unselectable-text.rz-helper-clearfix.rz-align-justify {

@@ -2,8 +2,9 @@
 {
     public interface IUserFavoriteCoinData
     {
-        Task AddUserFavoriteCoin(int userId, int coinId);
-        Task<IEnumerable<UserFavoriteCoinModel>> GetUserFavoriteCoins(string auth0UserId);
-        Task RemoveUserFavoriteCoin(int userId, int coinId);
+        Task AddUserFavoriteCoin(string userId, int CurrencyId);
+        Task<bool> CheckIfCoinIsUsersFavorite(string userId, int coinId);
+        Task<IEnumerable<UserFavoriteCoinModel>> GetUserFavoriteCoins(string userId);
+        Task RemoveUserFavoriteCoin(string userId, int CurrencyId);
     }
 }

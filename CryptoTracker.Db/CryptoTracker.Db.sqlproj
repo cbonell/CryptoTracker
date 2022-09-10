@@ -64,6 +64,7 @@
     <Folder Include="Stored Procedures\Currency" />
     <Folder Include="Stored Procedures\UserWallet" />
     <Folder Include="Stored Procedures\TradingPurchase" />
+    <Folder Include="Stored Procedures\UserFavoriteCoin" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\User.sql" />
@@ -90,6 +91,11 @@
     <Build Include="Stored Procedures\UserWallet\GetUserWallet.sql" />
     <Build Include="Stored Procedures\TradingPurchase\TradingPurchase_Create.sql" />
     <Build Include="Stored Procedures\TradingPurchase\GetUserTradingHistory.sql" />
+    <Build Include="Tables\UserFavoriteCoin.sql" />
+    <Build Include="Stored Procedures\UserFavoriteCoin\GetUserFavoriteCoins.sql" />
+    <Build Include="Stored Procedures\UserFavoriteCoin\AddUserFavoriteCoin.sql" />
+    <Build Include="Stored Procedures\UserFavoriteCoin\RemoveUserFavoriteCoin.sql" />
+    <Build Include="Stored Procedures\UserFavoriteCoin\CheckIfCoinIsUsersFavorite.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CryptoTracker.Db.publish.xml" />
