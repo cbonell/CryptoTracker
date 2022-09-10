@@ -1,4 +1,6 @@
-﻿namespace CryptoTracker.DataAccess.Data;
+﻿using CryptoTracker.DataAccess.Data.Interfaces;
+
+namespace CryptoTracker.DataAccess.Data;
 
 public class UserFavoriteCoinData : DataBase, IUserFavoriteCoinData
 {

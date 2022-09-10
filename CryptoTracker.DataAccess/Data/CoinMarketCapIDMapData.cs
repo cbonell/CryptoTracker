@@ -6,8 +6,8 @@ public class CoinMarketCapIDMapData : CoinMarketCapDataBase
 {
     public static async Task<IEnumerable<CoinMarketCapIDMapModel>> GetCoinMap()
     {
-        RestClient client = new RestClient(Constants.PROD_ENDPOINT + "/v1/cryptocurrency/map");
-        RestRequest request = new RestRequest()
+        RestClient client = new(Constants.PROD_ENDPOINT + "/v1/cryptocurrency/map");
+        RestRequest request = new()
         {
             Method = Method.Get
         };
@@ -19,6 +19,6 @@ public class CoinMarketCapIDMapData : CoinMarketCapDataBase
         }
 
         CoinMarketCapIDMapModelData data = JsonConvert.DeserializeObject<CoinMarketCapIDMapModelData>(response.Content!)!;
-        return data.coinMarketCapMaps;
+        return data.CoinMarketCapMaps;
     }
 }

@@ -23,7 +23,7 @@ else
                 <CoinDetails Coin="data" />
             </div>
             <div class="col-sm-4">
-                <CoinPurchasePanel />
+                <CoinPurchasePanel CoinMarketCapId="Id" />
             </div>
         </div>
     </div>
@@ -50,12 +50,18 @@ else
     private async Task AddToFavs()
     {
         var state = await AuthState.GetAuthenticationStateAsync();
-        if (state.User.Identity.IsAuthenticated)
+        if (state != null && state.User != null && state.User.Identity != null)
         {
-            // auth0|630eaeb6003454364c26e456
-            string userId = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            
-            await Auth0.AddUserFavoriteCoin(userId, Id);
+            if (state.User.Identity.IsAuthenticated)
+            {
+                // auth0|630eaeb6003454364c26e456
+                var tempUserClaim = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                if (tempUserClaim != null)
+                {
+                    string userId = tempUserClaim.Value;
+                    await Auth0.AddUserFavoriteCoin(userId, Id);
+                }                
+            }
         }
     }
 }

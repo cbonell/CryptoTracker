@@ -1,0 +1,47 @@
+﻿@using System.Security.Claims
+@using CryptoTracker.DataAccess.Auth0
+@using CryptoTracker.DataAccess.Auth0.Model
+
+@inject AuthenticationStateProvider AuthState
+
+<AuthorizeView>
+    <Authorized>
+        <h3>Favorites</h3>
+        @foreach(UserFavoriteCoinModel coin in userFavoriteCoins)
+        {
+            <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.CoinId + ".png")"><a href="@("/Coin/" + @coin.CoinId)">@coin.CoinId</a>
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private IEnumerable<UserFavoriteCoinModel> userFavoriteCoins { get; set; } = Enumerable.Empty<UserFavoriteCoinModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFavorites();
+    }
+
+    private async Task LoadFavorites()
+    {
+        var state = await AuthState.GetAuthenticationStateAsync();
+        if (state != null && state.User != null && state.User.Identity != null)
+        {
+            if (state.User.Identity.IsAuthenticated)
+            {
+                // auth0|630eaeb6003454364c26e456
+                var tempUserClaim = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                if (tempUserClaim != null)
+                {
+                    string userId = tempUserClaim.Value;
+                    UserMetaData userMetaData = (await Auth0.GetUserMetaData(userId))?.UserMetaData!;
+
+                    if(userMetaData != null)
+                    {
+                        userFavoriteCoins = userMetaData.FavoriteCoins;
+                    }
+                }                
+            }
+        }
+    }
+}

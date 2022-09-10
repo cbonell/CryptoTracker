@@ -23,7 +23,7 @@ public class CoinMarketCapMetaData : CoinMarketCapDataBase
         JObject data = JObject.Parse(response.Content!);
         if (data != null)
         {
-            JToken token = data["data"];
+            JToken token = data["data"] ?? "";
             CoinMarketCapMetaDataModel m = JsonConvert.DeserializeObject<CoinMarketCapMetaDataModel>(token[id.ToString()].ToString())!;
             return m;
         }

@@ -3,6 +3,7 @@ using System.Text.Json;
 using CryptoTracker.DataAccess.Auth0;
 using CryptoTracker.DataAccess.Auth0.Model;
 using Newtonsoft.Json;
+using CryptoTracker.DataAccess.Data.Interfaces;
 
 namespace CryptoTracker.DataAccess.Data;
 

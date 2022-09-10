@@ -3,15 +3,18 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" color-mode="dark">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="~/" />
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/default-base.css">
+    <link rel="icon" href="~/Coin.ico">
+
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link href="css/site.css" rel="stylesheet" />
+
     <link href="CryptoTracker.Web.styles.css" rel="stylesheet" />
-    <link rel="stylesheet" href="_content/Radzen.Blazor/css/default-base.css">
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
 <body>
@@ -28,6 +31,7 @@
         <a class="dismiss">🗙</a>
     </div>
 
+    <script src="scripts/ColorModeHandler.js"></script>
     <script src="_framework/blazor.server.js"></script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
 </body>

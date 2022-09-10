@@ -1,0 +1,59 @@
+﻿@if (showModal)
+{
+    <div class="modal fade show" tabindex="-1" role="dialog" style="display: block;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick=ToggleDisplay>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @ChildContent
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick=OnSaveClick>@SaveButtonText</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick=ToggleDisplay>@CancelButtonText</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string SaveButtonText { get; set; } = "Ok";
+    [Parameter]
+    public string CancelButtonText { get; set; } = "Cancel";
+    [Parameter]
+    public string Title { get; set; } = "";
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    [Parameter]
+    public EventCallback OnSave { get; set; }
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+    private bool showModal = false;
+
+    public void ToggleDisplay() => showModal = !showModal;
+
+    private async Task OnSaveClick()
+    {
+        ToggleDisplay();
+        if(OnSave.HasDelegate)
+        {
+            await OnSave.InvokeAsync();
+        }
+    }
+    
+    private async Task OnCancelClick()
+    {
+        ToggleDisplay();
+        if(OnCancel.HasDelegate)
+        {
+            await OnCancel.InvokeAsync();
+        }
+    }
+}

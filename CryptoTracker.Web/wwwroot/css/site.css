@@ -1,7 +1,112 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+:root[color-mode="dark"] {
+    --base-background-color: #101014;
+    --base-accent-color: #5E9ED6;
+    --hover-link-color: #F4F1D0;
+    --secondary-background-color: #16171d;
+    --tertiary-background-color: #1f2128;
+    --base-font-color: var(--hover-link-color);
+    --secondary-font-color: #9BA0B3;
+    --small-font-size: 0.75em;
+    --base-font-size: 1em;
+    --smedium-font-size: 1.333em;
+    --medium-font-size: 1.777em;
+    --large-font-size: 2.369em;
+    --xlarge-font-size: 3.157em;
+    --base-border-color: var(--secondary-font-color);
+    --hover-border: 1px solid var(--base-font-color);
+    --focus-border: 1px solid var(--base-font-color);
+    --base-border-radius: .2rem;
+    --base-box-shadow: 0 1px 2px 0px rgba(0,0,0,.25);
+    --hover-box-shadow: 0 2px 10px 1px rgba(0,0,0,.5);
+    --min-font-size: var(--base-font-size);
+    --max-font-size: var(--large-font-size);
+    --base-font-family: 'IBM Plex Sans', Arial, Sans-Serif;
+    --arabic-font-family: 'IBM Plex Sans Arabic', Arial, Sans-Serif;
+    --secondary-font-family: 'IBM Plex Mono', monospace;
+}
+
+:root[color-mode="light"] {
+    --base-background-color: pink;
+}
+
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: var(--base-font-color);
+    font-size: var(--min-font-size); /*clamp(var(--min-font-size),calc(50% + 1vw),var(--max-font-size));*/
+    font-family: var(--base-font-family);
+    line-height: var(--base-line-height);
+    /*-webkit-text-size-adjust: 100%;*/
+    background: var(--base-background-color);
+    box-sizing: border-box;
+}
+
+/*radzen datagrid styling*/
+
+th.rz-unselectable-text.rz-sortable-column {
+    background-color: var(--secondary-background-color)
+}
+
+.rz-datatable-thead th:not(:last-child), .rz-datatable-thead th.rz-composite-cell, .rz-grid-table thead th:not(:last-child), .rz-grid-table thead th.rz-composite-cell {
+    border-right: solid 1px var(--secondary-background-color);
+}
+
+.rz-datatable-thead th .rz-column-title, .rz-grid-table thead th .rz-column-title {
+    color: var(--base-font-color);
+}
+
+.rz-sortable-column .rzi-sort:before {
+    color: var(--secondary-font-color);
+}
+
+div.rz-data-grid.rz-has-paginator.rz-datatable.rz-datatable-scrollable {
+    background-color: none;
+    border: none;
+    box-shadow: var(--base-box-shadow);
+}
+
+tr.rz-datatable-even td.text-center {
+    background-color: var(--tertiary-background-color);
+    border: none;
+}
+
+tr.rz-datatable-odd td.text-center {
+    background-color: var(--secondary-background-color);
+    border: none;
+}
+
+
+/*radzen paginator*/
+.rz-paginator.rz-unselectable-text.rz-helper-clearfix.rz-align-justify {
+    color: red;
+    background: var(--tertiary-background-color)
+}
+
+.rz-paginator-page.rz-paginator-element.rz-state-active {
+    color: var(--base-font-color);
+    background-color: var(--secondary-background-color);
+    border: none;
+}
+
+/*radzen card*/
+.rz-tabview-panel {
+    background-color: var(--base-background-color)
+}
+
+/*radzen graph*/
+.rz-series-data-label {
+    color: pink;
+    background-color: red;
+}
+
+/*radzen tab*/
+.rz-tabview-panel {
+    background-color: var(--tertiary-background-color);
+    border: none;
+}
+
+a:hover {
+    color: var(--hover-link-color);
 }
 
 h1:focus {
@@ -77,4 +182,13 @@ a, .btn-link {
 
 .text-center {
     text-align: center;
+}
+
+.modal-content {
+    background-color: var(--tertiary-background-color);
+}
+
+.coin-img {
+    height: 32px;
+    width: 32px;
 }

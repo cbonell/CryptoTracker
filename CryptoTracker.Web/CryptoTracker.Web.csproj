@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CryptoTracker.DataAccess\CryptoTracker.DataAccess.csproj" />
+    <ProjectReference Include="..\SharedConstants\Tools.csproj" />
   </ItemGroup>
 
   <ItemGroup>

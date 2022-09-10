@@ -19,6 +19,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await CoinMarketCapData.GetCurrency();
+        await CoinMarketCapData.GetCurrencycoin();
         TrendingCoins = await CoinMarketCapData.GetTrendingLatest();
     }
 }
