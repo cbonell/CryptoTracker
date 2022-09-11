@@ -3,7 +3,7 @@
 	[Id] INT IDENTITY (100, 1) NOT NULL PRIMARY KEY,
 	[UserId] NVARCHAR(255) NOT NULL,
 	[CoinId] INT NOT NULL,
-	[PurchasingCurrencyId] INT NOT NULL,
+	[PurchasingCurrencyId] INT NULL,
 	[PurchaseTypeId] INT NOT NULL,
 	[Quantity] DECIMAL(20, 6) NOT NULL,
 	[PurchasePrice] DECIMAL(20, 2) NOT NULL,

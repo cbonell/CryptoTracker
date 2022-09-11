@@ -8,13 +8,6 @@
 <AuthorizeView>
     <Authorized>
         <h3>Favorites</h3>
-        @foreach (UserFavoriteCoinModel coin in userFavoriteCoins)
-        {
-            <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.CoinMarketCapId + ".png")">
-
-            <a href="@("/Coin/" + @coin.CoinId)">@coin.CoinName</a>
-        }
-
         <RadzenDataGrid Data="@userFavoriteCoins" TItem="UserFavoriteCoinModel" AllowPaging="true" AllowSorting="true" PageSize="15">
             <Columns>
                 <RadzenDataGridColumn TItem="UserFavoriteCoinModel" Property="CoinName" Title="Coin Name" CssClass="text-center">
