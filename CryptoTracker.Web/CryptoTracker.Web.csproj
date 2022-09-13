@@ -29,8 +29,4 @@
     <_ContentIncludedByDefault Remove="Components\ResetUserTradingAccount.razor" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="Components\ResetUserTradingAccount.razor" />
-  </ItemGroup>
-
 </Project>

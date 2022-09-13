@@ -1,5 +1,16 @@
 ﻿﻿let darkMode = localStorage.getItem("color-mode");
 
+window.addEventListener('click', function (e) {
+    var toggleColorButton = document.getElementById('darkmode-toggle');
+
+    if (toggleColorButton) {
+        if (toggleColorButton.contains(e.target)) {
+            // Clicked in box
+            toggleColorMode();
+        }
+    }
+});
+
 const enableDarkMode = () => {
     document.documentElement.setAttribute("color-mode", "dark");
     localStorage.setItem("color-mode", "dark");
@@ -22,3 +33,17 @@ const toggleColorMode = () => {
 
     }
 };
+
+(function () {
+
+    var toggleColorButton = document.getElementById('darkmode-toggle');
+    console.log(darkMode);
+    if (darkMode == "dark") {
+        //toggleColorButton.checked = false;
+        enableDarkMode();
+    } else {
+        //toggleColorButton.checked = true;
+        disableDarkMode();
+    }
+    console.log('a');
+})();
