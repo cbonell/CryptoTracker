@@ -97,6 +97,7 @@
     <Build Include="Stored Procedures\UserFavoriteCoin\RemoveUserFavoriteCoin.sql" />
     <Build Include="Stored Procedures\UserFavoriteCoin\CheckIfCoinIsUsersFavorite.sql" />
     <Build Include="Stored Procedures\TradingPurchase\TradingPurchase_Sell.sql" />
+    <Build Include="Stored Procedures\UserWallet\ResetUserTradingProfile.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CryptoTracker.Db.publish.xml" />

@@ -10,7 +10,7 @@ public class UserWalletData : DataBase, IUserWalletData
         => _db.LoadData<UserWalletModel, dynamic>("[dbo].[GetUserWallet]", new { UserId = userId });
 
     public Task ResetUserWallet(string userId)
-        => _db.SaveData<dynamic>("", new { UserId = userId });
+        => _db.SaveData<dynamic>("[dbo].[ResetUserTradingProfile]", new { UserId = userId });
 
     public Task InitializeUserWalletForPaperTrading(string userId)
         => _db.SaveData<dynamic>("[dbo].[InitializeUserWalletForPaperTrading]", new { UserId = userId });

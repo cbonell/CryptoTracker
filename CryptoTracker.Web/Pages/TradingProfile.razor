@@ -1,4 +1,5 @@
 ﻿@page "/MyWallet"
+@inherits BasePage
 
 @using System.Security.Claims
 @using CryptoTracker.Web.Components
@@ -11,13 +12,13 @@
 <RadzenTabs>
     <Tabs>
         <RadzenTabsItem Text="Fiat">
-            @foreach(UserWalletModel currency in Fiats)
+            @foreach (UserWalletModel currency in Fiats)
             {
                 <p> @currency.Sign@currency.Quantity.AsFormattedNumber() @currency.Symbol (@currency.CurrencyName)</p>
             }
         </RadzenTabsItem>
         <RadzenTabsItem Text="Coin">
-            @foreach(UserWalletModel currency in Coins)
+            @foreach (UserWalletModel currency in Coins)
             {
                 <p>@currency.Quantity.AsFormattedNumber() <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + currency.CoinMarketCapId + ".png")">@currency.CurrencyName </p>
             }
@@ -25,9 +26,14 @@
     </Tabs>
 </RadzenTabs>
 
-<UserFavorites/>
+<UserFavorites />
 
-<UserTradingHistory/>
+<UserTradingHistory />
+
+@if (IsAuthenticated)
+{
+    <button class="btn btn-danger" @onclick="confirmationModal.ToggleDisplay">Reset Trading Account</button>
+}
 
 <Modal @ref="AddInitialWalletModal"
        SaveButtonText="Yes"
@@ -36,9 +42,17 @@
        OnSave="OnConfirmCreateWallet">
     You dont have a paper trading wallet set up yet, would you like to create one now?
 </Modal>
+
+<Modal @ref=confirmationModal
+       Title="Confirm Reset"
+       SaveButtonText="Yes"
+       CancelButtonText="No"
+       OnSave="ResetAfterUserConfirmation">
+    Are you sure that you want to reset your profile? There is no way to recover after confirmation.
+</Modal>
 @code {
     Modal AddInitialWalletModal { get; set; } = new();
-    string userId = "";
+    Modal confirmationModal { get; set; } = new();
 
     protected IEnumerable<UserWalletModel> UserWallet { get; set; } = Enumerable.Empty<UserWalletModel>();
     protected IEnumerable<UserWalletModel> Fiats
@@ -53,7 +67,7 @@
             return Enumerable.Empty<UserWalletModel>();
         }
     }
-    
+
     protected IEnumerable<UserWalletModel> Coins
     {
         get
@@ -69,27 +83,18 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var state = await AuthState.GetAuthenticationStateAsync();
-        if (state != null && state.User != null && state.User.Identity != null)
+        await base.OnInitializedAsync();
+        if (IsAuthenticated)
         {
-            if (state.User.Identity.IsAuthenticated)
-            {
-                var tempUserClaim = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-                if (tempUserClaim != null)
-                {
-                    userId = tempUserClaim.Value;
-                }
-            }
+            await LoadData();
         }
-
-        await LoadData();
     }
 
     protected async Task LoadData()
     {
-        if (!string.IsNullOrWhiteSpace(userId))
+        if (!string.IsNullOrWhiteSpace(UserId))
         {
-            UserWallet = await userWallet.GetUserWallet(userId);
+            UserWallet = await userWallet.GetUserWallet(UserId);
             if (UserWallet.Count() <= 0)
             {
                 AddInitialWalletModal.ToggleDisplay();
@@ -98,5 +103,11 @@
         }
     }
 
-    private async Task OnConfirmCreateWallet() => await userWallet.InitializeUserWalletForPaperTrading(userId);
+    private async Task OnConfirmCreateWallet() => await userWallet.InitializeUserWalletForPaperTrading(UserId);
+
+    private async Task ResetAfterUserConfirmation()
+    {
+        await userWallet.ResetUserWallet(UserId);
+        await LoadData();
+    }
 }

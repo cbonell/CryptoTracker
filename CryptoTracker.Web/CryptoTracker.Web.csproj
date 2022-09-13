@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\ResetUserTradingAccount.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CryptoTracker.DataAccess\CryptoTracker.DataAccess.csproj" />
     <ProjectReference Include="..\SharedConstants\Tools.csproj" />
   </ItemGroup>
@@ -15,6 +19,18 @@
   <ItemGroup>
     <PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.0.3" />
     <PackageReference Include="Radzen.Blazor" Version="3.20.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\ResetUserTradingAccount.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\ResetUserTradingAccount.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Components\ResetUserTradingAccount.razor" />
   </ItemGroup>
 
 </Project>
