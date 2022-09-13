@@ -6,7 +6,8 @@
 	@PurchasePrice decimal(20,2),
 	@PurchaseDate DATETIME
 AS
-	DECLARE @PurchaseType INT = (SELECT TOP 1 Id FROM PurchaseType WHERE [Name] = 'Buy')
+	DECLARE @PurchaseType INT = (SELECT TOP 1 Id FROM PurchaseType WHERE [Name] = 'Buy'),
+			@UsdCurrencyId INT = (SELECT TOP 1 Id FROM Currency WHERE [Symbol] = 'USD')
 
 	IF(@UserId IS NULL)
 	BEGIN
@@ -46,6 +47,17 @@ AS
 			UserId = @UserId 
 			AND CurrencyId = @CoinId
 			
+	END
+
+	IF(@PurchasingCurrencyId = @UsdCurrencyId)
+	BEGIN
+		UPDATE
+			UserWallet
+		SET
+			Quantity = Quantity - (@Quantity * @PurchasePrice)
+		WHERE 
+			UserId = @UserId 
+			AND CurrencyId = @UsdCurrencyId
 	END
 
 RETURN 0

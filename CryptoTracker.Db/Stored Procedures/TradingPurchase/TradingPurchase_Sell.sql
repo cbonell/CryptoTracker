@@ -6,7 +6,8 @@
 	@PurchaseDate DATETIME
 AS
 	DECLARE @CurrentQuantity INT,
-			@PurchaseType INT = (SELECT TOP 1 Id FROM PurchaseType WHERE [Name] = 'Sell')
+			@PurchaseType INT = (SELECT TOP 1 Id FROM PurchaseType WHERE [Name] = 'Sell'),
+			@UsdCurrencyId INT = (SELECT TOP 1 Id FROM Currency WHERE [Symbol] = 'USD')
 
 	IF(EXISTS(SELECT TOP 1 *FROM UserWallet WHERE UserId = @UserId AND CurrencyId = @CoinId))
 	BEGIN
@@ -36,5 +37,14 @@ AS
 				, @SellPrice
 				, @PurchaseDate)
 		END		
+
+		UPDATE
+			UserWallet
+		SET
+			Quantity = Quantity + (@Quantity * @SellPrice)
+		WHERE 
+			UserId = @UserId 
+			AND CurrencyId = @UsdCurrencyId
+
 	END
 RETURN 0
