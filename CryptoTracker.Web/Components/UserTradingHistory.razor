@@ -1,0 +1,48 @@
+﻿@using System.Security.Claims
+@inject AuthenticationStateProvider AuthState
+@inject ITradingPurchaseData tradingData
+
+<AuthorizeView>
+    <Authorized>
+        <h3>Trading History</h3>
+
+        <RadzenDataGrid Data="@UserTrades" TItem="TradingPurchaseModel" AllowPaging="true" AllowSorting="true" PageSize="15">
+            <Columns>
+                <RadzenDataGridColumn TItem="TradingPurchaseModel" Property="CoinName" Title="Coin Name" CssClass="text-center">
+                    <Template Context="coin">
+                        <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.CoinMarketCapCoinId + ".png")"> <a href="/Coin/@coin.CoinMarketCapCoinId" target="_blank">@coin.CoinName</a>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="TradingPurchaseModel" Property="TransactionType" Title="Transaction Type" CssClass="text-center" />
+                <RadzenDataGridColumn TItem="TradingPurchaseModel" Property="Quantity" Title="Quantity" CssClass="text-center" />
+                <RadzenDataGridColumn TItem="TradingPurchaseModel" Property="PurchasePrice" Title="Purchase Price" CssClass="text-center" />
+                <RadzenDataGridColumn TItem="TradingPurchaseModel" Property="PurchaseDate" Title="Purchase Date" CssClass="text-center" />
+            </Columns>
+        </RadzenDataGrid>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private IEnumerable<TradingPurchaseModel> UserTrades { get; set; } = Enumerable.Empty<TradingPurchaseModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthState.GetAuthenticationStateAsync();
+        if (state != null && state.User != null && state.User.Identity != null)
+        {
+            if (state.User.Identity.IsAuthenticated)
+            {
+                var tempUserClaim = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                if (tempUserClaim != null)
+                {
+                    await GetTradingHistory(tempUserClaim.Value);
+                }
+            }
+        }
+    }
+
+    private async Task GetTradingHistory(string userId)
+    {
+        UserTrades = await tradingData.GetUserTradingHistory(userId);
+    }
+}

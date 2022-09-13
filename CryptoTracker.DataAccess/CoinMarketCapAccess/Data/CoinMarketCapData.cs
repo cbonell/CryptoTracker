@@ -1,5 +1,6 @@
 ﻿using CryptoTracker.DataAccess.CoinMarketCap.Model;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 
 namespace CryptoTracker.DataAccess.CoinMarketCap.Data;
@@ -17,7 +18,7 @@ public class CoinMarketCapData
             Method = Method.Get
         };
         request.AddHeader(AUTH_HEADER, API_KEY);
-        RestResponse response = client.Execute(request);
+        RestResponse response = await client.ExecuteAsync(request);
         if(response.StatusCode != System.Net.HttpStatusCode.OK)
         {
             return Enumerable.Empty<DataModel>();
@@ -29,7 +30,7 @@ public class CoinMarketCapData
             return Enumerable.Empty<DataModel>();
         }
 
-        ResponseDataModel responseData =  JsonConvert.DeserializeObject<ResponseDataModel>(response.Content)!;
+        ResponseDataModel responseData =  JsonConvert.DeserializeObject<ResponseDataModel>(response?.Content!)!;
 
         return responseData.DataContainerModel.DataModels;
     }
@@ -43,5 +44,45 @@ public class CoinMarketCapData
         }
 
         return new ResponseStatusModel();
+    }
+
+    public static async Task GetCurrency()
+    {
+        RestClient client = new RestClient(Constants.PROD_ENDPOINT + "/v1/fiat/map");
+        RestRequest request = new RestRequest()
+        {
+            Method = Method.Get
+        };
+        request.AddHeader(AUTH_HEADER, API_KEY);
+        RestResponse response = await client.ExecuteAsync(request);
+        JObject jobject = JObject.Parse(response?.Content!);
+        JToken jt = jobject["data"] ?? "";
+        string insert = "";
+        foreach (JObject jProperty in jt)
+        {
+            insert += $"INSERT INTO Currency([CoinMarketCapId], [CurrencyTypeId], [Name], [Sign], [Symbol]) VALUES({jProperty["id"]}, 100, '{jProperty["name"]}', '{jProperty["sign"]}', '{jProperty["symbol"]}');" + Environment.NewLine;
+        }
+
+        insert += "";
+    }
+    
+    public static async Task GetCurrencycoin()
+    {
+        RestClient client = new RestClient(Constants.PROD_ENDPOINT + "/v1/cryptocurrency/map");
+        RestRequest request = new RestRequest()
+        {
+            Method = Method.Get
+        };
+        request.AddHeader(AUTH_HEADER, API_KEY);
+        RestResponse response = await client.ExecuteAsync(request);
+        JObject jobject = JObject.Parse(response?.Content!);
+        JToken jt = jobject["data"] ?? "";
+        string insert = "";
+        foreach (JObject jProperty in jt)
+        {
+            insert += $"INSERT INTO Currency([CoinMarketCapId], [CurrencyTypeId], [Name], [Sign], [Symbol]) VALUES({jProperty["id"]}, 101, '{jProperty["name"]}', '', '{jProperty["symbol"]}');" + Environment.NewLine;
+        }
+
+        insert += "";
     }
 }

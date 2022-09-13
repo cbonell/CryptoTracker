@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[PurchaseType]
+(
+	[Id] INT IDENTITY (100, 1) NOT NULL PRIMARY KEY,
+	[Name] VARCHAR(255) NOT NULL,
+
+	UNIQUE([Name])
+)

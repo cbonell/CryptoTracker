@@ -1,4 +1,4 @@
-using CryptoTracker.Web;
+using CryptoTracker.Web.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
 

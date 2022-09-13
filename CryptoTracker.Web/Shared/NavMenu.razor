@@ -1,6 +1,6 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">CryptoTracker.Web</a>
+        <a class="navbar-brand" href="">Moon Trading</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -18,6 +18,17 @@
             <NavLink class="nav-link" href="/Coins">
                 <span aria-hidden="true"></span> Coins
             </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/MyWallet">
+                <span aria-hidden="true"></span> My Wallet
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <a id="darkmode-toggle">
+                    <i class="fa fa-moon fa-2x darkmode-toggle-icon"></i>
+                    <i class="fa fa-sun fa-2x lightmode-toggle-icon"></i>
+                </a>
         </div>
     </nav>
 </div>

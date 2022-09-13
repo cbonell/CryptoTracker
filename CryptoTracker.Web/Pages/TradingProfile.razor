@@ -1,0 +1,113 @@
+﻿@page "/MyWallet"
+@inherits BasePage
+
+@using System.Security.Claims
+@using CryptoTracker.Web.Components
+@using static Tools.Extensions.DoubleExtensions
+
+@inject AuthenticationStateProvider AuthState
+@inject IUserWalletData userWallet
+
+<h2>Wallet</h2>
+<RadzenTabs>
+    <Tabs>
+        <RadzenTabsItem Text="Fiat">
+            @foreach (UserWalletModel currency in Fiats)
+            {
+                <p> @currency.Sign@currency.Quantity.AsFormattedNumber() @currency.Symbol (@currency.CurrencyName)</p>
+            }
+        </RadzenTabsItem>
+        <RadzenTabsItem Text="Coin">
+            @foreach (UserWalletModel currency in Coins)
+            {
+                <p>@currency.Quantity.AsFormattedNumber() <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + currency.CoinMarketCapId + ".png")">@currency.CurrencyName </p>
+            }
+        </RadzenTabsItem>
+    </Tabs>
+</RadzenTabs>
+
+<UserFavorites />
+
+<UserTradingHistory />
+
+@if (IsAuthenticated)
+{
+    <button class="btn btn-danger" @onclick="confirmationModal.ToggleDisplay">Reset Trading Account</button>
+}
+
+<Modal @ref="AddInitialWalletModal"
+       SaveButtonText="Yes"
+       CancelButtonText="No"
+       Title=""
+       OnSave="OnConfirmCreateWallet">
+    You dont have a paper trading wallet set up yet, would you like to create one now?
+</Modal>
+
+<Modal @ref=confirmationModal
+       Title="Confirm Reset"
+       SaveButtonText="Yes"
+       CancelButtonText="No"
+       OnSave="ResetAfterUserConfirmation">
+    Are you sure that you want to reset your profile? There is no way to recover after confirmation.
+</Modal>
+@code {
+    Modal AddInitialWalletModal { get; set; } = new();
+    Modal confirmationModal { get; set; } = new();
+
+    protected IEnumerable<UserWalletModel> UserWallet { get; set; } = Enumerable.Empty<UserWalletModel>();
+    protected IEnumerable<UserWalletModel> Fiats
+    {
+        get
+        {
+            if (UserWallet != null && UserWallet.Count() > 0)
+            {
+                return UserWallet.Where(x => x.CurrencyTypeId == (int)ICurrencyData.CurrencyType.Fiat);
+            }
+
+            return Enumerable.Empty<UserWalletModel>();
+        }
+    }
+
+    protected IEnumerable<UserWalletModel> Coins
+    {
+        get
+        {
+            if (UserWallet != null && UserWallet.Count() > 0)
+            {
+                return UserWallet.Where(x => x.CurrencyTypeId == (int)ICurrencyData.CurrencyType.Coin);
+            }
+
+            return Enumerable.Empty<UserWalletModel>();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        if (IsAuthenticated)
+        {
+            await LoadData();
+        }
+    }
+
+    protected async Task LoadData()
+    {
+        if (!string.IsNullOrWhiteSpace(UserId))
+        {
+            UserWallet = await userWallet.GetUserWallet(UserId);
+            if (UserWallet.Count() <= 0)
+            {
+                AddInitialWalletModal.ToggleDisplay();
+                return;
+            }
+        }
+    }
+
+    private async Task OnConfirmCreateWallet() => await userWallet.InitializeUserWalletForPaperTrading(UserId);
+
+    private async Task ResetAfterUserConfirmation()
+    {
+        await userWallet.ResetUserWallet(UserId);
+        await LoadData();
+    }
+}
