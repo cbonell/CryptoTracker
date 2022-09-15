@@ -1,5 +1,6 @@
 ﻿@using System.Timers
 @using System.Security.Claims
+@using CryptoTracker.DataAccess.CoinGeckoAccess
 @using CryptoTracker.Web.Pages
 
 @inject ICurrencyData currencyData
@@ -94,6 +95,7 @@
         timer = new System.Threading.Timer(async (object? stateInfo) =>
         {
             Refresh();
+            //currentPrice = await CoinGeckoData.GetPriceInUsd(Currency.Name);
             await InvokeAsync(() => StateHasChanged()); // NOTE: MUST CALL StateHasChanged() BECAUSE THIS IS TRIGGERED BY A TIMER INSTEAD OF A USER EVENT
         }, new System.Threading.AutoResetEvent(false), 2000, 2000); // fire every 2000 milliseconds
     }

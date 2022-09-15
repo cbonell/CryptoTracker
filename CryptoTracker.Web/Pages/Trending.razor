@@ -2,16 +2,29 @@
 
 @using CryptoTracker.DataAccess.CoinMarketCap.Data
 @using CryptoTracker.DataAccess.CoinMarketCap.Model
+@using CryptoTracker.Web.Components
 
 <h2>Top Ten Trending Coins</h2>
-@foreach(DataModel data in TrendingCoins)
+@if(loading)
 {
-    <p>Name: @data.Name, Id: @data.Id</p> <br>
+    <LoadingSpinner/>
 }
+else
+{
+<RadzenDataGrid Data="@TrendingCoins" TItem="DataModel" AllowPaging="true" AllowSorting="true" FilterMode="FilterMode.Simple" AllowFiltering="true" >
+        <Columns>
+            <RadzenDataGridColumn TItem="DataModel" Property="Name" Title="Name" CssClass="text-center">
+                <Template Context="coin">
+                <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.Id + ".png")"> <a href="/Coin/@coin.Id" target="_blank">@coin.Name</a>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+    }
 
 @code {
     IEnumerable<DataModel> TrendingCoins { get; set; }
-
+    bool loading = false;
     public Trending()
     {
         TrendingCoins = Enumerable.Empty<DataModel>();
@@ -19,8 +32,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await CoinMarketCapData.GetCurrency();
-        await CoinMarketCapData.GetCurrencycoin();
+        loading = true;
         TrendingCoins = await CoinMarketCapData.GetTrendingLatest();
+        loading = false;
     }
 }
