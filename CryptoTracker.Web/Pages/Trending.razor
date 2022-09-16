@@ -3,6 +3,7 @@
 @using CryptoTracker.DataAccess.CoinMarketCap.Data
 @using CryptoTracker.DataAccess.CoinMarketCap.Model
 @using CryptoTracker.Web.Components
+@inject ICoinMarketCapData coinMarketCapData
 
 <h2>Top Ten Trending Coins</h2>
 @if(loading)
@@ -33,7 +34,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         loading = true;
-        TrendingCoins = await CoinMarketCapData.GetTrendingLatest();
+        TrendingCoins = await coinMarketCapData.GetTrendingLatest();
         loading = false;
     }
 }

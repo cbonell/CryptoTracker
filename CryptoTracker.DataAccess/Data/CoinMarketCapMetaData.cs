@@ -1,20 +1,25 @@
-﻿using CryptoTracker.DataAccess.CoinMarketCapAccess.Model;
+﻿using CryptoTracker.DataAccess.Caching;
+using CryptoTracker.DataAccess.CoinMarketCapAccess.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 
 namespace CryptoTracker.DataAccess.Data;
-public class CoinMarketCapMetaData : CoinMarketCapDataBase
+public class CoinMarketCapMetaData : CoinMarketCapDataBase, IDataBase, ICoinMarketCapMetaData
 {
-    public static async Task<CoinMarketCapMetaDataModel> GetCoinMetaData(int id)
+    internal readonly ISqlDataAccess _db;
+
+    public CoinMarketCapMetaData(ISqlDataAccess db)
     {
-        RestClient client = new RestClient(Constants.PROD_ENDPOINT + "/v1/cryptocurrency/info?id=" + id);
-        RestRequest request = new RestRequest()
-        {
-            Method = Method.Get
-        };
-        request.AddHeader(AUTH_HEADER, API_KEY);
-        RestResponse response = await client.ExecuteAsync(request);
+        _db = db;
+    }
+
+    public async Task<CoinMarketCapMetaDataModel> GetCoinMetaData(int id)
+    {
+        CachingService cachingService = new CachingService(_db);
+        cachingService.CreateRequest(Constants.PROD_ENDPOINT + "/v1/cryptocurrency/info?id=" + id, resonseThreshold: 500);
+        cachingService.AddHeader(AUTH_HEADER, API_KEY);
+        RestResponse response = await cachingService.ExecuteAsync();
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
             return new CoinMarketCapMetaDataModel();
