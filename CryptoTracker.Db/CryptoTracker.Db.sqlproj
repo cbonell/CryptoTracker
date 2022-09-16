@@ -65,6 +65,7 @@
     <Folder Include="Stored Procedures\UserWallet" />
     <Folder Include="Stored Procedures\TradingPurchase" />
     <Folder Include="Stored Procedures\UserFavoriteCoin" />
+    <Folder Include="Stored Procedures\ResponseCache" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\User.sql" />
@@ -98,6 +99,9 @@
     <Build Include="Stored Procedures\UserFavoriteCoin\CheckIfCoinIsUsersFavorite.sql" />
     <Build Include="Stored Procedures\TradingPurchase\TradingPurchase_Sell.sql" />
     <Build Include="Stored Procedures\UserWallet\ResetUserTradingProfile.sql" />
+    <Build Include="Tables\ResponseCache.sql" />
+    <Build Include="Stored Procedures\ResponseCache\GetCachedResponse.sql" />
+    <Build Include="Stored Procedures\ResponseCache\SaveCachedResponse.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CryptoTracker.Db.publish.xml" />
