@@ -12,7 +12,7 @@ Website:
 }
 <br />
 Tags:
-@foreach (string tag in Coin.Tags)
+@foreach (string tag in Coin.Tags ?? Enumerable.Empty<string>())
 {
     <Pill>@tag</Pill>
 }

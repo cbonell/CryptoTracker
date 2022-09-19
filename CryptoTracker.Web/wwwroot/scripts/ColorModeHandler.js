@@ -26,11 +26,8 @@ const disableDarkMode = () => {
 const toggleColorMode = () => {
     if (darkMode == "dark") {
         disableDarkMode();
-        console.log('in dark setting lights');
     } else {
         enableDarkMode();
-        console.log('in light setting dark');
-
     }
 };
 
@@ -38,12 +35,9 @@ const toggleColorMode = () => {
 
     var toggleColorButton = document.getElementById('darkmode-toggle');
     console.log(darkMode);
-    if (darkMode == "dark") {
-        //toggleColorButton.checked = false;
+    if (!darkMode || darkMode == "dark") {
         enableDarkMode();
     } else {
-        //toggleColorButton.checked = true;
         disableDarkMode();
     }
-    console.log('a');
 })();
