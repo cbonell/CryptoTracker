@@ -2,7 +2,12 @@
 @using CryptoTracker.Web.Components
 @using System.Security.Claims
 @using CryptoTracker.DataAccess.Auth0
+
 @inject AuthenticationStateProvider AuthState
+@inject IUserFavoriteCoinData favoriteCoinData
+@inject ICurrencyData currencyData
+@inject IUserFavoriteCoinData favoriteCoinData
+@inject ICoinMarketCapMetaData metaData
 
 <PageTitle>@data.Name - Details</PageTitle>
 
@@ -16,14 +21,16 @@ else
         <div class="row">
             <div class="col-8 border">
                 <AuthorizeView>
-                    <Authorized><button @onclick="AddToFavs">Add to favorites</button></Authorized>
+                    <Authorized>
+                        <StarCheckBox ticked="isUersFavorite" OnToggle="HandleFavoriteToggle" />
+                    </Authorized>
                     <NotAuthorized>Login in to add to favorites</NotAuthorized>
                 </AuthorizeView>
-                
+
                 <CoinDetails Coin="data" />
             </div>
             <div class="col-sm-4">
-                <CoinPurchasePanel />
+                <CoinPurchasePanel CoinMarketCapId="Id" />
             </div>
         </div>
     </div>
@@ -34,28 +41,89 @@ else
     public int Id { get; set; }
     bool loading = false;
     CoinMarketCapMetaDataModel data { get; set; }
+    private CurrencyModel Currency;
+    bool isUersFavorite = false;
+    string userId = "";
 
     public Coin()
     {
-        data = new CoinMarketCapMetaDataModel();
+        data = new();
+        Currency = new();
     }
 
     protected override async Task OnInitializedAsync()
     {
         loading = true;
-        data = await CoinMarketCapMetaData.GetCoinMetaData(Id);
+        data = await metaData.GetCoinMetaData(Id);
+        var tempCurrencies = await currencyData.GetCurrencyByCoinMarketCapId(Id, ICurrencyData.CurrencyType.Coin);
+        if (tempCurrencies.Count() > 1)
+        {
+            throw new Exception("Expected only one currency models to be returned to encountered multipiple");
+        }
+        else if (tempCurrencies.Count() != 0)
+        {
+            Currency = tempCurrencies.First();
+        }
+
+        var state = await AuthState.GetAuthenticationStateAsync();
+        if (state != null && state.User != null && state.User.Identity != null)
+        {
+            if (state.User.Identity.IsAuthenticated)
+            {
+                var tempUserClaim = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                if (tempUserClaim != null)
+                {
+                    userId = tempUserClaim.Value;
+                }
+            }
+        }
+        isUersFavorite = await favoriteCoinData.CheckIfCoinIsUsersFavorite(userId, Currency.Id);
+
         loading = false;
     }
 
-    private async Task AddToFavs()
+    private async Task HandleFavoriteToggle(bool isChecked)
+    {
+        isUersFavorite = isChecked;
+        if (isChecked)
+        {
+            await AddFavorite();
+        }
+        else
+        {
+            await RemoveFavorite();
+        }
+    }
+
+    private async Task AddFavorite()
     {
         var state = await AuthState.GetAuthenticationStateAsync();
-        if (state.User.Identity.IsAuthenticated)
+        if (state != null && state.User != null && state.User.Identity != null)
         {
-            // auth0|630eaeb6003454364c26e456
-            string userId = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            
-            await Auth0.AddUserFavoriteCoin(userId, Id);
+            if (state.User.Identity.IsAuthenticated)
+            {
+                var tempUserClaim = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                if (tempUserClaim != null)
+                {
+                    await favoriteCoinData.AddUserFavoriteCoin(userId, Currency.Id);
+                }
+            }
+        }
+    }
+
+    private async Task RemoveFavorite()
+    {
+        var state = await AuthState.GetAuthenticationStateAsync();
+        if (state != null && state.User != null && state.User.Identity != null)
+        {
+            if (state.User.Identity.IsAuthenticated)
+            {
+                var tempUserClaim = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                if (tempUserClaim != null)
+                {
+                    await favoriteCoinData.RemoveUserFavoriteCoin(userId, Currency.Id);
+                }
+            }
         }
     }
 }

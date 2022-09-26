@@ -1,7 +1,7 @@
 ﻿@using CryptoTracker.Web.Components
 @inherits LayoutComponentBase
 
-<PageTitle>CryptoTracker.Web</PageTitle>
+<PageTitle>Moon Trading</PageTitle>
 
 <div class="page">
     <div class="sidebar">
@@ -10,12 +10,17 @@
 
     <main>
         <div class="top-row px-4">
-            <AccessControl />    
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            <AccessControl />
         </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
+        <ErrorBoundary>
+            <ChildContent>
+                @Body
+            </ChildContent>
+            <ErrorContent Context="ex">
+                
+                <p>@ex.Message</p> @*prints exeption on page*@
+                <p>@ex.InnerException</p>
+            </ErrorContent>
+        </ErrorBoundary>
     </main>
 </div>

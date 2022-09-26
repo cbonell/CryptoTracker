@@ -1,5 +1,5 @@
 ﻿<div class="text-center">
-    <img src="@Coin.LogoPath" /> @Coin.Name (@Coin.Symbol)
+    <img src="@Coin.LogoPath" /> @Coin.Name (@Coin.Symbol)<br />
 </div>
 <br />
 <CoinPriceChart />
@@ -12,11 +12,12 @@ Website:
 }
 <br />
 Tags:
-@foreach (string tag in Coin.Tags)
+@foreach (string tag in Coin.Tags ?? Enumerable.Empty<string>())
 {
     <Pill>@tag</Pill>
 }
 <br />
+<TrendingTweets CoinName="@Coin.Name"/>
 @code {
     [Parameter]
     public CoinMarketCapMetaDataModel Coin { get; set; }

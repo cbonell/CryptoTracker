@@ -1,5 +1,6 @@
 ﻿@page "/Coins"
-@using CryptoTracker.Web.Components
+@using CryptoTracker.Web.Components 
+@inject ICoinMarketCapIDMapData mapData
 <PageTitle>Market Watch</PageTitle>
 <h3 class="text-center">Market Watch</h3>
 @if(loading)
@@ -8,11 +9,11 @@
 }
 else
 {
-<RadzenDataGrid Data="@CoinsData" TItem="CoinMarketCapIDMapModel" AllowPaging="true" AllowSorting="true">
+<RadzenDataGrid Data="@CoinsData" TItem="CoinMarketCapIDMapModel" AllowPaging="true" AllowSorting="true" FilterMode="FilterMode.Simple" AllowFiltering="true" >
         <Columns>
             <RadzenDataGridColumn TItem="CoinMarketCapIDMapModel" Property="Name" Title="Name" CssClass="text-center">
                 <Template Context="coin">
-                <a href="/Coin/@coin.Id" target="_blank">@coin.Name</a>
+                <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.Id + ".png")"> <a href="/Coin/@coin.Id" target="_blank">@coin.Name</a>
                 </Template>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="CoinMarketCapIDMapModel" Property="Rank" Title="Rank" CssClass="text-center"/>
@@ -34,7 +35,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         loading = true;
-        CoinsData = await CoinMarketCapIDMapData.GetCoinMap();
+        CoinsData = await mapData.GetCoinMap();
         loading = false;
     }
 }

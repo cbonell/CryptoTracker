@@ -4,5 +4,5 @@ namespace CryptoTracker.DataAccess.CoinMarketCap.Model;
 public class ResponseStatusModel
 {
     [JsonProperty("status")]
-    public Status Status { get; set; }
+    public Status Status { get; set; } = new Status();
 }

@@ -8,15 +8,15 @@ public class CoinMarketCapIDMapModel
     [JsonProperty("rank")]
     public int Rank { get; set; }
     [JsonProperty("name")]
-    public string Name { get; set; }
+    public string Name { get; set; } = "";
     [JsonProperty("symbol")]
-    public string Symbol { get; set; }
+    public string Symbol { get; set; } = "";
     [JsonProperty("slug")]
-    public string Slug { get; set; }
+    public string Slug { get; set; } = "";
 }
 
 public class CoinMarketCapIDMapModelData
 {
     [JsonProperty("data")]
-    public IEnumerable<CoinMarketCapIDMapModel> coinMarketCapMaps { get; set; }
+    public IEnumerable<CoinMarketCapIDMapModel> CoinMarketCapMaps { get; set; } = Enumerable.Empty<CoinMarketCapIDMapModel>();
 }

@@ -5,15 +5,31 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Configurations>Debug;Release;ReleaseBuild</Configurations>
+    <UserSecretsId>35d9d5fa-b2b8-4a47-956c-6584b64f1bc1</UserSecretsId>
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\ResetUserTradingAccount.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CryptoTracker.DataAccess\CryptoTracker.DataAccess.csproj" />
+    <ProjectReference Include="..\SharedConstants\Tools.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.0.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.1" />
     <PackageReference Include="Radzen.Blazor" Version="3.20.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\ResetUserTradingAccount.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\ResetUserTradingAccount.razor" />
   </ItemGroup>
 
 </Project>

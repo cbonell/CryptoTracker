@@ -1,14 +1,136 @@
-﻿<RadzenCard>
+﻿@using System.Timers
+@using System.Security.Claims
+@using CryptoTracker.DataAccess.CoinGeckoAccess
+@using CryptoTracker.Web.Pages
+
+@inject ICurrencyData currencyData
+@inject ITradingPurchaseData tradingPurchaseData
+@inject IUserWalletData userWalletData
+@inject ICoinGeckoData coinGeckoData
+
+@inherits BasePage
+
+<Modal @ref=purchaseModal
+       Title="Purchase Confirmation">
+       @Currency.Name purchased at @purcahsePrice
+</Modal>
+
+<Modal @ref=sellModal
+       Title="Sale Confirmation">
+       Sold @numberToSell @Currency.Name at @purcahsePrice
+</Modal>
+<RadzenCard>
     <RadzenTabs>
         <Tabs>
             <RadzenTabsItem Text="Trade">
-                <input type="text" placeholder="Amount USD"/>
-                <button>Purchase</button>
+                Current price: @currentPrice
+                <input type="number" placeholder="Amount USD" class="form-control" @bind="numberToBuy" />
+                <button @onclick="MakePurchase" class="btn btn-primary">Purchase</button>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Sell">
+                Current price: @currentPrice
+                <small>Max you can sell @userWallet.Quantity</small>
+                <input type="number" placeholder="Number of @Currency.Symbol" class="form-control" @bind="numberToSell"/>
+                <button @onclick="Sell" class="form-control">Sell</button>
             </RadzenTabsItem>
         </Tabs>
     </RadzenTabs>
 </RadzenCard>
 
 @code {
+    [Parameter]
+    [EditorRequired]
+    public int CoinMarketCapId { get; set; }
+    double currentPrice;
+    double purcahsePrice;
 
+    double? numberToSell;
+    double? numberToBuy;
+    private CurrencyModel Currency;
+    Modal purchaseModal;
+    Modal sellModal;
+    UserWalletModel userWallet { get; set; }
+
+    public CoinPurchasePanel()
+    {
+        purchaseModal = new();
+        sellModal = new();
+        Currency = new();
+        userWallet = new();
+    }
+
+    private System.Threading.Timer? timer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await LoadData();
+        SetTimer();
+    }
+
+    private async Task LoadData()
+    {
+        var tempCurrencies = await currencyData.GetCurrencyByCoinMarketCapId(CoinMarketCapId, ICurrencyData.CurrencyType.Coin);
+        if (tempCurrencies.Count() > 1)
+        {
+            throw new Exception("Expected only one currency models to be returned to encountered multipiple");
+        }
+        else if (tempCurrencies.Count() != 0)
+        {
+            Currency = tempCurrencies.First();
+        }
+
+        if (IsAuthenticated)
+        {
+            var tempWallet = await userWalletData.GetUserWallet(UserId);
+            if(tempWallet != null && tempWallet.Count() > 0)
+            {
+                userWallet = tempWallet.Where(x => x.CurrencyId == Currency.Id).FirstOrDefault() ?? new UserWalletModel();
+            }
+        }
+
+    }
+
+    private void SetTimer()
+    {
+
+        if (timer == null)
+        {
+            timer = new System.Threading.Timer(async (object? stateInfo) =>
+            {
+                //Refresh();
+                currentPrice = await coinGeckoData.GetPriceInUsd(Currency.Name);
+                await InvokeAsync(() => StateHasChanged()); // NOTE: MUST CALL StateHasChanged() BECAUSE THIS IS TRIGGERED BY A TIMER INSTEAD OF A USER EVENT
+            }, new System.Threading.AutoResetEvent(false), 2000, 2000); // fire every 2000 milliseconds
+        }
+    }
+
+    void Refresh()
+    {
+        Random rd = new Random();
+        currentPrice = rd.Next(100, 30000);
+        currentPrice += (rd.Next(1, 99) / (double)10);
+        //StateHasChanged();
+    }
+
+    protected async Task MakePurchase()
+    {
+        if (IsAuthenticated)
+        {
+            await tradingPurchaseData.Purchase(UserId, Currency.Id, 100, numberToBuy ?? 0, currentPrice, DateTime.Now);
+        }
+        purchaseModal.ToggleDisplay();
+        purcahsePrice = currentPrice;
+    }
+
+    private async Task Sell()
+    {
+        if (IsAuthenticated)
+        {
+            await tradingPurchaseData.Sell(UserId, Currency.Id, numberToSell ?? 0, currentPrice, DateTime.Now);
+            await LoadData();
+        }
+        sellModal.ToggleDisplay();
+        purcahsePrice = currentPrice;
+    }
 }

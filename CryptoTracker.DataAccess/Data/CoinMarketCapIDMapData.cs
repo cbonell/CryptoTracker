@@ -1,24 +1,29 @@
 ﻿using RestSharp;
 using Newtonsoft.Json;
+using CryptoTracker.DataAccess.Caching;
 
 namespace CryptoTracker.DataAccess.Data;
-public class CoinMarketCapIDMapData : CoinMarketCapDataBase
+public class CoinMarketCapIDMapData : CoinMarketCapDataBase, ICoinMarketCapIDMapData, IDataBase
 {
-    public static async Task<IEnumerable<CoinMarketCapIDMapModel>> GetCoinMap()
+    internal readonly ISqlDataAccess _db;
+
+    public CoinMarketCapIDMapData(ISqlDataAccess db)
     {
-        RestClient client = new RestClient(Constants.PROD_ENDPOINT + "/v1/cryptocurrency/map");
-        RestRequest request = new RestRequest()
-        {
-            Method = Method.Get
-        };
-        request.AddHeader(AUTH_HEADER, API_KEY);
-        RestResponse response = await client.ExecuteAsync(request);
+        _db = db;
+    }
+
+    public async Task<IEnumerable<CoinMarketCapIDMapModel>> GetCoinMap()
+    {
+        CachingService cachingService = new CachingService(_db);
+        cachingService.CreateRequest(Constants.PROD_ENDPOINT + "/v1/cryptocurrency/map", resonseThreshold: 500);
+        cachingService.AddHeader(AUTH_HEADER, API_KEY);
+        RestResponse response = await cachingService.ExecuteAsync();
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
             return Enumerable.Empty<CoinMarketCapIDMapModel>();
         }
 
         CoinMarketCapIDMapModelData data = JsonConvert.DeserializeObject<CoinMarketCapIDMapModelData>(response.Content!)!;
-        return data.coinMarketCapMaps;
+        return data.CoinMarketCapMaps;
     }
 }

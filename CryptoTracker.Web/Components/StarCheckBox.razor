@@ -1,5 +1,17 @@
-﻿<h3>StartCheckBox</h3>
+﻿<input class="star" type="checkbox" checked="@(!ticked)" @onchange="Toggle" title="bookmark page">
 
 @code {
+    [Parameter]
+    public bool ticked { get; set; } = false;
+    [Parameter]
+    public EventCallback<bool> OnToggle { get; set; }
 
+    private async Task Toggle()
+    {
+        ticked = !ticked;
+        if(OnToggle.HasDelegate)
+        {
+            await OnToggle.InvokeAsync(ticked);
+        }
+    }
 }

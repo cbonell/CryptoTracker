@@ -9,7 +9,7 @@ public class CoinMarketCapMetaDataModel
     [JsonProperty("logo")]
     public string LogoPath { get; set; } = "";
     [JsonProperty("Id")]
-    public int Id { get; set; } = 0;
+    public int CoinMarketCapId { get; set; } = 0;
     [JsonProperty("name")]
     public string Name { get; set; } = "";
     [JsonProperty("symbol")]

@@ -60,6 +60,12 @@
     <Folder Include="Functions" />
     <Folder Include="Stored Procedures" />
     <Folder Include="Stored Procedures\User" />
+    <Folder Include="Post Deployment Scripts" />
+    <Folder Include="Stored Procedures\Currency" />
+    <Folder Include="Stored Procedures\UserWallet" />
+    <Folder Include="Stored Procedures\TradingPurchase" />
+    <Folder Include="Stored Procedures\UserFavoriteCoin" />
+    <Folder Include="Stored Procedures\ResponseCache" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\User.sql" />
@@ -71,8 +77,34 @@
     <Build Include="Stored Procedures\User\DeleteUser.sql" />
     <Build Include="Stored Procedures\User\UpdateUser.sql" />
     <Build Include="Tables\CoinMarketCapIdMap.sql" />
+    <Build Include="Tables\TradingPurchase.sql" />
+    <Build Include="Tables\Currency.sql" />
+    <Build Include="Tables\UserWallet.sql" />
+    <Build Include="Tables\CurrencyType.sql" />
+    <Build Include="Tables\PurchaseType.sql" />
+    <Build Include="Functions\ChkCurrencyIsFiat.sql" />
+    <Build Include="Functions\ChkCurrencyIsCoin.sql" />
+    <Build Include="Tables\UserPaperBank.sql" />
+    <Build Include="Stored Procedures\Currency\GetCurrencies.sql" />
+    <Build Include="Stored Procedures\Currency\GetCurrencyByCoinMarketCapId.sql" />
+    <Build Include="Stored Procedures\Currency\GetCurrenciesByType.sql" />
+    <Build Include="Stored Procedures\UserWallet\InitializeUserWalletForPaperTrading.sql" />
+    <Build Include="Stored Procedures\UserWallet\GetUserWallet.sql" />
+    <Build Include="Stored Procedures\TradingPurchase\TradingPurchase_Create.sql" />
+    <Build Include="Stored Procedures\TradingPurchase\GetUserTradingHistory.sql" />
+    <Build Include="Tables\UserFavoriteCoin.sql" />
+    <Build Include="Stored Procedures\UserFavoriteCoin\GetUserFavoriteCoins.sql" />
+    <Build Include="Stored Procedures\UserFavoriteCoin\AddUserFavoriteCoin.sql" />
+    <Build Include="Stored Procedures\UserFavoriteCoin\RemoveUserFavoriteCoin.sql" />
+    <Build Include="Stored Procedures\UserFavoriteCoin\CheckIfCoinIsUsersFavorite.sql" />
+    <Build Include="Stored Procedures\TradingPurchase\TradingPurchase_Sell.sql" />
+    <Build Include="Stored Procedures\UserWallet\ResetUserTradingProfile.sql" />
+    <Build Include="Tables\ResponseCache.sql" />
+    <Build Include="Stored Procedures\ResponseCache\GetCachedResponse.sql" />
+    <Build Include="Stored Procedures\ResponseCache\SaveCachedResponse.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CryptoTracker.Db.publish.xml" />
+    <None Include="Post Deployment Scripts\Script.PostDeployment.sql" />
   </ItemGroup>
 </Project>
