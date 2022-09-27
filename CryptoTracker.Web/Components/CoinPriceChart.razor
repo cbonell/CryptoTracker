@@ -1,28 +1,39 @@
 ﻿@using System.Globalization
-
-<RadzenChart>
-    <RadzenLineSeries Smooth="true" Data="@data" CategoryProperty="Date" Title="2019" LineType="LineType.Solid" ValueProperty="Revenue">
-        <RadzenMarkers MarkerType="MarkerType.Square" />
-        <RadzenSeriesDataLabels />
-    </RadzenLineSeries>
-    <RadzenCategoryAxis Padding="20" Formatter="@FormatAsMonth" />
-    <RadzenValueAxis Formatter="@FormatAsUSD">
-        <RadzenGridLines Visible="true" />
-        <RadzenAxisTitle Text="Price in USD" />
-    </RadzenValueAxis>
-</RadzenChart>
+@using CryptoTracker.DataAccess.CoinGeckoAccess
+@inject ICoinGeckoData gd;
+@if (data.Count > 0)
+{
+    <RadzenChart>
+        <RadzenLineSeries Smooth="true" Data="@data" CategoryProperty="Date" Title="24hr Price" LineType="LineType.Solid" ValueProperty="Revenue">
+            <RadzenMarkers MarkerType="MarkerType.Square" />
+            <RadzenSeriesDataLabels Visible="false" />
+        </RadzenLineSeries>
+        <RadzenCategoryAxis Padding="20" Formatter="@FormatAsMonth" />
+        <RadzenValueAxis Formatter=@(value => ((double)value).ToString("C0"))>
+            <RadzenGridLines Visible="true" />
+            <RadzenAxisTitle Text="Price in USD" />
+        </RadzenValueAxis>
+    </RadzenChart>
+}
 
 @code {
-    string FormatAsUSD(object value)
+
+
+    [Parameter]
+    [EditorRequired]
+    public CoinMarketCapMetaDataModel Coin { get; set; }
+
+    public CoinPriceChart()
     {
-        return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-US"));
+        Coin = new CoinMarketCapMetaDataModel();
     }
+
 
     string FormatAsMonth(object value)
     {
         if (value != null)
         {
-            return Convert.ToDateTime(value).ToString("MMM");
+            return Convert.ToDateTime(value).ToString("MMMM dd h:mm tt");
         }
 
         return string.Empty;
@@ -34,66 +45,16 @@
         public double Revenue { get; set; }
     }
 
-    DataItem[] data = new DataItem[] {
-        new DataItem
+    List<DataItem> data = new List<DataItem>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(Coin.Name))
         {
-            Date = ("2019-01-01"),
-            Revenue = 23400
-        },
-        new DataItem
-        {
-            Date = ("2019-02-01"),
-            Revenue = 26900
-        },
-        new DataItem
-        {
-            Date = ("2019-03-01"),
-            Revenue = 23300
-        },
-        new DataItem
-        {
-            Date = ("2019-04-01"),
-            Revenue = 24400
-        },
-        new DataItem
-        {
-            Date = ("2019-05-01"),
-            Revenue = 21400
-        },
-        new DataItem
-        {
-            Date = ("2019-06-01"),
-            Revenue = 25300
-        },
-        new DataItem
-        {
-            Date = ("2019-07-01"),
-            Revenue = 27400
-        },
-        new DataItem
-        {
-            Date = ("2019-08-01"),
-            Revenue = 28400
-        },
-        new DataItem
-        {
-            Date = ("2019-09-01"),
-            Revenue = 27300
-        },
-        new DataItem
-        {
-            Date = ("2019-10-01"),
-            Revenue = 28200
-        },
-        new DataItem
-        {
-            Date = ("2019-11-01"),
-            Revenue = 28900
-        },
-        new DataItem
-        {
-            Date = ("2019-12-01"),
-            Revenue = 29400
+            foreach (Tuple<double, string> d in (await gd.GetPriceHistory(Coin.Name)))
+            {
+                data.Add(new DataItem() { Date = d.Item2, Revenue = d.Item1 });
+            }
         }
-    };
+    }
 }
