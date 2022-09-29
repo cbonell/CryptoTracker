@@ -127,9 +127,16 @@ tr.rz-datatable-odd td.text-center {
 }
 
 /*radzen graph*/
-.rz-series-data-label {
-    color: pink;
-    background-color: red;
+.rz-tick-text {
+    fill: var(--base-font-color);
+}
+
+.rz-axis-title {
+    fill: var(--base-font-color);
+}
+
+text.rz-tick-text {
+    visibility: hidden;
 }
 
 /*radzen tab*/

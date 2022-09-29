@@ -24,6 +24,8 @@ public class CoinMarketCapMetaDataModel
     public DateTime? DateLaunched { get; set; }
     [JsonProperty("tags")]
     public List<string> Tags { get; set; } = new List<string>();
+    //[JsonProperty("Platform")]
+    //public string? Platform { get; set; }
     [JsonProperty("category")]
     public string Category { get; set; } = "";
 
