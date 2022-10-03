@@ -2,6 +2,7 @@
 @using System.Security.Claims
 @using CryptoTracker.DataAccess.CoinGeckoAccess
 @using CryptoTracker.DataAccess.CoinMarketCap.Data
+@using CryptoTracker.DataAccess.MLModelAccess
 @using CryptoTracker.Web.Pages
 
 @inject ICurrencyData currencyData
@@ -9,17 +10,18 @@
 @inject IUserWalletData userWalletData
 @inject ICoinGeckoData coinGeckoData
 @inject ICoinMarketCapData marketCapData
+@inject IMLModelData mlModelData
 
 @inherits BasePage
 
 <Modal @ref=purchaseModal
        Title="Purchase Confirmation">
-       @Currency.Name purchased at @purcahsePrice
+    @Currency.Name purchased at @purcahsePrice
 </Modal>
 
 <Modal @ref=sellModal
        Title="Sale Confirmation">
-       Sold @numberToSell @Currency.Name at @purcahsePrice
+    Sold @numberToSell @Currency.Name at @purcahsePrice
 </Modal>
 
 <Modal @ref=purcahseConfirmationModal Title="Purchase Confirmation">
@@ -36,8 +38,16 @@
             <RadzenTabsItem Text="Sell">
                 Current price: @currentPrice
                 <small>Max you can sell @userWallet.Quantity</small>
-                <input type="number" placeholder="Number of @Currency.Symbol" class="form-control" @bind="numberToSell"/>
+                <input type="number" placeholder="Number of @Currency.Symbol" class="form-control" @bind="numberToSell" />
                 <button @onclick="Sell" class="form-control">Sell</button>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Price Prediction">
+                <button @onclick="GetPredictedPrice" class="btn btn-primary">Get Prediction</button>
+                <br>
+                <br>
+                @predictionMsg
+                <br>
+                @predictionTime
             </RadzenTabsItem>
         </Tabs>
     </RadzenTabs>
@@ -50,6 +60,8 @@
     double currentPrice;
     double purcahsePrice;
     double liveConvertedPurchasePrice;
+    string predictionMsg;
+    string predictionTime;
 
     double? numberToSell, numberToBuy;
     private CurrencyModel Currency;
@@ -87,7 +99,7 @@
         if (IsAuthenticated)
         {
             var tempWallet = await userWalletData.GetUserWallet(UserId);
-            if(tempWallet != null && tempWallet.Count() > 0)
+            if (tempWallet != null && tempWallet.Count() > 0)
             {
                 userWallet = tempWallet.Where(x => x.CurrencyId == Currency.Id).FirstOrDefault() ?? new UserWalletModel();
             }
@@ -102,7 +114,7 @@
         {
             timer = new System.Threading.Timer(async (object? stateInfo) =>
             {
-            //Refresh();
+                //Refresh();
                 currentPrice = await coinGeckoData.GetPriceInUsd(Currency.Name);
                 await InvokeAsync(() => StateHasChanged()); // NOTE: MUST CALL StateHasChanged() BECAUSE THIS IS TRIGGERED BY A TIMER INSTEAD OF A USER EVENT
             }, new System.Threading.AutoResetEvent(false), 2000, 2000); // fire every 2000 milliseconds
@@ -123,12 +135,12 @@
         {
             if (isConfirmed)
             {
-                
+
                 await tradingPurchaseData.Purchase(UserId, Currency.Id, 100, numberToBuy ?? 0, currentPrice, DateTime.Now);
             }
             else
             {
-                liveConvertedPurchasePrice= await marketCapData.GetPriceConversion(numberToBuy ?? 1, Currency.CoinMarketCapId, 1);
+                liveConvertedPurchasePrice = await marketCapData.GetPriceConversion(numberToBuy ?? 1, Currency.CoinMarketCapId, 1);
                 purcahseConfirmationModal.ToggleDisplay();
             }
         }
@@ -145,5 +157,23 @@
         }
         sellModal.ToggleDisplay();
         purcahsePrice = currentPrice;
+    }
+
+    private async Task GetPredictedPrice()
+    {
+        if (IsAuthenticated)
+        {
+            double price = await mlModelData.GetPricePrediction();
+            price = Math.Round(price, 2);
+            predictionMsg = "Predicted price : $" + price.ToString();
+
+            DateTime time = DateTime.Now;
+            predictionTime = DateTime.SpecifyKind(time.AddHours(1), DateTimeKind.Local).ToString();
+            predictionTime = "When: " + predictionTime;
+        }
+        else
+        {
+            predictionMsg = "Please login to use this feature";
+        }
     }
 }
