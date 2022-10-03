@@ -1,6 +1,7 @@
 ﻿using RestSharp;
 using Newtonsoft.Json;
 using CryptoTracker.DataAccess.Caching;
+using CryptoTracker.DataAccess.Data.Interfaces;
 
 namespace CryptoTracker.DataAccess.Data;
 public class CoinMarketCapIDMapData : CoinMarketCapDataBase, ICoinMarketCapIDMapData, IDataBase

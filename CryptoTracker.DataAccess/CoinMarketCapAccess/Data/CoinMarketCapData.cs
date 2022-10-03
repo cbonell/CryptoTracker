@@ -35,6 +35,27 @@ public class CoinMarketCapData : DataBase, ICoinMarketCapData
 
         return responseData.DataContainerModel.DataModels;
     }
+    
+    public async Task<double> GetPriceConversion(double amount, int baseId, int convertId)
+    {
+        CachingService cachingService = new CachingService(_db);
+        cachingService.CreateRequest(Constants.PROD_ENDPOINT + $"/v2/tools/price-conversion?convert_id={convertId}&id={baseId}&amount={amount}");
+        cachingService.AddHeader(AUTH_HEADER, API_KEY);
+        RestResponse response = await cachingService.ExecuteAsync();
+        if (response.StatusCode != System.Net.HttpStatusCode.OK)
+        {
+            return 0;
+        }
+
+        ResponseStatusModel status = HandleResponse(response.Content);
+        if (status.Status.ErrorCode != 0)
+        {
+            return 0;
+        }
+
+        JObject data = JObject.Parse(response.Content!);
+        return double.Parse(data["data"]["quote"][convertId.ToString()]["price"].ToString());
+    }
 
     private static ResponseStatusModel HandleResponse(string? responseContent)
     {
