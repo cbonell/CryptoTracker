@@ -2,11 +2,13 @@
 @using System.Security.Claims
 @using CryptoTracker.DataAccess.CoinGeckoAccess
 @using CryptoTracker.Web.Pages
+@using CryptoTracker.DataAccess.MLModelAccess
 
 @inject ICurrencyData currencyData
 @inject ITradingPurchaseData tradingPurchaseData
 @inject IUserWalletData userWalletData
 @inject ICoinGeckoData coinGeckoData
+@inject IMLModelData mlModelData
 
 @inherits BasePage
 
@@ -33,6 +35,14 @@
                 <input type="number" placeholder="Number of @Currency.Symbol" class="form-control" @bind="numberToSell"/>
                 <button @onclick="Sell" class="form-control">Sell</button>
             </RadzenTabsItem>
+            <RadzenTabsItem Text="Price Prediction">
+                <button @onclick="GetPredictedPrice" class="btn btn-primary">Get Prediction</button>
+                <br>
+                <br>
+                @predictionMsg
+                <br> 
+                @predictionTime
+            </RadzenTabsItem>
         </Tabs>
     </RadzenTabs>
 </RadzenCard>
@@ -43,6 +53,8 @@
     public int CoinMarketCapId { get; set; }
     double currentPrice;
     double purcahsePrice;
+    string predictionMsg;
+    string predictionTime;
 
     double? numberToSell;
     double? numberToBuy;
@@ -132,5 +144,21 @@
         }
         sellModal.ToggleDisplay();
         purcahsePrice = currentPrice;
+    }
+
+    private async Task GetPredictedPrice() {
+        if (IsAuthenticated)
+        {
+            double price = await mlModelData.GetPricePrediction();
+            price = Math.Round(price, 2);
+            predictionMsg = "Predicted price : $" + price.ToString();
+
+            DateTime time = DateTime.Now;
+            predictionTime = DateTime.SpecifyKind(time.AddHours(1), DateTimeKind.Local).ToString();
+            predictionTime = "When: " + predictionTime;
+        }
+        else {
+            predictionMsg = "Please login to use this feature";
+        }
     }
 }
