@@ -1,6 +1,5 @@
-﻿namespace CryptoTracker.DataAccess.Data
+﻿namespace CryptoTracker.DataAccess.Data;
+
+public interface IDataBase
 {
-    public interface IDataBase
-    {
-    }
 }

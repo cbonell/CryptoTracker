@@ -2,7 +2,7 @@
 using CryptoTracker.DataAccess.CoinMarketCap.Model;
 using CryptoTracker.DataAccess.Data;
 using Newtonsoft.Json;
-
+using Newtonsoft.Json.Linq;
 using RestSharp;
 
 namespace CryptoTracker.DataAccess.CoinMarketCap.Data;
