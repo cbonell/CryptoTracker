@@ -1,5 +1,6 @@
 ﻿using Auth0.AspNetCore.Authentication;
-using CryptoTracker.DataAccess.Data.Interfaces;
+using CryptoTracker.DataAccess.CoinGeckoAccess;
+using CryptoTracker.DataAccess.CoinMarketCap.Data;
 
 namespace CryptoTracker.Web.Startup;
 
@@ -16,6 +17,10 @@ public static class Services
         builder.Services.AddSingleton<IUserWalletData, UserWalletData>();
         builder.Services.AddSingleton<ITradingPurchaseData, TradingPurchaseData>();
         builder.Services.AddSingleton<IUserFavoriteCoinData, UserFavoriteCoinData>();
+        builder.Services.AddSingleton<ICoinMarketCapData, CoinMarketCapData>();
+        builder.Services.AddSingleton<ICoinMarketCapIDMapData, CoinMarketCapIDMapData>();
+        builder.Services.AddSingleton<ICoinMarketCapMetaData, CoinMarketCapMetaData>();
+        builder.Services.AddSingleton<ICoinGeckoData, CoinGeckoData>();
 
         builder.Services
     .AddAuth0WebAppAuthentication(options =>

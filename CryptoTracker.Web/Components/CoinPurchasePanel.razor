@@ -1,11 +1,14 @@
 ﻿@using System.Timers
 @using System.Security.Claims
 @using CryptoTracker.DataAccess.CoinGeckoAccess
+@using CryptoTracker.DataAccess.CoinMarketCap.Data
 @using CryptoTracker.Web.Pages
 
 @inject ICurrencyData currencyData
 @inject ITradingPurchaseData tradingPurchaseData
 @inject IUserWalletData userWalletData
+@inject ICoinGeckoData coinGeckoData
+@inject ICoinMarketCapData marketCapData
 
 @inherits BasePage
 
@@ -18,13 +21,17 @@
        Title="Sale Confirmation">
        Sold @numberToSell @Currency.Name at @purcahsePrice
 </Modal>
+
+<Modal @ref=purcahseConfirmationModal Title="Purchase Confirmation">
+    Are you sure that you want to purchase @numberToBuy @Currency.Name for @liveConvertedPurchasePrice.ToString("C0")?
+</Modal>
 <RadzenCard>
     <RadzenTabs>
         <Tabs>
             <RadzenTabsItem Text="Trade">
                 Current price: @currentPrice
-                <input type="number" placeholder="Amount USD" class="form-control" @bind="numberToBuy" />
-                <button @onclick="MakePurchase" class="btn btn-primary">Purchase</button>
+                <input type="number" placeholder="Number of @Currency.Name" class="form-control" @bind="numberToBuy" />
+                <button @onclick="() => MakePurchase()" class="btn btn-primary">Purchase</button>
             </RadzenTabsItem>
             <RadzenTabsItem Text="Sell">
                 Current price: @currentPrice
@@ -42,18 +49,16 @@
     public int CoinMarketCapId { get; set; }
     double currentPrice;
     double purcahsePrice;
+    double liveConvertedPurchasePrice;
 
-    double? numberToSell;
-    double? numberToBuy;
+    double? numberToSell, numberToBuy;
     private CurrencyModel Currency;
-    Modal purchaseModal;
-    Modal sellModal;
+    Modal purchaseModal, sellModal, purcahseConfirmationModal;
     UserWalletModel userWallet { get; set; }
 
     public CoinPurchasePanel()
     {
-        purchaseModal = new();
-        sellModal = new();
+        purchaseModal = sellModal = purcahseConfirmationModal = new();
         Currency = new();
         userWallet = new();
     }
@@ -92,12 +97,16 @@
 
     private void SetTimer()
     {
-        timer = new System.Threading.Timer(async (object? stateInfo) =>
+
+        if (timer == null)
         {
-            Refresh();
-            //currentPrice = await CoinGeckoData.GetPriceInUsd(Currency.Name);
-            await InvokeAsync(() => StateHasChanged()); // NOTE: MUST CALL StateHasChanged() BECAUSE THIS IS TRIGGERED BY A TIMER INSTEAD OF A USER EVENT
-        }, new System.Threading.AutoResetEvent(false), 2000, 2000); // fire every 2000 milliseconds
+            timer = new System.Threading.Timer(async (object? stateInfo) =>
+            {
+            //Refresh();
+                currentPrice = await coinGeckoData.GetPriceInUsd(Currency.Name);
+                await InvokeAsync(() => StateHasChanged()); // NOTE: MUST CALL StateHasChanged() BECAUSE THIS IS TRIGGERED BY A TIMER INSTEAD OF A USER EVENT
+            }, new System.Threading.AutoResetEvent(false), 2000, 2000); // fire every 2000 milliseconds
+        }
     }
 
     void Refresh()
@@ -108,11 +117,20 @@
         //StateHasChanged();
     }
 
-    protected async Task MakePurchase()
+    protected async Task MakePurchase(bool isConfirmed = false)
     {
         if (IsAuthenticated)
         {
-            await tradingPurchaseData.Purchase(UserId, Currency.Id, 100, numberToBuy ?? 0, currentPrice, DateTime.Now);
+            if (isConfirmed)
+            {
+                
+                await tradingPurchaseData.Purchase(UserId, Currency.Id, 100, numberToBuy ?? 0, currentPrice, DateTime.Now);
+            }
+            else
+            {
+                liveConvertedPurchasePrice= await marketCapData.GetPriceConversion(numberToBuy ?? 1, Currency.CoinMarketCapId, 1);
+                purcahseConfirmationModal.ToggleDisplay();
+            }
         }
         purchaseModal.ToggleDisplay();
         purcahsePrice = currentPrice;
