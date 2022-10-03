@@ -2,7 +2,6 @@
     <img src="@Coin.LogoPath" /> @Coin.Name (@Coin.Symbol)<br />
 </div>
 <br />
-<CoinPriceChart />
 Description: <p>@Coin.Description</p>
 <br />
 Website:
@@ -12,7 +11,7 @@ Website:
 }
 <br />
 Tags:
-@foreach (string tag in Coin.Tags)
+@foreach (string tag in Coin.Tags ?? Enumerable.Empty<string>())
 {
     <Pill>@tag</Pill>
 }

@@ -7,6 +7,7 @@
 @inject IUserFavoriteCoinData favoriteCoinData
 @inject ICurrencyData currencyData
 @inject IUserFavoriteCoinData favoriteCoinData
+@inject ICoinMarketCapMetaData metaData
 
 <PageTitle>@data.Name - Details</PageTitle>
 
@@ -16,6 +17,8 @@
 }
 else
 {
+<CoinPriceChart Coin="data"/>
+
     <div class="container">
         <div class="row">
             <div class="col-8 border">
@@ -53,7 +56,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         loading = true;
-        data = await CoinMarketCapMetaData.GetCoinMetaData(Id);
+        data = await metaData.GetCoinMetaData(Id);
         var tempCurrencies = await currencyData.GetCurrencyByCoinMarketCapId(Id, ICurrencyData.CurrencyType.Coin);
         if (tempCurrencies.Count() > 1)
         {
