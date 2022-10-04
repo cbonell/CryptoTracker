@@ -37,7 +37,7 @@
 
     private bool showModal = false;
 
-    public void ToggleDisplay() => showModal = !showModal;
+    public void ToggleDisplay() { showModal = !showModal; StateHasChanged(); }
 
     private async Task OnSaveClick()
     {

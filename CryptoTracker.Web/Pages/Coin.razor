@@ -8,7 +8,7 @@
 @inject ICurrencyData currencyData
 @inject IUserFavoriteCoinData favoriteCoinData
 @inject ICoinMarketCapMetaData metaData
-
+@inherits BasePage
 <PageTitle>@data.Name - Details</PageTitle>
 
 @if (loading)
@@ -17,7 +17,7 @@
 }
 else
 {
-<CoinPriceChart Coin="data"/>
+    <CoinPriceChart Coin="data" />
 
     <div class="container">
         <div class="row">
@@ -35,8 +35,18 @@ else
                 <CoinPurchasePanel CoinMarketCapId="Id" />
             </div>
         </div>
+        
+        @if(createUserPriceAlert != null && IsAuthenticated)
+        {
+           <button @onclick="createUserPriceAlert.Open">Create Alert</button> 
+        }
+        
+
     </div>
 }
+
+
+<CreateUserPriceAlert @ref="createUserPriceAlert" CoinMarketCapId="data.CoinMarketCapId" UserId="@UserId" />
 
 @code {
     [Parameter]
@@ -46,15 +56,18 @@ else
     private CurrencyModel Currency;
     bool isUersFavorite = false;
     string userId = "";
+    CreateUserPriceAlert createUserPriceAlert;
 
     public Coin()
     {
         data = new();
         Currency = new();
+        //createUserPriceAlert = new();
     }
 
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
         loading = true;
         data = await metaData.GetCoinMetaData(Id);
         var tempCurrencies = await currencyData.GetCurrencyByCoinMarketCapId(Id, ICurrencyData.CurrencyType.Coin);

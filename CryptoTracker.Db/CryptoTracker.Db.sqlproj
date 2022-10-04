@@ -66,6 +66,7 @@
     <Folder Include="Stored Procedures\TradingPurchase" />
     <Folder Include="Stored Procedures\UserFavoriteCoin" />
     <Folder Include="Stored Procedures\ResponseCache" />
+    <Folder Include="Stored Procedures\PriceAlert" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\User.sql" />
@@ -102,6 +103,11 @@
     <Build Include="Tables\ResponseCache.sql" />
     <Build Include="Stored Procedures\ResponseCache\GetCachedResponse.sql" />
     <Build Include="Stored Procedures\ResponseCache\SaveCachedResponse.sql" />
+    <Build Include="Tables\PriceAlert.sql" />
+    <Build Include="Stored Procedures\PriceAlert\CreatePriceAlert.sql" />
+    <Build Include="Stored Procedures\PriceAlert\DeletePriceAlert.sql" />
+    <Build Include="Stored Procedures\PriceAlert\GetPriceAlerts.sql" />
+    <Build Include="Stored Procedures\Currency\GetCurrencyById.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CryptoTracker.Db.publish.xml" />

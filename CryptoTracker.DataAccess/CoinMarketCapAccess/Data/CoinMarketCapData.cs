@@ -84,10 +84,6 @@ public class CoinMarketCapData : DataBase, ICoinMarketCapData
             {
                 trendingCoins.Add(coin);
             }
-            //else
-            //{
-            //    trendingCoins.Add(new CoinMarketCapIDMapModel());
-            //}
         }
 
         return trendingCoins;
