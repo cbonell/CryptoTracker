@@ -3,17 +3,33 @@
 @inject ICoinGeckoData gd;
 @if (data.Count > 0)
 {
-    <RadzenChart>
-        <RadzenLineSeries Smooth="true" Data="@data" CategoryProperty="Date" Title="24hr Price" LineType="LineType.Solid" ValueProperty="Revenue">
-            <RadzenMarkers MarkerType="MarkerType.Square" />
-            <RadzenSeriesDataLabels Visible="false" />
-        </RadzenLineSeries>
-        <RadzenCategoryAxis Padding="20" Formatter="@FormatAsMonth" />
-        <RadzenValueAxis Formatter=@(value => ((double)value).ToString("C0"))>
-            <RadzenGridLines Visible="true" />
-            <RadzenAxisTitle Text="Price in USD" />
-        </RadzenValueAxis>
-    </RadzenChart>
+
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-sm-4 btn-group">
+                <button id="chartDrawButton" class="btn btn-primary">Draw</button>
+                <button id="chartDrawCloseButton" class="btn btn-danger" style="display: none">Close</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="canvasParent"></div>
+
+    <div id="priceWrapper">
+        <RadzenChart>
+            <RadzenLineSeries Smooth="true" Data="@data" CategoryProperty="Date" Title="24hr Price" LineType="LineType.Solid" ValueProperty="Revenue">
+                <RadzenMarkers MarkerType="MarkerType.Square" />
+                <RadzenSeriesDataLabels Visible="false" />
+            </RadzenLineSeries>
+            <RadzenCategoryAxis Padding="20" Formatter="@FormatAsMonth" />
+            <RadzenValueAxis Formatter=@(value => ((double)value).ToString("C0"))>
+                <RadzenGridLines Visible="true" />
+                <RadzenAxisTitle Text="Price in USD" />
+            </RadzenValueAxis>
+        </RadzenChart>
+    </div>
 }
 
 @code {
@@ -57,4 +73,4 @@
             }
         }
     }
-}
+    }
