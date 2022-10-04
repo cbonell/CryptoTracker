@@ -1,4 +1,5 @@
 ﻿using CryptoTracker.DataAccess.Caching;
+using CryptoTracker.DataAccess.CoinGeckoAccess;
 using CryptoTracker.DataAccess.CoinMarketCap.Model;
 using CryptoTracker.DataAccess.Data;
 using Newtonsoft.Json;
@@ -66,5 +67,29 @@ public class CoinMarketCapData : DataBase, ICoinMarketCapData
         }
 
         return new ResponseStatusModel();
+    }
+
+    public async Task<List<CoinMarketCapIDMapModel>> GetTrending()
+    {
+        CoinGeckoData geckoData = new CoinGeckoData(_db);
+        List<string> trendingNames = await geckoData.GetTrending();
+
+        CoinMarketCapIDMapData coinMarketCapIDMap = new(_db);
+        IEnumerable<CoinMarketCapIDMapModel> coins = await coinMarketCapIDMap.GetCoinMap();
+
+        List<CoinMarketCapIDMapModel> trendingCoins = new List<CoinMarketCapIDMapModel>();
+        foreach (CoinMarketCapIDMapModel coin in coins)
+        {
+            if(trendingNames.Contains(coin.Name))
+            {
+                trendingCoins.Add(coin);
+            }
+            //else
+            //{
+            //    trendingCoins.Add(new CoinMarketCapIDMapModel());
+            //}
+        }
+
+        return trendingCoins;
     }
 }

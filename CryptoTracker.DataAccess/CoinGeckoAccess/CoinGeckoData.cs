@@ -43,4 +43,22 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
         }
         return Enumerable.Empty<Tuple<double, string>>();
     }
+    
+    public async Task<List<string>> GetTrending()
+    {
+        CachingService cachingService = new CachingService(_db);
+        cachingService.CreateRequest($"https://api.coingecko.com/api/v3/search/trending", resonseThreshold: 1 * 1000 * 60 * 24);
+        RestResponse response = await cachingService.ExecuteAsync();
+        JObject data = JObject.Parse(response.Content!);
+
+        List<string> trending = new List<string>();
+        if (data != null)
+        {
+            foreach(var i in data.First.First)
+            {
+                trending.Add(i.First.First["name"].ToString());
+            }
+        }
+        return trending;
+    }
 }

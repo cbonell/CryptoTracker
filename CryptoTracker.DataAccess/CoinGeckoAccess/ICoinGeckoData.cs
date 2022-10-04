@@ -4,5 +4,6 @@
     {
         Task<IEnumerable<Tuple<double, string>>> GetPriceHistory(string currency);
         Task<double> GetPriceInUsd(string currency);
+        Task<List<string>> GetTrending();
     }
 }
