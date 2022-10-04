@@ -32,16 +32,13 @@ else
                 <CoinDetails Coin="data" />
             </div>
             <div class="col-sm-4">
+                @if (createUserPriceAlert != null && IsAuthenticated)
+                {
+                    <button @onclick="createUserPriceAlert.Open">Create Alert</button>
+                }
                 <CoinPurchasePanel CoinMarketCapId="Id" />
             </div>
         </div>
-        
-        @if(createUserPriceAlert != null && IsAuthenticated)
-        {
-           <button @onclick="createUserPriceAlert.Open">Create Alert</button> 
-        }
-        
-
     </div>
 }
 
