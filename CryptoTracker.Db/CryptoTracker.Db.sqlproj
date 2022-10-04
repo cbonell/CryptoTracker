@@ -108,6 +108,7 @@
     <Build Include="Stored Procedures\PriceAlert\DeletePriceAlert.sql" />
     <Build Include="Stored Procedures\PriceAlert\GetPriceAlerts.sql" />
     <Build Include="Stored Procedures\Currency\GetCurrencyById.sql" />
+    <Build Include="Stored Procedures\PriceAlert\GetUserAlerts.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CryptoTracker.Db.publish.xml" />

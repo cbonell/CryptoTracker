@@ -49,8 +49,8 @@ public class PriceAlertTasks
                 string body = String.Format("{0} {1} your alert price of ${2} and the current price is ${3}"
                                              , currency.Name
                                              , alertType == AlertType.Above ? "went above" : "dropped below"
-                                             , alert.AlertPrice.ToString("0.00")
-                                             , currentPrice.ToString("0.00"));
+                                             , alert.AlertPrice.ToString("0.0000")
+                                             , currentPrice.ToString("0.0000"));
                 string to = alert.email;
                 EmailClient.SendEmail(subject, body, to);
             }

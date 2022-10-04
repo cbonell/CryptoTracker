@@ -13,9 +13,12 @@ public class PriceAlertData : DataBase, IPriceAlertData
     public Task CreatePriceAlert(string userId, int currencyId, string email, AlertType alertType, double alertPrice)
        => _db.SaveData<dynamic>("[dbo].[CreatePriceAlert]", new { UserId = userId, CurrencyId = currencyId, Email = email, alertType, AlertPrice = alertPrice });
 
-    public Task DeletePriceAlert(string id)
+    public Task DeletePriceAlert(int id)
        => _db.SaveData<dynamic>("[dbo].[DeletePriceAlert]", new { Id = id });
 
     public Task<IEnumerable<PriceAlertModel>> GetAlerts()
         => _db.LoadData<PriceAlertModel,dynamic>("[dbo].[GetPriceAlerts]", new { });
+
+    public Task<IEnumerable<PriceAlertModel>> GetUserAlerts(string userId)
+        => _db.LoadData<PriceAlertModel, dynamic>("[dbo].[GetUserAlerts]", new { UserId = userId});
 }
