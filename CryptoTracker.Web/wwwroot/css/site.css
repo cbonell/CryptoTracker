@@ -65,6 +65,17 @@ html, body {
     box-sizing: border-box;
 }
 
+#h2canvas {
+    background-color: var(--base-background-color);
+}
+/*svg {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 2;
+    width: 300px
+}*/
+
 /*radzen datagrid styling*/
 
 th.rz-unselectable-text.rz-sortable-column {
