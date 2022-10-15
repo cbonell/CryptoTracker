@@ -4,15 +4,17 @@
 @foreach (TweetSearchModel tweet in twitterSearchModels)
 {
     <div class="container-md border border-secondary">
-        <div class="row">
-            <div class="col">
-                <img src="@tweet.User.ImageUrl"/>
+        <a href="@tweet.User.UserUrl" target="_blank">
+            <div class="row">
+                <div class="col">
+                    <img src="@tweet.User.ImageUrl" />
+                </div>
+                <div class="col">
+                    <div class="row"><span>@tweet.User.Name</span></div>
+                    <div class="row"><span>@tweet.User.ScreenName</span></div>
+                </div>
             </div>
-            <div class="col">
-                <div class="row"><span>@tweet.User.Name</span></div>
-                <div class="row"><span>@tweet.User.ScreenName</span></div>         
-            </div>
-        </div>
+        </a>
         <div class="row">
             <p>@((MarkupString)tweet.DisplayText)</p>
         </div>
