@@ -1,0 +1,52 @@
+﻿@using CryptoTracker.DataAccess.Auth0.Model
+@using CryptoTracker.DataAccess.Auth0
+@inject ICurrencyData currencyData
+@inject IPriceAlertData priceAlertData
+<Modal @ref="CreateModal" OnSave="CreateAlert" Title="@($"Create alert for {Currency?.Name}")">
+    Alert Type
+    <select @bind="inputAlertType">
+        <option value="@((int)AlertType.Below)">Below</option>
+        <option value="@((int)AlertType.Above)">Above</option>
+    </select>
+
+    Alert Price
+    <input type="number" @bind="inputAlertPrice"/>
+</Modal>
+@code {
+    [Parameter]
+    public string UserId { get; set; }
+    [Parameter]
+    [EditorRequired]
+    public int CoinMarketCapId { get; set; }
+    private CurrencyModel Currency;
+    Modal CreateModal;
+
+    int inputAlertType;
+    double inputAlertPrice;
+
+    public void Open()
+    {
+        CreateModal.ToggleDisplay();
+    }
+
+    private async Task LoadData()
+    {
+        var tempCurrencies = await currencyData.GetCurrencyByCoinMarketCapId(CoinMarketCapId, ICurrencyData.CurrencyType.Coin);
+        if (tempCurrencies.Count() > 1)
+        {
+            throw new Exception("Expected only one currency models to be returned to encountered multipiple");
+        }
+        else if (tempCurrencies.Count() != 0)
+        {
+            Currency = tempCurrencies.First();
+        }
+    }
+
+    private async Task CreateAlert()
+    {
+        await LoadData();
+
+        UserMetaDataContainer user = await Auth0.GetUserMetaData(UserId);
+        await priceAlertData.CreatePriceAlert(UserId, Currency.Id, user.Email, (AlertType)inputAlertType, inputAlertPrice);
+    }
+}

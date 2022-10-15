@@ -50,6 +50,7 @@
        OnSave="ResetAfterUserConfirmation">
     Are you sure that you want to reset your profile? There is no way to recover after confirmation.
 </Modal>
+<UserPriceAlerts UserId="@UserId"/>
 @code {
     Modal AddInitialWalletModal { get; set; } = new();
     Modal confirmationModal { get; set; } = new();
