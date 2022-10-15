@@ -3,6 +3,7 @@ using CryptoTracker.DataAccess.CoinGeckoAccess;
 using CryptoTracker.DataAccess.CoinMarketCap.Data;
 using CryptoTracker.DataAccess.Data.Interfaces;
 using CryptoTracker.DataAccess.MLModelAccess;
+using Hangfire;
 
 namespace CryptoTracker.Web.Startup;
 
@@ -24,6 +25,7 @@ public static class Services
         builder.Services.AddSingleton<ICoinMarketCapMetaData, CoinMarketCapMetaData>();
         builder.Services.AddSingleton<ICoinGeckoData, CoinGeckoData>();
         builder.Services.AddSingleton<IMLModelData, MLModelData>();
+        builder.Services.AddSingleton<IPriceAlertData, PriceAlertData>();
 
         builder.Services
     .AddAuth0WebAppAuthentication(options =>
@@ -31,5 +33,9 @@ public static class Services
         options.Domain = builder.Configuration["Auth0:Domain"];
         options.ClientId = builder.Configuration["Auth0:ClientId"];
     });
+
+        // Hangfire task scheduler
+        builder.Services.AddHangfire(x => x.UseSqlServerStorage(builder.Configuration.GetConnectionString("Default")));
+        builder.Services.AddHangfireServer();
     }
 }

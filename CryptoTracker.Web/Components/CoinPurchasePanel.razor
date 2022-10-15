@@ -41,14 +41,17 @@
                 <input type="number" placeholder="Number of @Currency.Symbol" class="form-control" @bind="numberToSell" />
                 <button @onclick="Sell" class="form-control">Sell</button>
             </RadzenTabsItem>
-            <RadzenTabsItem Text="Price Prediction">
-                <button @onclick="GetPredictedPrice" class="btn btn-primary">Get Prediction</button>
+            @if (CoinMarketCapId == 1)
+            {
+                <RadzenTabsItem Text="Price Prediction">
+                    <button @onclick="GetPredictedPrice" class="btn btn-primary">Get Prediction</button>
                 <br>
                 <br>
                 @predictionMsg
                 <br>
                 @predictionTime
             </RadzenTabsItem>
+            }
         </Tabs>
     </RadzenTabs>
 </RadzenCard>
@@ -79,7 +82,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
         await LoadData();
         SetTimer();
     }
@@ -114,8 +116,12 @@
         {
             timer = new System.Threading.Timer(async (object? stateInfo) =>
             {
-                //Refresh();
-                currentPrice = await coinGeckoData.GetPriceInUsd(Currency.Name);
+            //Refresh();
+                try
+                {
+                    currentPrice = await coinGeckoData.GetPriceInUsd(Currency.Name);
+                }
+                catch{}
                 await InvokeAsync(() => StateHasChanged()); // NOTE: MUST CALL StateHasChanged() BECAUSE THIS IS TRIGGERED BY A TIMER INSTEAD OF A USER EVENT
             }, new System.Threading.AutoResetEvent(false), 2000, 2000); // fire every 2000 milliseconds
         }

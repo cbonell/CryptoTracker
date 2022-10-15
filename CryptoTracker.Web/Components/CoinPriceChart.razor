@@ -24,7 +24,7 @@
                 <RadzenSeriesDataLabels Visible="false" />
             </RadzenLineSeries>
             <RadzenCategoryAxis Padding="20" Formatter="@FormatAsMonth" />
-            <RadzenValueAxis Formatter=@(value => ((double)value).ToString("C0"))>
+            <RadzenValueAxis Formatter=@FormatAsUSD>
                 <RadzenGridLines Visible="true" />
                 <RadzenAxisTitle Text="Price in USD" />
             </RadzenValueAxis>
@@ -54,6 +54,17 @@
 
         return string.Empty;
     }
+
+     string FormatAsUSD(object value)
+    {
+        if (value != null)
+        {
+            return Convert.ToDouble(value).ToString("C2");
+        }
+
+        return string.Empty;
+    }
+
 
     class DataItem
     {

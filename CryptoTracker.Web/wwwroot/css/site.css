@@ -142,14 +142,14 @@ tr.rz-datatable-odd td.text-center {
     fill: var(--base-font-color);
 }
 
-.rz-axis-title {
+.rz-axis-title{
     fill: var(--base-font-color);
 }
 
-text.rz-tick-text {
-    visibility: hidden;
+/*class="rz-axis rz-category-axis"*/
+g.rz-axis.rz-category-axis {
+    display:none;
 }
-
 /*radzen tab*/
 .rz-tabview-panel {
     background-color: var(--tertiary-background-color);
