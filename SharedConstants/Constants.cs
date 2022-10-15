@@ -17,5 +17,8 @@ public class Constants
 
     // Error messages
     public static readonly string InvalidUserId = "Tried to retrieve favorite coins for user but encounterd invalid userId";
-    public static readonly string InvalidCoinId = "Retrieved invalid CoinId";
+    public static readonly string InvalidCoinId = "Recieved invalid CoinId";
+    public static readonly string InvalidSellPrice = "Recieved invalid sell price";
+    public static readonly string InvalidPurchasePrice = "Recieved invalid purchase price";
+    public static readonly string InvalidQuantity = "Recieved invalid quantity";
 }

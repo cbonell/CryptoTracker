@@ -81,7 +81,7 @@ public class UserWalletDataTests
         // Act           
         try
         {
-            await userWalletData.ResetUserWallet(null);
+            await userWalletData.ResetUserWallet(TestUser_UserId);
         }
         catch (Exception e) { exception = e; }
 
