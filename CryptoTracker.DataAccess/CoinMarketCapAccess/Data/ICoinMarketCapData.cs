@@ -5,6 +5,7 @@ namespace CryptoTracker.DataAccess.CoinMarketCap.Data
     public interface ICoinMarketCapData
     {
         Task<double> GetPriceConversion(double amount, int baseId, int convertId);
+        Task<List<CoinMarketCapIDMapModel>> GetTrending();
         Task<IEnumerable<DataModel>> GetTrendingLatest();
     }
 }

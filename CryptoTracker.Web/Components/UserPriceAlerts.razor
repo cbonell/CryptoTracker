@@ -1,0 +1,48 @@
+﻿@inject IPriceAlertData priceAlertData
+
+<AuthorizeView>
+    <Authorized>
+        <h3>Price Alerts</h3>
+        <RadzenDataGrid Data="@UserAlerts" TItem="PriceAlertModel" AllowPaging="true" AllowSorting="true" PageSize="15">
+            <Columns>
+                @*<RadzenDataGridColumn TItem="PriceAlertModel" CssClass="text-center">
+                    <Template Context="coin">
+                        <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.Cur + ".png")"> <a href="/Coin/@coin.CoinMarketCapCoinId" target="_blank">@coin.CoinName</a>
+                    </Template>
+                </RadzenDataGridColumn>*@
+                <RadzenDataGridColumn TItem="PriceAlertModel" Property="CurrencyId" Title="Currency Id" CssClass="text-center"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="PriceAlertModel" Property="AlertPrice" Title="AlertPrice" CssClass="text-center"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="PriceAlertModel" CssClass="text-center">
+                    <Template Context="coin">
+                        <button @onclick="(async () => await RemoveAlert(coin.Id))">Remove Favorite</button>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Authorized>
+</AuthorizeView>
+@code {
+    [Parameter]
+    [EditorRequired]
+    public string UserId { get; set; }
+    public IEnumerable<PriceAlertModel> UserAlerts { get; set; } = Enumerable.Empty<PriceAlertModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        if (!string.IsNullOrWhiteSpace(UserId))
+        {
+            UserAlerts = await priceAlertData.GetUserAlerts(UserId);
+        }
+    }
+
+    private async Task RemoveAlert(int alertId)
+    {
+        await priceAlertData.DeletePriceAlert(alertId);
+        await LoadData();
+
+    }
+}

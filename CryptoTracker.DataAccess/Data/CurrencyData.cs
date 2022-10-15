@@ -1,4 +1,5 @@
 ﻿using CryptoTracker.DataAccess.Data.Interfaces;
+using System.Linq;
 using static CryptoTracker.DataAccess.Data.Interfaces.ICurrencyData;
 using static SharedConstants.Constants;
 
@@ -34,5 +35,20 @@ public class CurrencyData : DataBase, ICurrencyData
         }
 
         return _db.LoadData<CurrencyModel, dynamic>("[dbo].[GetCurrencyByCoinMarketCapId]", new { CoinMarketCapId = coinMarketCapId, CurrencyTypeId = (int)currencyType });
+    }
+
+    public async Task<CurrencyModel> GetCurrencyById(int Id)
+    {
+        var data = await _db.LoadData<CurrencyModel, dynamic>("[dbo].[GetCurrencyById]", new {Id = Id});
+
+        if(data != null)
+        {
+            if(data.Count() > 0)
+            {
+                return data.First();
+            }
+        }
+
+        return new CurrencyModel();
     }
 }
