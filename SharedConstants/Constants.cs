@@ -21,4 +21,5 @@ public class Constants
     public static readonly string InvalidSellPrice = "Recieved invalid sell price";
     public static readonly string InvalidPurchasePrice = "Recieved invalid purchase price";
     public static readonly string InvalidQuantity = "Recieved invalid quantity";
+    public static readonly string InvalidCoinMarketCapId = "Recieved invalid coin market cap Id";
 }
