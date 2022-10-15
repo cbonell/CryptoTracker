@@ -9,6 +9,5 @@ public class Constants
     ///// Twitter API
     public const string ApiKey = "OB0OuKLC4LkdAHriit93nAqUW";
     public const string ApiKeySecret = "kLI7DkRPEmPfLHEFqTKFhrOrTaHfPWfUxm3Xdt2g94Iwqurdpk";
-    public const string BearerToken = "AAAAAAAAAAAAAAAAAAAAAGmAhAEAAAAAFV190k%2FVMnf%2BWvVz3IOKen1Buso%3DhsB39Ka1AY2TmQtBvs0S9AtMYB9kAFCe8cgVGvFp8uivXD0WRl";
-
+    public const string TwitterApiBearerToken = "AAAAAAAAAAAAAAAAAAAAAGmAhAEAAAAAO%2BbYhX%2FmtqyYtjdyG8uLXWgWFxs%3DJTjORZ8Xit9UdPE9HRfp7ZqlWgBTCfbKdg4075AmlLe88DWube";
 }
