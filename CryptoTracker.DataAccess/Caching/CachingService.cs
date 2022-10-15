@@ -32,7 +32,7 @@ public class CachingService : RestClient
     public async Task<RestResponse> ExecuteAsync(CancellationToken cancellationToken = default)
     {
         var dataList = await _db.LoadData<string, dynamic>("[dbo].[GetCachedResponse]", new { RequestPath = BaseUrl,Method = Request.Method.ToString(), ResonseThreshold = ResonseThreshold });
-        string data = dataList.First();
+        string data = dataList.FirstOrDefault();
 
         if (string.IsNullOrWhiteSpace(data) || data == "DATA_EXPIRED")
         {

@@ -1,7 +1,6 @@
 ﻿using Auth0.AspNetCore.Authentication;
 using CryptoTracker.DataAccess.CoinGeckoAccess;
 using CryptoTracker.DataAccess.CoinMarketCap.Data;
-using CryptoTracker.DataAccess.Data.Interfaces;
 using CryptoTracker.DataAccess.MLModelAccess;
 
 namespace CryptoTracker.Web.Startup;
