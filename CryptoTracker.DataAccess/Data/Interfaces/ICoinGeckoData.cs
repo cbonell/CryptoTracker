@@ -1,4 +1,4 @@
-﻿namespace CryptoTracker.DataAccess.CoinGeckoAccess
+﻿namespace CryptoTracker.DataAccess.Data.Interfaces
 {
     public interface ICoinGeckoData
     {
