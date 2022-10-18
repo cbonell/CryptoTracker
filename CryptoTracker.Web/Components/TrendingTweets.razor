@@ -1,21 +1,40 @@
 ﻿@using CryptoTracker.DataAccess.Twitter
 <h3>Trending Tweets</h3>
-<ul>
-    @foreach (TwitterSearchModel tweet in twitterSearchModels)
-    {
-        <li> @((MarkupString)tweet.Text)</li>
-    }
-</ul>
+
+@foreach (TweetSearchModel tweet in twitterSearchModels)
+{
+    <div class="container-md border border-secondary">
+        <a href="@tweet.User.UserUrl" target="_blank">
+            <div class="row">
+                <div class="col">
+                    <img src="@tweet.User.ImageUrl" />
+                </div>
+                <div class="col">
+                    <div class="row"><span>@tweet.User.Name</span></div>
+                    <div class="row"><span>@tweet.User.ScreenName</span></div>
+                </div>
+            </div>
+        </a>
+        <div class="row">
+            <p>@((MarkupString)tweet.DisplayText)</p>
+        </div>
+        <div class="row">
+            <div class="col">@tweet.RetweetCount Retweets</div>
+            <div class="col">@tweet.FavoriteCount Quote Tweets</div>
+        </div>
+    </div>
+}
+
 @code {
     [Parameter]
     public string CoinName { get; set; } = "";
 
-    private IEnumerable<TwitterSearchModel> twitterSearchModels { get; set; } = Enumerable.Empty<TwitterSearchModel>();
+    private IEnumerable<TweetSearchModel> twitterSearchModels { get; set; } = Enumerable.Empty<TweetSearchModel>();
     protected override async Task OnParametersSetAsync()
     {
         if (!string.IsNullOrWhiteSpace(CoinName))
         {
-            twitterSearchModels = await TwitterSearch.ByCoin(CoinName);
+            twitterSearchModels = await TwitterSearch.TrendingByHashTag(CoinName);
         }
     }
 }
