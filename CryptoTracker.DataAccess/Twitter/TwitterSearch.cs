@@ -9,6 +9,11 @@ public class TwitterSearch
 {
     public static async Task<IEnumerable<TwitterSearchModel>> ByCoin(string coinName)
     {
+        if(string.IsNullOrEmpty(coinName))
+        {
+            throw new ArgumentNullException(nameof(coinName));
+        }
+
         RestClient client = new RestClient($"https://api.twitter.com/2/tweets/search/recent?query=%23{coinName}");
         RestRequest request = new RestRequest()
         {

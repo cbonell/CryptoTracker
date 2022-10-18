@@ -1,8 +1,8 @@
 ﻿using CryptoTracker.DataAccess.Caching;
-using CryptoTracker.DataAccess.CoinMarketCapAccess.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using static SharedConstants.Constants;
 
 namespace CryptoTracker.DataAccess.Data;
 public class CoinMarketCapMetaData : CoinMarketCapDataBase, IDataBase, ICoinMarketCapMetaData
@@ -16,6 +16,11 @@ public class CoinMarketCapMetaData : CoinMarketCapDataBase, IDataBase, ICoinMark
 
     public async Task<CoinMarketCapMetaDataModel> GetCoinMetaData(int id)
     {
+        if(id < 0)
+        {
+            throw new Exception(InvalidCoinMarketCapId);
+        }
+
         CachingService cachingService = new CachingService(_db);
         cachingService.CreateRequest(Constants.PROD_ENDPOINT + "/v1/cryptocurrency/info?id=" + id, resonseThreshold: 500);
         cachingService.AddHeader(AUTH_HEADER, API_KEY);

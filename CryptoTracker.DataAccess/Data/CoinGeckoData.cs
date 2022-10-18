@@ -1,5 +1,6 @@
 ﻿using CryptoTracker.DataAccess.Caching;
 using CryptoTracker.DataAccess.Data;
+using CryptoTracker.DataAccess.Data.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
@@ -14,9 +15,24 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
 
     public async Task<double> GetPriceInUsd(string currency)
     {
+        // If an error
+
+        if (string.IsNullOrWhiteSpace(currency))
+        {
+            throw new ArgumentNullException("currency");
+        }
+
         CachingService cachingService = new CachingService(_db);
         cachingService.CreateRequest($"https://api.coingecko.com/api/v3/simple/price?ids={currency}&vs_currencies=usd", resonseThreshold: 20);
-        RestResponse response = await cachingService.ExecuteAsync();
+        RestResponse response = new();
+        try
+        {
+            response = await cachingService.ExecuteAsync();
+        }
+        catch (Exception e)
+        {
+
+        }
         JObject data = JObject.Parse(response.Content!);
         if (data != null)
         {
@@ -24,11 +40,18 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             double m = JsonConvert.DeserializeObject<double>(token.First.First.First.ToString())!;
             return m;
         }
+
+
         return 0;
     }
 
     public async Task<IEnumerable<Tuple<double, string>>> GetPriceHistory(string currency)
     {
+        if (string.IsNullOrWhiteSpace(currency))
+        {
+            throw new ArgumentNullException("currency");
+        }
+
         currency = currency.ToLower();
         CachingService cachingService = new CachingService(_db);
         cachingService.CreateRequest($"https://api.coingecko.com/api/v3/coins/{currency}/market_chart?vs_currency=usd&days=1&interval=hourly", resonseThreshold: 4000);
@@ -38,7 +61,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
         {
             JToken token = JObject.Parse(response.Content!)["prices"];
             int counter = 25;
-            var z = token.Select( x => new Tuple<double,string>((double)x[1], DateTime.Now.AddHours(-counter--).ToString()));
+            var z = token.Select(x => new Tuple<double, string>((double)x[1], DateTime.Now.AddHours(-counter--).ToString()));
             return z;
         }
         return Enumerable.Empty<Tuple<double, string>>();
