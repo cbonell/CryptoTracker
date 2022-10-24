@@ -1,6 +1,4 @@
-﻿using CryptoTracker.DataAccess.CoinMarketCap.Model;
-
-namespace CryptoTracker.DataAccess.CoinMarketCap.Data;
+﻿namespace CryptoTracker.DataAccess.Data.Interfaces;
 public interface ICoinMarketCapData
 {
     Task<double> GetPriceConversion(double amount, int baseId, int convertId);

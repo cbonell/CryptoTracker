@@ -1,6 +1,7 @@
 ﻿using CryptoTracker.DataAccess.Auth0.Model;
 using Newtonsoft.Json;
 using RestSharp;
+using static SharedConstants.Constants;
 
 namespace CryptoTracker.DataAccess.Auth0;
 
@@ -8,12 +9,12 @@ public class Auth0
 {
     public static async Task<UserMetaDataContainer> GetUserMetaData(string auth0UserId)
     {
-        var client = new RestClient(Constants.AUTH0_API_ENDPOINT + "users/" + auth0UserId);
+        var client = new RestClient(AUTH0_API_ENDPOINT + "users/" + auth0UserId);
         var request = new RestRequest()
         {
             Method = Method.Get
         };
-        request.AddHeader("authorization", "Bearer " + Constants.AUTH0_API_TOKEN);
+        request.AddHeader("authorization", "Bearer " + AUTH0_API_TOKEN);
         request.AddHeader("content-type", "application/json");
         RestResponse response = await client.ExecuteAsync(request);
 
@@ -27,7 +28,7 @@ public class Auth0
 
     public static async Task AddUserFavoriteCoin(string auth0UserId, int coinId)
     {
-        var client = new RestClient(Constants.AUTH0_API_ENDPOINT + "users/" + auth0UserId);
+        var client = new RestClient(AUTH0_API_ENDPOINT + "users/" + auth0UserId);
         var request = new RestRequest()
         {
             Method = Method.Patch
@@ -36,7 +37,7 @@ public class Auth0
         l.UserMetaData.FavoriteCoins = l.UserMetaData.FavoriteCoins.Append(new UserFavoriteCoinModel { UserId = auth0UserId, CoinId = coinId });
         string json = JsonConvert.SerializeObject(l);
 
-        request.AddHeader("authorization", "Bearer " + Constants.AUTH0_API_TOKEN);
+        request.AddHeader("authorization", "Bearer " + AUTH0_API_TOKEN);
         request.AddHeader("content-type", "application/json");
         request.AddParameter("application/json", json, ParameterType.RequestBody);
         RestResponse response = await client.ExecuteAsync(request);

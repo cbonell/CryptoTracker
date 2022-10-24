@@ -1,5 +1,4 @@
-﻿using CryptoTracker.DataAccess.CoinMarketCapAccess.Model;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace CryptoTracker.DataAccess.Model;
 public class CoinMarketCapMetaDataModel

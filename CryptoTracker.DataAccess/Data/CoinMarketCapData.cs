@@ -1,13 +1,13 @@
 ﻿using CryptoTracker.DataAccess.Caching;
 using CryptoTracker.DataAccess.CoinGeckoAccess;
-using CryptoTracker.DataAccess.CoinMarketCap.Model;
-using CryptoTracker.DataAccess.Data;
+using CryptoTracker.DataAccess.Data.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using static SharedConstants.Constants;
 
-namespace CryptoTracker.DataAccess.CoinMarketCap.Data;
+namespace CryptoTracker.DataAccess.Data;
 public class CoinMarketCapData : DataBase, ICoinMarketCapData
 {
     // TODO: Move (azure key vault?)
@@ -30,7 +30,7 @@ public class CoinMarketCapData : DataBase, ICoinMarketCapData
                 .SetAbsoluteExpiration(TimeSpan.FromHours(12));
 
             RestClient client = new RestClient();
-            RestRequest request = new RestRequest(Constants.PROD_ENDPOINT + $"/v2/tools/price-conversion?convert_id={convertId}&id={baseId}&amount={amount}")
+            RestRequest request = new RestRequest(PROD_ENDPOINT + $"/v2/tools/price-conversion?convert_id={convertId}&id={baseId}&amount={amount}")
                                      .AddHeader(AUTH_HEADER, API_KEY);
             RestResponse response = await client.ExecuteAsync(request);
 
@@ -75,7 +75,7 @@ public class CoinMarketCapData : DataBase, ICoinMarketCapData
         List<CoinMarketCapIDMapModel> trendingCoins = new List<CoinMarketCapIDMapModel>();
         foreach (CoinMarketCapIDMapModel coin in coins)
         {
-            if(trendingNames.Contains(coin.Name))
+            if (trendingNames.Contains(coin.Name))
             {
                 trendingCoins.Add(coin);
             }

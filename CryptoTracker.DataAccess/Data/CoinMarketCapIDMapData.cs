@@ -26,7 +26,7 @@ public class CoinMarketCapIDMapData : CoinMarketCapDataBase, ICoinMarketCapIDMap
                 .SetAbsoluteExpiration(TimeSpan.FromHours(12));
 
             RestClient client = new RestClient();
-            RestRequest request = new RestRequest(Constants.PROD_ENDPOINT + "/v1/cryptocurrency/map")
+            RestRequest request = new RestRequest(PROD_ENDPOINT + "/v1/cryptocurrency/map")
                                      .AddHeader(AUTH_HEADER, API_KEY);
             RestResponse response = await client.ExecuteAsync(request);
 

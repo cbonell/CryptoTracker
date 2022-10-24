@@ -1,4 +1,4 @@
-﻿using CryptoTracker.DataAccess.Twitter;
+﻿using CryptoTracker.DataAccess.Data;
 using Moq;
 using System;
 using System.Collections.Generic;

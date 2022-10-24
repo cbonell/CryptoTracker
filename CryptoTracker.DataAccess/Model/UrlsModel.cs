@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace CryptoTracker.DataAccess.CoinMarketCapAccess.Model;
+namespace CryptoTracker.DataAccess.Model;
 public class UrlsModel
 {
     [JsonProperty("website")]

@@ -3,13 +3,13 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using static SharedConstants.Constants;
 
-namespace CryptoTracker.DataAccess.Twitter;
+namespace CryptoTracker.DataAccess.Data;
 
 public class TwitterSearch
 {
     public static async Task<IEnumerable<TwitterSearchModel>> ByCoin(string coinName)
     {
-        if(string.IsNullOrEmpty(coinName))
+        if (string.IsNullOrEmpty(coinName))
         {
             throw new ArgumentNullException(nameof(coinName));
         }
@@ -39,7 +39,7 @@ public class TwitterSearch
 
         return Enumerable.Empty<TwitterSearchModel>();
     }
-    
+
     public static async Task<IEnumerable<TweetSearchModel>> TrendingByHashTag(string hashTag)
     {
         RestClient client = new RestClient($"  https://api.twitter.com/1.1/search/tweets.json?result_type=popular&lang=en&q=%23{hashTag}");

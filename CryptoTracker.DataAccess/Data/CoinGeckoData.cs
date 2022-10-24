@@ -19,8 +19,13 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
 
     public async Task<double> GetPriceInUsd(string currency)
     {
+        if(string.IsNullOrWhiteSpace(currency))
+        {
+            throw new ArgumentNullException(nameof(currency));
+        }
+
         double price;
-        string cacheKey = String.Format("{key}-{currency}", CacheKey.GetPriceInUsd, currency);
+        string cacheKey = $"{CacheKey.GetPriceInUsd}-{currency}";
         if (!_memoryCache.TryGetValue(cacheKey, out price))
         {
             var cacheEntryOptions = new MemoryCacheEntryOptions()

@@ -1,13 +1,13 @@
 ﻿using CryptoTracker.DataAccess.Caching;
-using CryptoTracker.DataAccess.CoinMarketCapAccess.Model;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using static SharedConstants.Constants;
+using static CryptoTracker.DataAccess.Data.CoinMarketCapDataBase;
 
 namespace CryptoTracker.DataAccess.Data;
-public class CoinMarketCapMetaData : CoinMarketCapDataBase, IDataBase, ICoinMarketCapMetaData
+public class CoinMarketCapMetaData : IDataBase, ICoinMarketCapMetaData
 {
     internal readonly ISqlDataAccess _db;
     internal IMemoryCache _memoryCache;
@@ -34,7 +34,7 @@ public class CoinMarketCapMetaData : CoinMarketCapDataBase, IDataBase, ICoinMark
                 .SetAbsoluteExpiration(TimeSpan.FromHours(12));
 
             RestClient client = new RestClient();
-            RestRequest request = new RestRequest(Constants.PROD_ENDPOINT + "/v1/cryptocurrency/info?id=" + id)
+            RestRequest request = new RestRequest(PROD_ENDPOINT + "/v1/cryptocurrency/info?id=" + id)
                                      .AddHeader(AUTH_HEADER, API_KEY);
             RestResponse response = await client.ExecuteAsync(request);
 

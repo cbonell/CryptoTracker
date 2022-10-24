@@ -2,6 +2,7 @@
 using CryptoTracker.DataAccess.Data;
 using CryptoTracker.DataAccess.Data.Interfaces;
 using CryptoTracker.DataAccess.DbAccess;
+using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using RestSharp;
 using static SharedConstants.Constants;
@@ -12,6 +13,7 @@ namespace CryptoTracker.Tests.Data;
 public class CoinGeckoDataTests
 {
     Mock<ISqlDataAccess> _dataBase;
+    Mock<IMemoryCache> _memoryCache;
     CoinGeckoData coinGeckoData;
     Mock<RestClient> mockRestClient;
 
@@ -19,7 +21,8 @@ public class CoinGeckoDataTests
     public void Setup()
     {
         _dataBase = new Mock<ISqlDataAccess>();
-        coinGeckoData = new(_dataBase.Object);
+        _memoryCache = new Mock<IMemoryCache>();
+        coinGeckoData = new(_dataBase.Object, _memoryCache.Object);
         mockRestClient = new Mock<RestClient>();
     }
 
@@ -45,14 +48,20 @@ public class CoinGeckoDataTests
     public async Task GetPriceInUsd_ValidCurrency_ExpectSuccess()
     {
         // Arrange
-        ArgumentException? exception = null;
+        string n = null;
+         var mockCacheEntry = new Mock<ICacheEntry>();
+
+        Exception? exception = null;
+        _memoryCache.Setup(mc => mc.CreateEntry(It.IsAny<object>()))
+        .Callback((object k) => n = (string)k)
+        .Returns(mockCacheEntry.Object);
 
         // Act
         try
         {
             var a = await coinGeckoData.GetPriceInUsd("bitcoin");
         }
-        catch (ArgumentNullException e) { exception = e; }
+        catch (Exception e) { exception = e; }
 
         // Assert
         Assert.IsNull(exception);

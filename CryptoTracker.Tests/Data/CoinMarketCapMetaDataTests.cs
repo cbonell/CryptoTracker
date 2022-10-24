@@ -1,6 +1,7 @@
 ﻿using CryptoTracker.DataAccess.Data;
 using CryptoTracker.DataAccess.Data.Interfaces;
 using CryptoTracker.DataAccess.DbAccess;
+using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using static SharedConstants.Constants;
 
@@ -11,12 +12,13 @@ public class CoinMarketCapMetaDataTests
 {
     Mock<ISqlDataAccess> _dataBase;
     CoinMarketCapMetaData coinMarketCapMetaData;
+    IMemoryCache _memoryCache;
 
     [TestInitialize]
     public void Setup()
     {
         _dataBase = new Mock<ISqlDataAccess>();
-        coinMarketCapMetaData = new(_dataBase.Object);
+        coinMarketCapMetaData = new(_dataBase.Object, _memoryCache);
     }
 
     [TestMethod]
