@@ -1,4 +1,6 @@
 ﻿using CryptoTracker.DataAccess.Caching;
+using CryptoTracker.DataAccess.CoinMarketCapAccess.Model;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
@@ -8,37 +10,47 @@ namespace CryptoTracker.DataAccess.Data;
 public class CoinMarketCapMetaData : CoinMarketCapDataBase, IDataBase, ICoinMarketCapMetaData
 {
     internal readonly ISqlDataAccess _db;
-
-    public CoinMarketCapMetaData(ISqlDataAccess db)
+    internal IMemoryCache _memoryCache;
+    public CoinMarketCapMetaData(ISqlDataAccess db, IMemoryCache memoryCache)
     {
         _db = db;
+        _memoryCache = memoryCache;
     }
 
     public async Task<CoinMarketCapMetaDataModel> GetCoinMetaData(int id)
     {
-        if(id < 0)
+        if (id < 0)
         {
             throw new Exception(InvalidCoinMarketCapId);
         }
 
-        CachingService cachingService = new CachingService(_db);
-        cachingService.CreateRequest(Constants.PROD_ENDPOINT + "/v1/cryptocurrency/info?id=" + id, resonseThreshold: 500);
-        cachingService.AddHeader(AUTH_HEADER, API_KEY);
-        RestResponse response = await cachingService.ExecuteAsync();
-        if (response.StatusCode != System.Net.HttpStatusCode.OK)
+        CoinMarketCapMetaDataModel coinMarketCapMetaDataModel;
+        string cacheKey = CacheKey.GetCoinMetaData.ToString() + id;// String.Format("{key}-{id}", CacheKey.GetCoinMetaData.ToString(), id.ToString());
+        if (!_memoryCache.TryGetValue(cacheKey, out coinMarketCapMetaDataModel))
         {
-            return new CoinMarketCapMetaDataModel();
+            coinMarketCapMetaDataModel = new CoinMarketCapMetaDataModel();
+
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromHours(12));
+
+            RestClient client = new RestClient();
+            RestRequest request = new RestRequest(Constants.PROD_ENDPOINT + "/v1/cryptocurrency/info?id=" + id)
+                                     .AddHeader(AUTH_HEADER, API_KEY);
+            RestResponse response = await client.ExecuteAsync(request);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                JObject data = JObject.Parse(response.Content!);
+                if (data != null)
+                {
+                    JToken token = data["data"] ?? "";
+                    coinMarketCapMetaDataModel = JsonConvert.DeserializeObject<CoinMarketCapMetaDataModel>(token[id.ToString()].ToString())!;
+                }
+            }
+
+            _memoryCache.Set(cacheKey, coinMarketCapMetaDataModel, cacheEntryOptions);
         }
 
-        JObject data = JObject.Parse(response.Content!);
-        if (data != null)
-        {
-            JToken token = data["data"] ?? "";
-            CoinMarketCapMetaDataModel m = JsonConvert.DeserializeObject<CoinMarketCapMetaDataModel>(token[id.ToString()].ToString())!;
-            return m;
-        }
-
-
-        return new CoinMarketCapMetaDataModel();
+        return coinMarketCapMetaDataModel;
     }
 }

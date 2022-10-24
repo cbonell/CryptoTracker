@@ -12,6 +12,8 @@ public static class Services
     {
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
+        builder.Services.AddMemoryCache();
+
 
         builder.Services.AddTransient<ISqlDataAccess, SqlDataAccess>();
         builder.Services.AddSingleton<IUserData, UserData>();
