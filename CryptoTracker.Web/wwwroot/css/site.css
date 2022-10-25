@@ -138,11 +138,13 @@ tr.rz-datatable-odd td.text-center {
 
 /*radzen card*/
 .rz-tabview-panel {
-    background-color: var(--base-background-color) !important; 
+    background-color: var(--base-background-color) !important;
 }
+
 div.rz-card.card {
     background-color: var(--base-background-color) !important;
 }
+
 div.rz-tabview-panel, div.rz-tabview-panels {
     background-color: var(--tertiary-background-color) !important;
 }
@@ -347,3 +349,22 @@ input[type=text].rz-spinner-input, span.rz-spinner, div.rz-cell-filter-content, 
     color: var(--base-font-color);
 }
 
+.grow {
+    transition: all .2s ease-in-out;
+}
+
+    .grow:hover {
+        transform: scale(1.1);
+    }
+
+.grow-sm {
+    transition: all .2s ease-in-out;
+}
+
+    .grow-sm:hover, tr.rz-datatable-even:hover, tr.rz-datatable-odd:hover {
+        transform: scale(1.01);
+    }
+
+    /*tr.rz-datatable-even:hover {
+        transform: scale(1.01);
+    }*/
