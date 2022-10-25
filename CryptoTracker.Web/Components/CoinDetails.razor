@@ -2,7 +2,7 @@
     <img src="@Coin.LogoPath" /> @Coin.Name (@Coin.Symbol)<br />
 </div>
 <br />
-Description: <p>@Coin.Description</p>
+<p class="text-center">@Coin.Description</p>
 <br />
 Website:
 @foreach (string web in Coin.Urls.Website)
@@ -10,13 +10,16 @@ Website:
     <a href="@web">@web</a>
 }
 <br />
-Tags:
-@foreach (string tag in Coin.Tags ?? Enumerable.Empty<string>())
-{
-    <Pill>@tag</Pill>
-}
+@*Tags:
+<div class="row">
+    @foreach (string tag in Coin.Tags ?? Enumerable.Empty<string>())
+    {
+        <div class="col-sm">
+            <Pill>@tag</Pill>
+        </div>
+    }
+</div>*@
 <br />
-<TrendingTweets CoinName="@Coin.Name"/>
 @code {
     [Parameter]
     public CoinMarketCapMetaDataModel Coin { get; set; }

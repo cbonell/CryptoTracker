@@ -42,6 +42,9 @@ public class TweetSearchModel
 
     [JsonProperty("source")]
     public string TweetUrl { get; set; }
+    
+    [JsonProperty("created_at")]
+    public string? CreatedAt { get; set; }
 
     [JsonProperty("retweet_count")]
     public int RetweetCount { get; set; }

@@ -1,29 +1,37 @@
-﻿<h3>Trending Tweets</h3>
+﻿<h3 class="text-center">Trending Tweets</h3>
+<div class="col" id="tweet-container">
+    @foreach (TweetSearchModel tweet in twitterSearchModels)
+    {
+        <div class="row">
+            <div class="col-2">
+                <a href="@tweet.User.UserUrl" target="_blank">
+                    <div class="row">
+                        <div class="col">
+                            <img src="@tweet.User.ImageUrl" />
+                        </div>
 
-@foreach (TweetSearchModel tweet in twitterSearchModels)
-{
-    <div class="container-md border border-secondary">
-        <a href="@tweet.User.UserUrl" target="_blank">
-            <div class="row">
-                <div class="col">
-                    <img src="@tweet.User.ImageUrl" />
-                </div>
-                <div class="col">
-                    <div class="row"><span>@tweet.User.Name</span></div>
-                    <div class="row"><span>@tweet.User.ScreenName</span></div>
-                </div>
+                    </div>
+                </a>
             </div>
-        </a>
-        <div class="row">
-            <p>@((MarkupString)tweet.DisplayText)</p>
+            <div class="col-1">
+                <span> <a href="@tweet.User.UserUrl" target="_blank">@tweet.User.Name </a></span>
+                <small>
+                    @@<span>@tweet.User.ScreenName</span>
+                </small>
+            </div>
+            @*<div class="col-1">
+                @tweet.CreatedAt
+            </div>*@
         </div>
         <div class="row">
-            <div class="col">@tweet.RetweetCount Retweets</div>
-            <div class="col">@tweet.FavoriteCount Quote Tweets</div>
+            <p class="text-center">@((MarkupString)tweet.DisplayText)</p>
         </div>
-    </div>
-}
-
+        <div class="row justify-content-center">
+            <div class="col-md-3">@tweet.RetweetCount Retweets</div>
+            <div class="col-md-3">@tweet.FavoriteCount Quote Tweets</div>
+        </div>
+    }
+</div>
 @code {
     [Parameter]
     public string CoinName { get; set; } = "";

@@ -8,6 +8,8 @@
 @inject ICurrencyData currencyData
 @inject IUserFavoriteCoinData favoriteCoinData
 @inject ICoinMarketCapMetaData metaData
+@inject IJSRuntime js
+
 @inherits BasePage
 <PageTitle>@data.Name - Details</PageTitle>
 
@@ -17,11 +19,24 @@
 }
 else
 {
-    <CoinPriceChart Coin="data" />
-
-    <div class="container">
-        <div class="row">
-            <div class="col-8 border">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="row mainBorder">
+                @if (createUserPriceAlert != null && IsAuthenticated)
+                {
+                    <button @onclick="createUserPriceAlert.Open">Create Alert</button>
+                }
+                <CoinPurchasePanel CoinMarketCapId="Id" />
+            </div>
+            <div class="row mainBorder">
+                <TrendingTweets CoinName="@data.Name" />
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="row mainBorder">
+                <CoinPriceChart Coin="data" />
+            </div>
+            <div class="row mainBorder">
                 <AuthorizeView>
                     <Authorized>
                         <StarCheckBox ticked="isUersFavorite" OnToggle="HandleFavoriteToggle" />
@@ -30,13 +45,6 @@ else
                 </AuthorizeView>
 
                 <CoinDetails Coin="data" />
-            </div>
-            <div class="col-sm-4">
-                @if (createUserPriceAlert != null && IsAuthenticated)
-                {
-                    <button @onclick="createUserPriceAlert.Open">Create Alert</button>
-                }
-                <CoinPurchasePanel CoinMarketCapId="Id" />
             </div>
         </div>
     </div>
@@ -75,6 +83,7 @@ else
         else if (tempCurrencies.Count() != 0)
         {
             Currency = tempCurrencies.First();
+            await SetLogo(data.LogoPath);
         }
 
         var state = await AuthState.GetAuthenticationStateAsync();
@@ -137,5 +146,10 @@ else
                 }
             }
         }
+    }
+
+    private async Task SetLogo(string path)
+    {
+         await js.InvokeVoidAsync("setIcon", path);
     }
 }
