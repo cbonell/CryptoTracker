@@ -138,9 +138,18 @@ tr.rz-datatable-odd td.text-center {
 
 /*radzen card*/
 .rz-tabview-panel {
-    background-color: var(--base-background-color)
+    background-color: var(--base-background-color) !important; 
 }
-
+div.rz-card.card {
+    background-color: var(--base-background-color) !important;
+}
+div.rz-tabview-panel, div.rz-tabview-panels {
+    background-color: var(--tertiary-background-color) !important;
+}
+/*ul.rz-tabview-nav:nth-child(even).a[role=tab] {
+    background-color: var(--base-background-color) !important;
+}
+*/
 /*radzen graph*/
 .rz-tick-text {
     fill: var(--base-font-color);
@@ -325,3 +334,16 @@ a, .btn-link {
     margin-left: 2vw;
     overflow: hidden;
 }
+
+/* sort boxes */
+th.rz-unselectable-text, div.rz-cell-filter {
+    background-color: var(--base-background-color) !important;
+    color: var(--base-font-color);
+    border: none !important;
+}
+
+input[type=text].rz-spinner-input, span.rz-spinner, div.rz-cell-filter-content, input.rz-textbox {
+    background-color: var(--tertiary-background-color) !important;
+    color: var(--base-font-color);
+}
+
