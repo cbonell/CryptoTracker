@@ -1,13 +1,37 @@
 ﻿@page "/d"
 @inject ICoinGeckoData geckoData
+@inject IJSRuntime js
 
 <PageTitle>Index</PageTitle>
 
+<button @onclick="open">Open</button>
+<CryptoTracker.Web.Components.Modal @ref="moddy">
+</CryptoTracker.Web.Components.Modal>
+    <canvas width="1280" height="720" id="testcanvas" style="display: @(vis ? "block" : "none")"></canvas>
+
+
+<div id="chart_div" style="width: 100vw; height: 20vh;"></div>
 @code {
 
     List<OHLCPairModel> data;
+    List<VolumePairModel> lineData;
+    bool vis = false;
+    CryptoTracker.Web.Components.Modal moddy;
     protected override async Task OnInitializedAsync()
     {
+        lineData = await geckoData.GetCoinVolume("bitcoin", 7);
         data = await geckoData.GetOHLCPairs("bitcoin");
+    }
+
+    async Task open()
+    {
+        //moddy.ToggleDisplay();
+        vis = !vis;
+        await js.InvokeVoidAsync("makeCandleChart", "testcanvas", data);
+        await js.InvokeVoidAsync("makeLineChart", "chart_div", lineData);
+    }
+
+    async Task openModal()
+    {
     }
 }

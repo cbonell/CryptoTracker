@@ -45,12 +45,13 @@ function draw() {
 
     function drawstart(event) {
         context.beginPath();
-        context.moveTo(event.pageX - canvas.offsetLeft + document.getElementsByClassName("sidebar")[0].clientWidth + widthOffset, event.pageY - canvas.offsetTop + heightOffset);
+        //context.moveTo(event.pageX - canvas.offsetLeft + document.getElementsByClassName("sidebar")[0].clientWidth + widthOffset, event.pageY - canvas.offsetTop + heightOffset);
+        context.moveTo(event.pageX - canvas.offsetLeft + widthOffset, event.pageY - canvas.offsetTop + heightOffset);
         isIdle = false;
     }
     function drawmove(event) {
         if (isIdle) return;
-        context.lineTo(event.pageX - canvas.offsetLeft + document.getElementsByClassName("sidebar")[0].clientWidth + widthOffset, event.pageY - canvas.offsetTop + heightOffset);
+        context.lineTo(event.pageX - canvas.offsetLeft + widthOffset, event.pageY - canvas.offsetTop + heightOffset);
         context.stroke();
     }
     function drawend(event) {

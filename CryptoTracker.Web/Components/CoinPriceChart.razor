@@ -1,6 +1,8 @@
 ﻿@using System.Globalization
 @using CryptoTracker.DataAccess.CoinGeckoAccess
-@inject ICoinGeckoData gd;
+@inject ICoinGeckoData geckoData
+@inject IJSRuntime js
+
 @if (data.Count > 0)
 {
     @*Used as a placeholder for the drawing chart*@
@@ -14,10 +16,12 @@
             </div>
         </div>
     </div>
-
-    <span id="priceWrapper">
+}
+<div id="priceWrapper">
+    @if (data.Count > 0 && false)
+    {
         <RadzenChart>
-            <RadzenLineSeries Smooth="true" Data="@data" CategoryProperty="Date" Title="24hr Price" LineType="LineType.Solid" ValueProperty="Revenue">
+            <RadzenLineSeries Smooth="true" Data="@data" CategoryProperty="TimeStamp" Title="24hr Price" LineType="LineType.Solid" ValueProperty="Price">
                 <RadzenMarkers MarkerType="MarkerType.Square" />
                 <RadzenSeriesDataLabels Visible="false" />
             </RadzenLineSeries>
@@ -27,8 +31,14 @@
                 <RadzenAxisTitle Text="Price in USD" />
             </RadzenValueAxis>
         </RadzenChart>
-    </span>
-}
+    }
+    <div id="linechart_div" style="width: 60vw; height: 20vh;"></div>
+
+</div>
+
+<canvas width="1280" height="720" id="testcanvas"></canvas> @*style="display: @(vis ? "block" : "none")"*@
+<div id="chart_div" style="width: 100vw; height: 20vh;"></div>
+@*}*@
 
 @code {
 
@@ -37,9 +47,14 @@
     [EditorRequired]
     public CoinMarketCapMetaDataModel Coin { get; set; }
 
+    List<OHLCPairModel> candleData;
+    List<VolumePairModel> barData;
+
     public CoinPriceChart()
     {
         Coin = new CoinMarketCapMetaDataModel();
+        candleData = new();
+        barData = new();
     }
 
 
@@ -53,7 +68,7 @@
         return string.Empty;
     }
 
-     string FormatAsUSD(object value)
+    string FormatAsUSD(object value)
     {
         if (value != null)
         {
@@ -66,8 +81,8 @@
 
     class DataItem
     {
-        public string Date { get; set; } = "";
-        public double Revenue { get; set; }
+        public string TimeStamp { get; set; } = "";
+        public double Price { get; set; }
     }
 
     List<DataItem> data = new List<DataItem>();
@@ -76,10 +91,16 @@
     {
         if (!string.IsNullOrWhiteSpace(Coin.Name))
         {
-            foreach (Tuple<double, string> d in (await gd.GetPriceHistory(Coin.Name)))
+            foreach (Tuple<double, string> d in (await geckoData.GetPriceHistory(Coin.Name)))
             {
-                data.Add(new DataItem() { Date = d.Item2, Revenue = d.Item1 });
+                data.Add(new DataItem() { TimeStamp = d.Item2, Price = d.Item1 });
             }
         }
+
+        barData = await geckoData.GetCoinVolume(Coin.Name, 7);
+        candleData = await geckoData.GetOHLCPairs(Coin.Name);
+        await js.InvokeVoidAsync("makeCandleChart", "testcanvas", candleData);
+        await js.InvokeVoidAsync("makeBarChart", "chart_div", barData);
+        await js.InvokeVoidAsync("makeLineChart", "linechart_div", data);
     }
     }

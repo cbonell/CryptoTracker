@@ -24,7 +24,6 @@ const disableDarkMode = () => {
 }
 
 const toggleColorMode = () => {
-    console.log('c');
     if (darkMode == "dark") {
         disableDarkMode();
     } else {
@@ -33,9 +32,7 @@ const toggleColorMode = () => {
 };
 
 (function () {
-
     var toggleColorButton = document.getElementById('darkmode-toggle');
-    console.log(darkMode);
     if (!darkMode || darkMode == "dark") {
         enableDarkMode();
     } else {
@@ -62,8 +59,6 @@ function onUrlChange() {
 }
 
 window.setIcon = (path) => {
-    console.log(path);
     var link = document.querySelector("link[rel~='icon']");
     link.href = path;
-    console.log(link.href);
 }

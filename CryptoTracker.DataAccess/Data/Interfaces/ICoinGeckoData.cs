@@ -2,6 +2,8 @@
 {
     public interface ICoinGeckoData
     {
+        Task<List<VolumePairModel>> GetCoinVolume(string coinName, int days = 1);
+
         /// <summary>
         /// Returns OHLC pairs in 30 minute intervals
         /// </summary>

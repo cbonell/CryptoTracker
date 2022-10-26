@@ -115,11 +115,11 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
     /// <returns>List<OHLCPairModel></returns>
     public async Task<List<OHLCPairModel>> GetOHLCPairs(string coinName, int days = 1)
     {
-        //
         if (string.IsNullOrEmpty(coinName) || days < 1)
         {
             throw new ArgumentException();
         }
+        coinName = coinName.ToLower();
 
         string cacheKey = $"GetOHLCPairs-{coinName}-{days}";
         List<OHLCPairModel> responseData = new();
@@ -158,6 +158,62 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
                 }
             }
 
+
+            _memoryCache.Set(CacheKey.CoinGeckoGetTrending, responseData, cacheEntryOptions);
+        }
+
+        return responseData;
+    }
+
+    /// <summary>
+    /// Returns OHLC pairs in 30 minute intervals
+    /// </summary>
+    /// <param name="coinName">Name of the coin</param>
+    /// <param name="days">Number of days to be returned (deffault of 1)</param>
+    /// <returns>List<VolumePairModel></returns>
+    public async Task<List<VolumePairModel>> GetCoinVolume(string coinName, int days = 1)
+    {
+        if (string.IsNullOrEmpty(coinName) || days < 1)
+        {
+            throw new ArgumentException();
+        }
+
+        coinName = coinName.ToLower();
+
+        string cacheKey = $"GetCoinVolume-{coinName}-{days}";
+        List<VolumePairModel> responseData = new();
+        if (!_memoryCache.TryGetValue(cacheKey, out responseData))
+        {
+            responseData = new();
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
+
+            RestClient client = new RestClient();
+            RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/coins/{coinName}/market_chart?vs_currency=usd&days={days}&interval=hourly");
+            RestResponse response = await client.ExecuteAsync(request);
+            JObject data = JObject.Parse(response.Content!);
+            if (data != null)
+            {
+                JToken token = JObject.Parse(response.Content!)["total_volumes"];
+                JArray jArray = JArray.Parse(token.ToString());
+                if (jArray != null && jArray.Count > 0)
+                {
+                    for (int i = 0; i < jArray.Count; i++)
+                    {
+                        if (jArray[i] != null)
+                        {
+                            string? time = jArray[i][0]?.ToString();
+                            string? volume = jArray[i][1]?.ToString();
+
+                            responseData.Add(new VolumePairModel()
+                            {
+                                TimeStamp = DateTimeFromUnixTimestampMillis(long.Parse(time)),
+                                Volume = double.Parse(volume)
+                            });
+                        }
+                    }
+                }
+            }
 
             _memoryCache.Set(CacheKey.CoinGeckoGetTrending, responseData, cacheEntryOptions);
         }
