@@ -48,7 +48,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
         return price;
     }
 
-    public async Task<IEnumerable<Tuple<double, string>>> GetPriceHistory(string currency)
+    public async Task<List<DatePricePairModel>> GetPriceHistory(string currency)
     {
         if (string.IsNullOrWhiteSpace(currency))
         {
@@ -56,10 +56,10 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
         }
 
         currency = currency.ToLower();
-        IEnumerable<Tuple<double, string>> responseData;
+        List<DatePricePairModel> responseData;
         if (!_memoryCache.TryGetValue(CacheKey.CoinGeckoGetTrending, out responseData))
         {
-            responseData = Enumerable.Empty<Tuple<double, string>>();
+            responseData = new();
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                 .SetAbsoluteExpiration(TimeSpan.FromHours(1));
 
@@ -70,8 +70,24 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             if (data != null)
             {
                 JToken token = JObject.Parse(response.Content!)["prices"];
-                int counter = 25;
-                responseData = token.Select(x => new Tuple<double, string>((double)x[1], DateTime.Now.AddHours(-counter--).ToString()));
+                JArray jArray = JArray.Parse(token.ToString());
+                if (jArray != null && jArray.Count > 0)
+                {
+                    for (int i = 0; i < jArray.Count; i++)
+                    {
+                        if (jArray[i] != null)
+                        {
+                            string? time = jArray[i][0]?.ToString();
+                            string? price = jArray[i][1]?.ToString();
+
+                            responseData.Add(new DatePricePairModel()
+                            {
+                                TimeStamp = DateTimeFromUnixTimestampMillis(long.Parse(time)),
+                                Price = double.Parse(price)
+                            });
+                        }
+                    }
+                }
             }
 
             _memoryCache.Set(CacheKey.CoinGeckoGetTrending, responseData, cacheEntryOptions);

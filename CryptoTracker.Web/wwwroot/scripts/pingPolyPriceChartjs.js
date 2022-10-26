@@ -151,8 +151,9 @@ pingpoliCandlestickChart.prototype.draw = function () {
         this.context.fillText(str, this.width - textWidth - 5, this.mousePosition.y + 5);
 
         // time line
+        var offsetX = 0;
         this.context.setLineDash([5, 5]);
-        this.drawLine(this.mousePosition.x, 0, this.mousePosition.x, this.height, this.mouseHoverBackgroundColor);
+        this.drawLine(this.mousePosition.x - offsetX, 0, this.mousePosition.x - offsetX, this.height, this.mouseHoverBackgroundColor);
         this.context.setLineDash([]);
         str = this.formatDate(new Date(this.xMouseHover));
         textWidth = this.context.measureText(str).width;

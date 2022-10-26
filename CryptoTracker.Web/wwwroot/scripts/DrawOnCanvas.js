@@ -40,7 +40,7 @@ function draw() {
     var context = canvas.getContext('2d');
 
     var isIdle = true;
-    var widthOffset = 420;
+    var widthOffset = 650;
     var heightOffset = 90;
 
     function drawstart(event) {
@@ -53,6 +53,7 @@ function draw() {
         if (isIdle) return;
         context.lineTo(event.pageX - canvas.offsetLeft + widthOffset, event.pageY - canvas.offsetTop + heightOffset);
         context.stroke();
+        context.strokeStyle = "red";
     }
     function drawend(event) {
         if (isIdle) return;

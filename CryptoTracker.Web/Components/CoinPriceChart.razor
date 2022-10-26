@@ -3,11 +3,8 @@
 @inject ICoinGeckoData geckoData
 @inject IJSRuntime js
 
-@if (data.Count > 0)
+@if (priceData.Count > 0)
 {
-    @*Used as a placeholder for the drawing chart*@
-    <div id="canvasParent"></div>
-
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-sm-4 btn-group">
@@ -16,29 +13,21 @@
             </div>
         </div>
     </div>
+
+    @*Used as a placeholder for the drawing chart*@
+    <div id="canvasParent"></div>
 }
-<div id="priceWrapper">
-    @if (data.Count > 0 && false)
-    {
-        <RadzenChart>
-            <RadzenLineSeries Smooth="true" Data="@data" CategoryProperty="TimeStamp" Title="24hr Price" LineType="LineType.Solid" ValueProperty="Price">
-                <RadzenMarkers MarkerType="MarkerType.Square" />
-                <RadzenSeriesDataLabels Visible="false" />
-            </RadzenLineSeries>
-            <RadzenCategoryAxis Padding="20" Formatter="@FormatAsMonth" />
-            <RadzenValueAxis Formatter=@FormatAsUSD>
-                <RadzenGridLines Visible="true" />
-                <RadzenAxisTitle Text="Price in USD" />
-            </RadzenValueAxis>
-        </RadzenChart>
-    }
-    <div id="linechart_div" style="width: 60vw; height: 20vh;"></div>
 
+<div class="chartWrapper">
+    <div id="priceWrapper">
+        <div id="linechart_div" style="width: 62vw; height: 20vh;"></div>
+    </div>
+    <div id="chart_div" style="width: 62vw; height: 20vh;"></div>
+    @*<div class="mainBorder">*@
+    <canvas style="width: 62vw; height: 40vh;" id="testcanvas"></canvas> @*style="display: @(vis ? "block" : "none")"*@
+    @*<canvas width="1280" height="720" id="testcanvas"></canvas> style="display: @(vis ? "block" : "none")"*@
+    @*</div>*@
 </div>
-
-<canvas width="1280" height="720" id="testcanvas"></canvas> @*style="display: @(vis ? "block" : "none")"*@
-<div id="chart_div" style="width: 100vw; height: 20vh;"></div>
-@*}*@
 
 @code {
 
@@ -49,14 +38,15 @@
 
     List<OHLCPairModel> candleData;
     List<VolumePairModel> barData;
+    List<DatePricePairModel> priceData;
 
     public CoinPriceChart()
     {
-        Coin = new CoinMarketCapMetaDataModel();
+        Coin = new();
         candleData = new();
         barData = new();
+        priceData = new();
     }
-
 
     string FormatAsMonth(object value)
     {
@@ -78,29 +68,18 @@
         return string.Empty;
     }
 
-
-    class DataItem
-    {
-        public string TimeStamp { get; set; } = "";
-        public double Price { get; set; }
-    }
-
-    List<DataItem> data = new List<DataItem>();
-
     protected override async Task OnInitializedAsync()
     {
-        if (!string.IsNullOrWhiteSpace(Coin.Name))
-        {
-            foreach (Tuple<double, string> d in (await geckoData.GetPriceHistory(Coin.Name)))
-            {
-                data.Add(new DataItem() { TimeStamp = d.Item2, Price = d.Item1 });
-            }
-        }
+        await LoadData();
+    }
 
+    protected async Task LoadData()
+    {
+        priceData = await geckoData.GetPriceHistory(Coin.Name);
         barData = await geckoData.GetCoinVolume(Coin.Name, 7);
         candleData = await geckoData.GetOHLCPairs(Coin.Name);
         await js.InvokeVoidAsync("makeCandleChart", "testcanvas", candleData);
         await js.InvokeVoidAsync("makeBarChart", "chart_div", barData);
-        await js.InvokeVoidAsync("makeLineChart", "linechart_div", data);
+        await js.InvokeVoidAsync("makeLineChart", "linechart_div", priceData);
     }
-    }
+}
