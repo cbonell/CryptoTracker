@@ -24,6 +24,7 @@ const disableDarkMode = () => {
 }
 
 const toggleColorMode = () => {
+    console.log('c');
     if (darkMode == "dark") {
         disableDarkMode();
     } else {

@@ -11,8 +11,8 @@ namespace CryptoTracker.DataAccess.Data;
 public class CoinMarketCapData : DataBase, ICoinMarketCapData
 {
     // TODO: Move (azure key vault?)
-    private static readonly string API_KEY = "62b7f061-e398-43a9-8c47-5df939073787";
-    private static readonly string AUTH_HEADER = "X-CMC_PRO_API_KEY";
+    public static readonly string API_KEY = "62b7f061-e398-43a9-8c47-5df939073787";
+    public static readonly string AUTH_HEADER = "X-CMC_PRO_API_KEY";
     internal readonly IMemoryCache _memoryCache;
 
     public CoinMarketCapData(ISqlDataAccess db, IMemoryCache memory) : base(db)
@@ -69,7 +69,7 @@ public class CoinMarketCapData : DataBase, ICoinMarketCapData
         CoinGeckoData geckoData = new CoinGeckoData(_db, _memoryCache);
         List<string> trendingNames = await geckoData.GetTrending();
 
-        CoinMarketCapIDMapData coinMarketCapIDMap = new(_db, _memoryCache);
+        CoinMarketCapData coinMarketCapIDMap = new(_db, _memoryCache);
         IEnumerable<CoinMarketCapIDMapModel> coins = await coinMarketCapIDMap.GetCoinMap();
 
         List<CoinMarketCapIDMapModel> trendingCoins = new List<CoinMarketCapIDMapModel>();
@@ -83,4 +83,63 @@ public class CoinMarketCapData : DataBase, ICoinMarketCapData
 
         return trendingCoins;
     }
+
+    public async Task<CoinMarketCapMetaDataModel> GetCoinMetaData(int id)
+    {
+        if (id < 0)
+        {
+            throw new Exception(InvalidCoinMarketCapId);
+        }
+
+        CoinMarketCapMetaDataModel coinMarketCapMetaDataModel;
+        string cacheKey = CacheKey.GetCoinMetaData.ToString() + id;// String.Format("{key}-{id}", CacheKey.GetCoinMetaData.ToString(), id.ToString());
+        if (!_memoryCache.TryGetValue(cacheKey, out coinMarketCapMetaDataModel))
+        {
+            coinMarketCapMetaDataModel = new CoinMarketCapMetaDataModel();
+
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromHours(12));
+
+            RestClient client = new RestClient();
+            RestRequest request = new RestRequest(PROD_ENDPOINT + "/v1/cryptocurrency/info?id=" + id)
+                                     .AddHeader(AUTH_HEADER, API_KEY);
+            RestResponse response = await client.ExecuteAsync(request);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                JObject data = JObject.Parse(response.Content!);
+                if (data != null)
+                {
+                    JToken token = data["data"] ?? "";
+                    coinMarketCapMetaDataModel = JsonConvert.DeserializeObject<CoinMarketCapMetaDataModel>(token[id.ToString()].ToString())!;
+                }
+            }
+
+            _memoryCache.Set(cacheKey, coinMarketCapMetaDataModel, cacheEntryOptions);
+        }
+
+        return coinMarketCapMetaDataModel;
+    }
+
+    public async Task<IEnumerable<CoinMarketCapIDMapModel>> GetCoinMap()
+    {
+        IEnumerable<CoinMarketCapIDMapModel> coins = Enumerable.Empty<CoinMarketCapIDMapModel>();
+        if (!_memoryCache.TryGetValue(CacheKey.GetCoinMap, out coins))
+        {
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromHours(12));
+
+            RestClient client = new RestClient();
+            RestRequest request = new RestRequest(PROD_ENDPOINT + "/v1/cryptocurrency/map")
+                                     .AddHeader(AUTH_HEADER, API_KEY);
+            RestResponse response = await client.ExecuteAsync(request);
+
+            CoinMarketCapIDMapModelData data = JsonConvert.DeserializeObject<CoinMarketCapIDMapModelData>(response.Content!)!;
+            coins = data.CoinMarketCapMaps;
+            _memoryCache.Set(CacheKey.GetCoinMap, coins, cacheEntryOptions);
+        }
+
+        return coins;
+    }
+
 }

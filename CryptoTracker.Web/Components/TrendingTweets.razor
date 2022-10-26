@@ -43,7 +43,7 @@
     {
         if (!string.IsNullOrWhiteSpace(CoinName))
         {
-            twitterSearchModels = await TwitterSearch.TrendingByHashTag(CoinName);
+            twitterSearchModels = await TwitterSearch.GetTrendingByHashTag(CoinName);
         }
     }
 }

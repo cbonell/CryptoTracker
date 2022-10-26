@@ -20,7 +20,7 @@ public class TwitterSearchTests
         // Act
         try
         {
-            await TwitterSearch.ByCoin(null);
+            await TwitterSearch.GetTrendingByHashTag(null);
         }
         catch(ArgumentNullException e) { exception = e; }
 

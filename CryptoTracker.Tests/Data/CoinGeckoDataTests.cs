@@ -48,7 +48,7 @@ public class CoinGeckoDataTests
     public async Task GetPriceInUsd_ValidCurrency_ExpectSuccess()
     {
         // Arrange
-        string n = null;
+        string n = "";
          var mockCacheEntry = new Mock<ICacheEntry>();
 
         Exception? exception = null;
@@ -76,7 +76,7 @@ public class CoinGeckoDataTests
         // Act
         try
         {
-            var a = await coinGeckoData.GetPriceHistory(null);
+            var a = await coinGeckoData.GetPriceHistory("");
         }
         catch (ArgumentNullException e) { exception = e; }
 

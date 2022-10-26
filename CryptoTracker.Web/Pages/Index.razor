@@ -1,5 +1,13 @@
-﻿@page "/"
+﻿@page "/d"
+@inject ICoinGeckoData geckoData
 
 <PageTitle>Index</PageTitle>
 
-<h1>Welcome to the Crypto Proj3ct!</h1>
+@code {
+
+    List<OHLCPairModel> data;
+    protected override async Task OnInitializedAsync()
+    {
+        data = await geckoData.GetOHLCPairs("bitcoin");
+    }
+}

@@ -10,15 +10,15 @@ namespace CryptoTracker.Tests.Data;
 [TestClass]
 public class CoinMarketCapMetaDataTests
 {
-    Mock<ISqlDataAccess> _dataBase;
-    CoinMarketCapMetaData coinMarketCapMetaData;
+    Mock<ISqlDataAccess>? _dataBase;
+    CoinMarketCapData? CoinMarketCapData;
     IMemoryCache _memoryCache;
 
     [TestInitialize]
     public void Setup()
     {
         _dataBase = new Mock<ISqlDataAccess>();
-        coinMarketCapMetaData = new(_dataBase.Object, _memoryCache);
+        CoinMarketCapData = new(_dataBase.Object, _memoryCache);
     }
 
     [TestMethod]
@@ -30,7 +30,7 @@ public class CoinMarketCapMetaDataTests
         // Act           
         try
         {
-            await coinMarketCapMetaData.GetCoinMetaData(-1);
+            await CoinMarketCapData.GetCoinMetaData(-1);
         }
         catch (Exception e) { exception = e; }
 

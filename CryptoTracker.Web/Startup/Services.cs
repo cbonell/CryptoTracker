@@ -21,8 +21,6 @@ public static class Services
         builder.Services.AddSingleton<ITradingPurchaseData, TradingPurchaseData>();
         builder.Services.AddSingleton<IUserFavoriteCoinData, UserFavoriteCoinData>();
         builder.Services.AddSingleton<ICoinMarketCapData, CoinMarketCapData>();
-        builder.Services.AddSingleton<ICoinMarketCapIDMapData, CoinMarketCapIDMapData>();
-        builder.Services.AddSingleton<ICoinMarketCapMetaData, CoinMarketCapMetaData>();
         builder.Services.AddSingleton<ICoinGeckoData, CoinGeckoData>();
         builder.Services.AddSingleton<IMLModelData, MLModelData>();
         builder.Services.AddSingleton<IPriceAlertData, PriceAlertData>();

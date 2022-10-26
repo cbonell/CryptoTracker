@@ -5,16 +5,16 @@ namespace CryptoTracker.DataAccess.Model;
 public class TwitterUser
 {
     [JsonProperty("name")]
-    public string Name { get; set; }
+    public string Name { get; set; } = "";
 
     [JsonProperty("screen_name")]
-    public string ScreenName { get; set; }
+    public string ScreenName { get; set; } = "";
 
     [JsonProperty("url")]
-    public string UserUrl { get; set; }
+    public string UserUrl { get; set; } = "";
 
     [JsonProperty("profile_image_url_https")]
-    public string ImageUrl { get; set; }
+    public string ImageUrl { get; set; } = "";
 }
 
 public class TweetSearchModel
@@ -41,8 +41,8 @@ public class TweetSearchModel
     }
 
     [JsonProperty("source")]
-    public string TweetUrl { get; set; }
-    
+    public string TweetUrl { get; set; } = "";
+
     [JsonProperty("created_at")]
     public string? CreatedAt { get; set; }
 
