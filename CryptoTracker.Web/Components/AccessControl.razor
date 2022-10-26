@@ -5,10 +5,15 @@
 @inject IUserData ud
 <AuthorizeView>
     <Authorized>
-        Welcome, @Username <a href="logout">Log out</a>
+        Welcome, @Username
+        <NavLink class="nav-link  grow" href="logout">
+            Log out
+        </NavLink>
     </Authorized>
     <NotAuthorized>
-        <a href="login?redirectUri=/">Log in</a>
+         <NavLink class="nav-link  grow" href="login?redirectUri=/">
+            Log In
+        </NavLink>
     </NotAuthorized>
 </AuthorizeView>
 @code {

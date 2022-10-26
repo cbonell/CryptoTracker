@@ -3,7 +3,8 @@
 @inject ICoinGeckoData gd;
 @if (data.Count > 0)
 {
-
+    @*Used as a placeholder for the drawing chart*@
+    <div id="canvasParent"></div>
 
     <div class="container">
         <div class="row justify-content-center">
@@ -14,10 +15,7 @@
         </div>
     </div>
 
-
-    <div id="canvasParent"></div>
-
-    <div id="priceWrapper">
+    <span id="priceWrapper">
         <RadzenChart>
             <RadzenLineSeries Smooth="true" Data="@data" CategoryProperty="Date" Title="24hr Price" LineType="LineType.Solid" ValueProperty="Revenue">
                 <RadzenMarkers MarkerType="MarkerType.Square" />
@@ -29,7 +27,7 @@
                 <RadzenAxisTitle Text="Price in USD" />
             </RadzenValueAxis>
         </RadzenChart>
-    </div>
+    </span>
 }
 
 @code {

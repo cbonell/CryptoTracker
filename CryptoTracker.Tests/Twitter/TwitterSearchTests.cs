@@ -1,4 +1,4 @@
-﻿using CryptoTracker.DataAccess.Twitter;
+﻿using CryptoTracker.DataAccess.Data;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ public class TwitterSearchTests
         // Act
         try
         {
-            await TwitterSearch.ByCoin(null);
+            await TwitterSearch.GetTrendingByHashTag(null);
         }
         catch(ArgumentNullException e) { exception = e; }
 

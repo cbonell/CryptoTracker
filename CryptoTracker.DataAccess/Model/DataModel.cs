@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace CryptoTracker.DataAccess.CoinMarketCap.Model;
+namespace CryptoTracker.DataAccess.Model;
 public class DataModel
 {
     [JsonProperty("id")]

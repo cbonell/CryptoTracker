@@ -6,6 +6,7 @@ namespace CryptoTracker.Web.Pages;
 
 public class BasePage : ComponentBase
 {
+
     [Inject]
     AuthenticationStateProvider AuthState { get; set; }
 

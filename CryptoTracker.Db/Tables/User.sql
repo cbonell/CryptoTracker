@@ -17,7 +17,7 @@ CREATE TRIGGER [dbo].[Trigger_UserUpdated]
         SET NoCount ON
         DECLARE @UpdatedId INT;
 
-        SELECT @UpdatedId = ins.ID FROM INSERTED ins;
+        SELECT @UpdatedId = ins.Id FROM INSERTED ins;
         
         IF(@UpdatedId IS NOT NULL AND @UpdatedId > 0)
         BEGIN

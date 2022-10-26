@@ -3,11 +3,12 @@
 @using System.Security.Claims
 @using CryptoTracker.DataAccess.Auth0
 
-@inject AuthenticationStateProvider AuthState
 @inject IUserFavoriteCoinData favoriteCoinData
 @inject ICurrencyData currencyData
 @inject IUserFavoriteCoinData favoriteCoinData
-@inject ICoinMarketCapMetaData metaData
+@inject ICoinMarketCapData metaData
+@inject IJSRuntime js
+
 @inherits BasePage
 <PageTitle>@data.Name - Details</PageTitle>
 
@@ -17,11 +18,24 @@
 }
 else
 {
-    <CoinPriceChart Coin="data" />
-
-    <div class="container">
-        <div class="row">
-            <div class="col-8 border">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="row mainBorder">
+                @if (createUserPriceAlert != null && IsAuthenticated)
+                {
+                    <button @onclick="createUserPriceAlert.Open">Create Alert</button>
+                }
+                <CoinPurchasePanel CoinMarketCapId="Id" />
+            </div>
+            <div class="row mainBorder">
+                <TrendingTweets CoinName="@data.Name" />
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="row mainBorder">
+                <CoinPriceChart Coin="data" />
+            </div>
+            <div class="row mainBorder">
                 <AuthorizeView>
                     <Authorized>
                         <StarCheckBox ticked="isUersFavorite" OnToggle="HandleFavoriteToggle" />
@@ -31,19 +45,12 @@ else
 
                 <CoinDetails Coin="data" />
             </div>
-            <div class="col-sm-4">
-                @if (createUserPriceAlert != null && IsAuthenticated)
-                {
-                    <button @onclick="createUserPriceAlert.Open">Create Alert</button>
-                }
-                <CoinPurchasePanel CoinMarketCapId="Id" />
-            </div>
         </div>
     </div>
 }
 
 
-<CreateUserPriceAlert @ref="createUserPriceAlert" CoinMarketCapId="data.CoinMarketCapId" UserId="@UserId" />
+<CreateUserPriceAlert @ref="createUserPriceAlert" coinMarketCapId="data.CoinMarketCapId" UserId="@UserId" />
 
 @code {
     [Parameter]
@@ -52,19 +59,17 @@ else
     CoinMarketCapMetaDataModel data { get; set; }
     private CurrencyModel Currency;
     bool isUersFavorite = false;
-    string userId = "";
     CreateUserPriceAlert createUserPriceAlert;
 
     public Coin()
     {
         data = new();
         Currency = new();
-        //createUserPriceAlert = new();
+        createUserPriceAlert = new();
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
         loading = true;
         data = await metaData.GetCoinMetaData(Id);
         var tempCurrencies = await currencyData.GetCurrencyByCoinMarketCapId(Id, ICurrencyData.CurrencyType.Coin);
@@ -75,23 +80,17 @@ else
         else if (tempCurrencies.Count() != 0)
         {
             Currency = tempCurrencies.First();
+            await SetLogo(data.LogoPath);
         }
 
-        var state = await AuthState.GetAuthenticationStateAsync();
-        if (state != null && state.User != null && state.User.Identity != null)
+        if (IsAuthenticated)
         {
-            if (state.User.Identity.IsAuthenticated)
-            {
-                var tempUserClaim = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-                if (tempUserClaim != null)
-                {
-                    userId = tempUserClaim.Value;
-                }
-            }
+            isUersFavorite = await favoriteCoinData.CheckIfCoinIsUsersFavorite(UserId, Currency.Id);
         }
-        isUersFavorite = await favoriteCoinData.CheckIfCoinIsUsersFavorite(userId, Currency.Id);
 
         loading = false;
+        await base.OnInitializedAsync();
+
     }
 
     private async Task HandleFavoriteToggle(bool isChecked)
@@ -109,33 +108,22 @@ else
 
     private async Task AddFavorite()
     {
-        var state = await AuthState.GetAuthenticationStateAsync();
-        if (state != null && state.User != null && state.User.Identity != null)
+        if (IsAuthenticated)
         {
-            if (state.User.Identity.IsAuthenticated)
-            {
-                var tempUserClaim = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-                if (tempUserClaim != null)
-                {
-                    await favoriteCoinData.AddUserFavoriteCoin(userId, Currency.Id);
-                }
-            }
+            await favoriteCoinData.AddUserFavoriteCoin(UserId, Currency.Id);
         }
     }
 
     private async Task RemoveFavorite()
     {
-        var state = await AuthState.GetAuthenticationStateAsync();
-        if (state != null && state.User != null && state.User.Identity != null)
+        if (IsAuthenticated)
         {
-            if (state.User.Identity.IsAuthenticated)
-            {
-                var tempUserClaim = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-                if (tempUserClaim != null)
-                {
-                    await favoriteCoinData.RemoveUserFavoriteCoin(userId, Currency.Id);
-                }
-            }
+            await favoriteCoinData.RemoveUserFavoriteCoin(UserId, Currency.Id);
         }
+    }
+
+    private async Task SetLogo(string path)
+    {
+        await js.InvokeVoidAsync("setIcon", path);
     }
 }

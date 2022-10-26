@@ -1,6 +1,5 @@
 ﻿using Auth0.AspNetCore.Authentication;
 using CryptoTracker.DataAccess.CoinGeckoAccess;
-using CryptoTracker.DataAccess.CoinMarketCap.Data;
 using CryptoTracker.DataAccess.MLModelAccess;
 using Hangfire;
 
@@ -12,6 +11,8 @@ public static class Services
     {
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
+        builder.Services.AddMemoryCache();
+
 
         builder.Services.AddTransient<ISqlDataAccess, SqlDataAccess>();
         builder.Services.AddSingleton<IUserData, UserData>();
@@ -20,8 +21,6 @@ public static class Services
         builder.Services.AddSingleton<ITradingPurchaseData, TradingPurchaseData>();
         builder.Services.AddSingleton<IUserFavoriteCoinData, UserFavoriteCoinData>();
         builder.Services.AddSingleton<ICoinMarketCapData, CoinMarketCapData>();
-        builder.Services.AddSingleton<ICoinMarketCapIDMapData, CoinMarketCapIDMapData>();
-        builder.Services.AddSingleton<ICoinMarketCapMetaData, CoinMarketCapMetaData>();
         builder.Services.AddSingleton<ICoinGeckoData, CoinGeckoData>();
         builder.Services.AddSingleton<IMLModelData, MLModelData>();
         builder.Services.AddSingleton<IPriceAlertData, PriceAlertData>();

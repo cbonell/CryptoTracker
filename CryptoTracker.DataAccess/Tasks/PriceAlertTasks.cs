@@ -1,5 +1,4 @@
-﻿using CryptoTracker.DataAccess.CoinMarketCap.Data;
-using CryptoTracker.DataAccess.Data;
+﻿using CryptoTracker.DataAccess.Data;
 using CryptoTracker.DataAccess.Data.Interfaces;
 using Tools.Email;
 
