@@ -3,7 +3,8 @@
 @inject ICoinGeckoData geckoData
 @inject IJSRuntime js
 
-
+@if (priceData.Count > 0)
+{
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-sm-4 btn-group">
@@ -13,23 +14,20 @@
         </div>
     </div>
 
-
+    @*Used as a placeholder for the drawing chart*@
     <div id="canvasParent"></div>
-
-    <div id="priceWrapper">
-        <RadzenChart>
-            <RadzenLineSeries Smooth="true" Data="@data" CategoryProperty="Date" Title="24hr Price" LineType="LineType.Solid" ValueProperty="Revenue">
-                <RadzenMarkers MarkerType="MarkerType.Square" />
-                <RadzenSeriesDataLabels Visible="false" />
-            </RadzenLineSeries>
-            <RadzenCategoryAxis Padding="20" Formatter="@FormatAsMonth" />
-            <RadzenValueAxis Formatter=@FormatAsUSD>
-                <RadzenGridLines Visible="true" />
-                <RadzenAxisTitle Text="Price in USD" />
-            </RadzenValueAxis>
-        </RadzenChart>
-    </div>
 }
+
+<div class="chartWrapper">
+    <div id="priceWrapper">
+        <div id="linechart_div" style="width: 62vw; height: 20vh;"></div>
+    </div>
+    <div id="chart_div" style="width: 62vw; height: 20vh;"></div>
+    @*<div class="mainBorder">*@
+    <canvas style="width: 62vw; height: 40vh;" id="testcanvas"></canvas> @*style="display: @(vis ? "block" : "none")"*@
+    @*<canvas width="1280" height="720" id="testcanvas"></canvas> style="display: @(vis ? "block" : "none")"*@
+    @*</div>*@
+</div>
 
 @code {
 
