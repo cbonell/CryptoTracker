@@ -109,6 +109,7 @@
     <Build Include="Stored Procedures\PriceAlert\GetPriceAlerts.sql" />
     <Build Include="Stored Procedures\Currency\GetCurrencyById.sql" />
     <Build Include="Stored Procedures\PriceAlert\GetUserAlerts.sql" />
+    <Build Include="Tables\CoinGeckoCoin.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CryptoTracker.Db.publish.xml" />
