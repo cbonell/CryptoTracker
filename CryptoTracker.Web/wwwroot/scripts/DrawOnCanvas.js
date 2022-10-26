@@ -40,18 +40,20 @@ function draw() {
     var context = canvas.getContext('2d');
 
     var isIdle = true;
-    var widthOffset = 420;
+    var widthOffset = 650;
     var heightOffset = 90;
 
     function drawstart(event) {
         context.beginPath();
-        context.moveTo(event.pageX - canvas.offsetLeft + document.getElementsByClassName("sidebar")[0].clientWidth + widthOffset, event.pageY - canvas.offsetTop + heightOffset);
+        //context.moveTo(event.pageX - canvas.offsetLeft + document.getElementsByClassName("sidebar")[0].clientWidth + widthOffset, event.pageY - canvas.offsetTop + heightOffset);
+        context.moveTo(event.pageX - canvas.offsetLeft + widthOffset, event.pageY - canvas.offsetTop + heightOffset);
         isIdle = false;
     }
     function drawmove(event) {
         if (isIdle) return;
-        context.lineTo(event.pageX - canvas.offsetLeft + document.getElementsByClassName("sidebar")[0].clientWidth + widthOffset, event.pageY - canvas.offsetTop + heightOffset);
+        context.lineTo(event.pageX - canvas.offsetLeft + widthOffset, event.pageY - canvas.offsetTop + heightOffset);
         context.stroke();
+        context.strokeStyle = "red";
     }
     function drawend(event) {
         if (isIdle) return;
