@@ -34,7 +34,7 @@
 
     [Parameter]
     [EditorRequired]
-    public CoinMarketCapMetaDataModel Coin { get; set; }
+    public CoinGeckCoinModel Coin { get; set; }
 
     List<OHLCPairModel> candleData;
     List<VolumePairModel> barData;
@@ -75,9 +75,9 @@
 
     protected async Task LoadData()
     {
-        priceData = await geckoData.GetPriceHistory(Coin.Name);
-        barData = await geckoData.GetCoinVolume(Coin.Name, 7);
-        candleData = await geckoData.GetOHLCPairs(Coin.Name);
+        priceData = await geckoData.GetPriceHistory(Coin.Id);
+        barData = await geckoData.GetCoinVolume(Coin.Id, 7);
+        candleData = await geckoData.GetOHLCPairs(Coin.Id);
         await js.InvokeVoidAsync("makeCandleChart", "testcanvas", candleData);
         await js.InvokeVoidAsync("makeBarChart", "chart_div", barData);
         await js.InvokeVoidAsync("makeLineChart", "linechart_div", priceData);

@@ -1,26 +1,25 @@
 ﻿@using CryptoTracker.Web.Components
 <div class="topNav">
-    @*<NavMenu />*@
     <div class="top-row px-4">
         <div class="nav-item px-3">
-            <NavLink class="nav-link grow" href="" Match="NavLinkMatch.All">
+            <NavLink class="nav-link grow" href="/Coins" Match="NavLinkMatch.All">
                 <span aria-hidden="true" class="fa-solid fa-house"></span> Home
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link grow" href="/Coins">
+            <NavLink class="nav-link grow" href="/Coins" Match="NavLinkMatch.All">
                 <span aria-hidden="true" class="fa-solid fa-coins"></span> Coins
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link grow" href="/Trending">
+            <NavLink class="nav-link grow" href="/Trending" Match="NavLinkMatch.All">
                 <span aria-hidden="true" class="fa-solid fa-arrow-trend-up"></span> Trending
             </NavLink>
         </div>
         <AuthorizeView>
             <Authorized>
         <div class="nav-item px-3">
-            <NavLink class="nav-link grow" href="/MyWallet">
+            <NavLink class="nav-link grow" href="/MyWallet" Match="NavLinkMatch.All">
                 <span aria-hidden="true" class="fa-solid fa-vault"></span> My Wallet
             </NavLink>
         </div>
@@ -35,7 +34,5 @@
         <div class="nav-item px-3">
             <AccessControl />
         </div>
-
-
     </div>
 </div>

@@ -8,6 +8,8 @@
     --tertiary-background-color: #1f2128;
     --base-font-color: var(--hover-link-color);
     --secondary-font-color: #9BA0B3;
+    --green-color: #00cc00;
+    --red-color: #cc0000;
     --small-font-size: 0.75em;
     --base-font-size: 1em;
     --smedium-font-size: 1.333em;
@@ -29,6 +31,8 @@
 
 :root[color-mode="light"] {
     --secondary-font-color: #9BA0B3;
+    --green-color: #00cc00;
+    --red-color: #cc0000;
     --small-font-size: 0.75em;
     --base-font-size: 1em;
     --smedium-font-size: 1.333em;
@@ -72,13 +76,14 @@ html, body {
 #h2canvas {
     background-color: var(--base-background-color);
 }
-/*svg {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    z-index: 2;
-    width: 300px
-}*/
+
+.green {
+    color: var(--green-color);
+}
+
+.red {
+    color: var(--red-color);
+}
 
 /*radzen datagrid styling*/
 
@@ -365,6 +370,6 @@ input[type=text].rz-spinner-input, span.rz-spinner, div.rz-cell-filter-content, 
         transform: scale(1.01);
     }
 
-    /*tr.rz-datatable-even:hover {
+/*tr.rz-datatable-even:hover {
         transform: scale(1.01);
     }*/

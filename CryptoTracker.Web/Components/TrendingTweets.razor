@@ -33,6 +33,11 @@
             </div>
         </div>
     }
+
+    @if(twitterSearchModels != null && twitterSearchModels.Count() == 0)
+    {
+        <p>No twitter data found</p>    
+    }
 </div>
 @code {
     [Parameter]

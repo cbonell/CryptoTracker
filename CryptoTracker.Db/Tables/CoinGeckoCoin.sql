@@ -3,6 +3,7 @@
 	[Id] NVARCHAR(255) NOT NULL PRIMARY KEY,
 	[Symbol] NVARCHAR(255) NOT NULL,
 	[Name] NVARCHAR(255) NOT NULL,
+	[CoinMarketCapId] INT NULL,
 
 	CONSTRAINT UC_CoinGeckoCoin UNIQUE (Id,[Name])
 )

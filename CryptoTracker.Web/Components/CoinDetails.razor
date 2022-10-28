@@ -1,31 +1,21 @@
 ﻿<div class="text-center">
-    <img src="@Coin.LogoPath" /> @Coin.Name (@Coin.Symbol)<br />
+    <img src="@Coin.image.thumb" /> @Coin.Name (@Coin.Symbol)<br />
 </div>
 <br />
-<p class="text-center">@Coin.Description</p>
+<p class="text-center">@((MarkupString)Coin.description.en)</p>
 <br />
 Website:
-@foreach (string web in Coin.Urls.Website)
+@foreach (string site in Coin.links.blockchain_site)
 {
-    <a href="@web">@web</a>
+    <a href="@site">@site</a>
 }
-<br />
-@*Tags:
-<div class="row">
-    @foreach (string tag in Coin.Tags ?? Enumerable.Empty<string>())
-    {
-        <div class="col-sm">
-            <Pill>@tag</Pill>
-        </div>
-    }
-</div>*@
 <br />
 @code {
     [Parameter]
-    public CoinMarketCapMetaDataModel Coin { get; set; }
+    public CoinGeckoMetaDataModel Coin { get; set; }
 
     public CoinDetails()
     {
-        Coin = new CoinMarketCapMetaDataModel();
+        Coin = new CoinGeckoMetaDataModel();
     }
 }

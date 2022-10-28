@@ -1,4 +1,4 @@
-﻿@page "/Coin/{Id:int}"
+﻿@page "/Coin/{CoinId}"
 @using CryptoTracker.Web.Components
 @using System.Security.Claims
 @using CryptoTracker.DataAccess.Auth0
@@ -6,11 +6,11 @@
 @inject IUserFavoriteCoinData favoriteCoinData
 @inject ICurrencyData currencyData
 @inject IUserFavoriteCoinData favoriteCoinData
-@inject ICoinMarketCapData metaData
 @inject IJSRuntime js
+@inject ICoinGeckoData coinGeckoData
 
 @inherits BasePage
-<PageTitle>@data.Name - Details</PageTitle>
+<PageTitle>@CoinModel.Name - Details</PageTitle>
 
 @if (loading)
 {
@@ -25,15 +25,15 @@ else
                 {
                     <button @onclick="createUserPriceAlert.Open">Create Alert</button>
                 }
-                <CoinPurchasePanel CoinMarketCapId="Id" />
+                @*<CoinPurchasePanel Coin="CoinModel" />*@
             </div>
             <div class="row mainBorder">
-                <TrendingTweets CoinName="@data.Name" />
+                <TrendingTweets CoinName="@CoinModel.Symbol" />
             </div>
         </div>
         <div class="col-8">
             <div class="row mainBorder">
-                <CoinPriceChart Coin="data" />
+                <CoinPriceChart Coin="CoinModel" />
             </div>
             <div class="row mainBorder">
                 <AuthorizeView>
@@ -43,45 +43,50 @@ else
                     <NotAuthorized>Login in to add to favorites</NotAuthorized>
                 </AuthorizeView>
 
-                <CoinDetails Coin="data" />
+                <CoinDetails Coin="coinGeckoMetaDataModel" />
             </div>
         </div>
     </div>
 }
 
 
-<CreateUserPriceAlert @ref="createUserPriceAlert" coinMarketCapId="data.CoinMarketCapId" UserId="@UserId" />
+@*<CreateUserPriceAlert @ref="createUserPriceAlert" coinMarketCapId="data.CoinMarketCapId" UserId="@UserId" />*@
 
 @code {
     [Parameter]
-    public int Id { get; set; }
+    public string CoinId { get; set; }
+
+
+    public CoinGeckCoinModel CoinModel { get; set; }
+    private CoinGeckoMetaDataModel coinGeckoMetaDataModel { get; set; }
+
     bool loading = false;
-    CoinMarketCapMetaDataModel data { get; set; }
     private CurrencyModel Currency;
     bool isUersFavorite = false;
     CreateUserPriceAlert createUserPriceAlert;
 
     public Coin()
     {
-        data = new();
         Currency = new();
         createUserPriceAlert = new();
+        CoinModel = new();
     }
 
     protected override async Task OnInitializedAsync()
     {
         loading = true;
-        data = await metaData.GetCoinMetaData(Id);
-        var tempCurrencies = await currencyData.GetCurrencyByCoinMarketCapId(Id, ICurrencyData.CurrencyType.Coin);
-        if (tempCurrencies.Count() > 1)
+
+        if (int.TryParse(CoinId, out int coinId))
         {
-            throw new Exception("Expected only one currency models to be returned to encountered multipiple");
+            CoinModel = await coinGeckoData.GetTradeableCoinByCoinMarketCapId(coinId);
         }
-        else if (tempCurrencies.Count() != 0)
+        else
         {
-            Currency = tempCurrencies.First();
-            await SetLogo(data.LogoPath);
+            CoinModel = await coinGeckoData.GetTradeableCoinByCoinGeckoId(CoinId);
         }
+
+        coinGeckoMetaDataModel = await coinGeckoData.GetMetaData(CoinModel.Id);
+        await SetLogo(coinGeckoMetaDataModel.image.thumb);
 
         if (IsAuthenticated)
         {
@@ -89,8 +94,6 @@ else
         }
 
         loading = false;
-        await base.OnInitializedAsync();
-
     }
 
     private async Task HandleFavoriteToggle(bool isChecked)

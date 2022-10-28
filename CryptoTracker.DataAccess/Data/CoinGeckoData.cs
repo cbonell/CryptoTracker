@@ -17,11 +17,16 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
         _memoryCache = memory;
     }
 
-    public async Task<double> GetPriceInUsd(string currency)
+    public async Task<double> GetPriceInUsd(string currency, double amount = 1)
     {
         if (string.IsNullOrWhiteSpace(currency))
         {
             throw new ArgumentNullException(nameof(currency));
+        }
+
+        if (amount <= 0)
+        {
+            amount = 0;
         }
 
         double price;
@@ -45,7 +50,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             _memoryCache.Set(cacheKey, price);
         }
 
-        return price;
+        return price * amount;
     }
 
     public async Task<List<DatePricePairModel>> GetPriceHistory(string currency)
@@ -82,7 +87,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
 
                             responseData.Add(new DatePricePairModel()
                             {
-                                TimeStamp = DateTimeFromUnixTimestampMillis(long.Parse(time)),
+                                TimeStamp = long.Parse(time).DateTimeFromUnixTimestampMillis(),
                                 Price = double.Parse(price)
                             });
                         }
@@ -121,6 +126,72 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             _memoryCache.Set(CacheKey.CoinGeckoGetTrending, coins, cacheEntryOptions);
         }
         return coins;
+    }
+
+    public async Task<CoinGeckoMetaDataModel> GetMetaData(string geckoId)
+    {
+        if (string.IsNullOrWhiteSpace(geckoId))
+        {
+            throw new ArgumentNullException(geckoId);
+        }
+
+        string cacheKey = "GetGeckoMetaData-" + geckoId;
+        CoinGeckoMetaDataModel? responseData = new();
+        if (!_memoryCache.TryGetValue(cacheKey, out responseData))
+        {
+            responseData = new();
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromHours(12));
+
+            RestClient client = new RestClient();
+            RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/coins/{geckoId}");
+            RestResponse response = await client.ExecuteAsync(request);
+            JObject data = JObject.Parse(response.Content!);
+            responseData = JsonConvert.DeserializeObject<CoinGeckoMetaDataModel>(data.ToString());
+            if (responseData == null)
+            {
+                throw new Exception("Failed to retrieve metadata for " + geckoId);
+            }
+
+            _memoryCache.Set(cacheKey, responseData, cacheEntryOptions);
+        }
+
+        if (responseData == null)
+        {
+            throw new Exception("Failed to retrieve metadata for " + geckoId);
+        }
+
+        return responseData;
+    }
+    
+    public async Task<IEnumerable<CoinGeckoMarketModel>> GetMarkets(int page = 1)
+    {
+        string cacheKey = "GetMarkets-" + page;
+        IEnumerable<CoinGeckoMarketModel>? responseData = Enumerable.Empty<CoinGeckoMarketModel>();
+        if (!_memoryCache.TryGetValue(cacheKey, out responseData))
+        {
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromMinutes(30));
+
+            RestClient client = new RestClient();
+            RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page={page}&sparkline=false");
+            RestResponse response = await client.ExecuteAsync(request);
+            JArray data = JArray.Parse(response.Content!);
+            responseData = JsonConvert.DeserializeObject<IEnumerable<CoinGeckoMarketModel>>(data.ToString());
+            if (responseData == null)
+            {
+                throw new Exception("Failed to retrieve markets for page " + page);
+            }
+
+            _memoryCache.Set(cacheKey, responseData, cacheEntryOptions);
+        }
+
+        if (responseData == null)
+        {
+            throw new Exception("Failed to retrieve markets for page " + page);
+        }
+
+        return responseData;
     }
 
     /// <summary>
@@ -164,7 +235,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
 
                         responseData.Add(new OHLCPairModel()
                         {
-                            TimeStamp = DateTimeFromUnixTimestampMillis(long.Parse(time)),
+                            TimeStamp = long.Parse(time).DateTimeFromUnixTimestampMillis(),
                             Open = double.Parse(open),
                             High = double.Parse(high),
                             Low = double.Parse(low),
@@ -223,7 +294,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
 
                             responseData.Add(new VolumePairModel()
                             {
-                                TimeStamp = DateTimeFromUnixTimestampMillis(long.Parse(time)),
+                                TimeStamp = long.Parse(time).DateTimeFromUnixTimestampMillis(),
                                 Volume = double.Parse(volume)
                             });
                         }
@@ -237,9 +308,55 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
         return responseData;
     }
 
-    public static DateTime DateTimeFromUnixTimestampMillis(long millis)
+    public async Task<IEnumerable<CoinGeckCoinModel>> GetTradeableCoins() =>
+        await _db.LoadData<CoinGeckCoinModel, dynamic>(
+                    "[dbo].[GetTradeableCoinGeckoCoins]",
+                    new { });
+
+    public async Task<CoinGeckCoinModel> GetTradeableCoinByCoinMarketCapId(int coinMarketCapId)
     {
-        DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        return UnixEpoch.AddMilliseconds(millis);
+        var result = await _db.LoadData<CoinGeckCoinModel, dynamic>(
+           "[dbo].[GetTradeableCoinGeckoCoinByCoinMarketCapId]",
+           new { CoinMarketCapId = coinMarketCapId });
+
+        return result.FirstOrDefault();
+    }
+
+    public async Task<CoinGeckCoinModel> GetTradeableCoinByCoinGeckoId(string coinGeckoId)
+    {
+        var result = await _db.LoadData<CoinGeckCoinModel, dynamic>(
+           "[dbo].[GetTradeableCoinByCoinGeckoId]",
+           new { Id = coinGeckoId });
+
+        return result.FirstOrDefault();
     }
 }
+
+//RestClient client = new RestClient();
+//RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/coins/list");
+//RestResponse response = await client.ExecuteAsync(request);
+//JArray jArray = JArray.Parse(response.Content!);
+
+//        if (jArray != null && jArray.Count > 0)
+//        {
+//            for (int i = 0; i<jArray.Count; i++)
+//            {
+//                if (jArray[i] != null)
+//                {
+//                    string? id = jArray[i]["id"]?.ToString();
+//string? sym = jArray[i]["symbol"]?.ToString();
+//string? name = jArray[i]["name"]?.ToString();
+
+//                    try
+//                    {
+//                        await _db.SaveData<dynamic>(
+//                      "[dbo].[CreatCoinGeckoCoin]",
+//                      new { Id = id, Symbol = sym, Name = name });
+//                    }
+//                    catch { }
+//                }
+//            }
+//        }
+
+
+
