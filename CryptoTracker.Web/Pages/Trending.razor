@@ -13,11 +13,12 @@
 }
 else
 {
-    <RadzenDataGrid Data="@TrendingCoins" TItem="CoinMarketCapIDMapModel" AllowPaging="true" AllowSorting="true" FilterMode="FilterMode.Simple" AllowFiltering="true">
+    <RadzenDataGrid Data="@TrendingCoins" TItem="CoinGeckoTrendingModel" AllowPaging="true" AllowSorting="true" FilterMode="FilterMode.Simple" AllowFiltering="true">
         <Columns>
-            <RadzenDataGridColumn TItem="CoinMarketCapIDMapModel" Property="Name" Title="Name" CssClass="text-center">
+            <RadzenDataGridColumn TItem="CoinGeckoTrendingModel" Property="MarketCapRank" Title="#" CssClass="text-center"/>
+            <RadzenDataGridColumn TItem="CoinGeckoTrendingModel" Property="Name" Title="Coin" CssClass="text-center">
                 <Template Context="coin">
-                    <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.Id + ".png")"> <a href="/Coin/@coin.Id">@coin.Name</a>
+                    <img class="coin-img" src="@coin.ImagePath"> <a href="/Coin/@coin.Id">@coin.Name <small>(@coin.Symbol)</small></a>
                 </Template>
             </RadzenDataGridColumn>
         </Columns>
@@ -25,7 +26,7 @@ else
 }
 
 @code {
-    List<CoinMarketCapIDMapModel> TrendingCoins { get; set; }
+    List<CoinGeckoTrendingModel> TrendingCoins { get; set; }
     bool loading = false;
     public Trending()
     {
@@ -35,7 +36,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         loading = true;
-        TrendingCoins = await coinMarketCapData.GetTrending();
+        TrendingCoins = await coinGeckoData.GetTrending();
         loading = false;
     }
 }

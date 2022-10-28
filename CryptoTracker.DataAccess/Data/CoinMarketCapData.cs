@@ -64,26 +64,6 @@ public class CoinMarketCapData : DataBase, ICoinMarketCapData
         return new ResponseStatusModel();
     }
 
-    public async Task<List<CoinMarketCapIDMapModel>> GetTrending()
-    {
-        CoinGeckoData geckoData = new CoinGeckoData(_db, _memoryCache);
-        List<string> trendingNames = await geckoData.GetTrending();
-
-        CoinMarketCapData coinMarketCapIDMap = new(_db, _memoryCache);
-        IEnumerable<CoinMarketCapIDMapModel> coins = await coinMarketCapIDMap.GetCoinMap();
-
-        List<CoinMarketCapIDMapModel> trendingCoins = new List<CoinMarketCapIDMapModel>();
-        foreach (CoinMarketCapIDMapModel coin in coins)
-        {
-            if (trendingNames.Contains(coin.Name))
-            {
-                trendingCoins.Add(coin);
-            }
-        }
-
-        return trendingCoins;
-    }
-
     public async Task<CoinMarketCapMetaDataModel> GetCoinMetaData(int id)
     {
         if (id < 0)

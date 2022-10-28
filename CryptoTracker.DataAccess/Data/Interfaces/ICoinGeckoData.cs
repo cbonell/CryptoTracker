@@ -18,6 +18,6 @@
         Task<CoinGeckCoinModel> GetTradeableCoinByCoinGeckoId(string coinGeckoId);
         Task<CoinGeckCoinModel> GetTradeableCoinByCoinMarketCapId(int coinMarketCapId);
         Task<IEnumerable<CoinGeckCoinModel>> GetTradeableCoins();
-        Task<List<string>> GetTrending();
+        Task<List<CoinGeckoTrendingModel>> GetTrending();
     }
 }

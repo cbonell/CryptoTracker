@@ -101,9 +101,9 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
         return responseData;
     }
 
-    public async Task<List<string>> GetTrending()
+    public async Task<List<CoinGeckoTrendingModel>> GetTrending()
     {
-        List<string> coins = new();
+        List<CoinGeckoTrendingModel> coins = new();
         if (!_memoryCache.TryGetValue(CacheKey.CoinGeckoGetTrending, out coins))
         {
             coins = new();
@@ -113,18 +113,22 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             RestClient client = new RestClient();
             RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/search/trending");
             RestResponse response = await client.ExecuteAsync(request);
-            JObject data = JObject.Parse(response.Content!);
-
-            if (data != null)
+            JObject data = JObject.Parse(response.Content.ToString()!);
+            JArray jArray = JArray.Parse(data["coins"].ToString());
+            foreach (var item in jArray)
             {
-                foreach (var i in data.First.First)
+                coins.Add(new CoinGeckoTrendingModel()
                 {
-                    coins.Add(i.First.First["name"].ToString());
-                }
+                    Name = item["item"]["name"].ToString(),
+                    Id = item["item"]["id"].ToString(),
+                    ImagePath = item["item"]["thumb"].ToString(),
+                    Symbol = item["item"]["symbol"].ToString(),
+                    MarketCapRank = int.Parse(item["item"]["market_cap_rank"].ToString())
+                });
             }
-
             _memoryCache.Set(CacheKey.CoinGeckoGetTrending, coins, cacheEntryOptions);
         }
+
         return coins;
     }
 
@@ -163,7 +167,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
 
         return responseData;
     }
-    
+
     public async Task<IEnumerable<CoinGeckoMarketModel>> GetMarkets(int page = 1)
     {
         string cacheKey = "GetMarkets-" + page;
