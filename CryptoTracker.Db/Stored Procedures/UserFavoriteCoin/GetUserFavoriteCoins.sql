@@ -8,7 +8,7 @@ AS
 		c.[Name] CoinName
 	FROM
 		UserFavoriteCoin ufc
-		INNER JOIN Currency c ON c.Id = ufc.CurrencyId
+		INNER JOIN CoinGeckoCoin c ON c.Id = ufc.CoinGeckoId
 	WHERE
 		ufc.UserId = @UserId
 RETURN 0

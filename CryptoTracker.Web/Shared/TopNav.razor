@@ -1,5 +1,5 @@
 ﻿@using CryptoTracker.Web.Components
-<div class="topNav">
+<div class="main-container">
     <div class="top-row px-4">
         <div class="nav-item px-3">
             <NavLink class="nav-link grow" href="/Coins" Match="NavLinkMatch.All">
@@ -18,21 +18,23 @@
         </div>
         <AuthorizeView>
             <Authorized>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link grow" href="/MyWallet" Match="NavLinkMatch.All">
-                <span aria-hidden="true" class="fa-solid fa-vault"></span> My Wallet
-            </NavLink>
-        </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link grow" href="/MyWallet" Match="NavLinkMatch.All">
+                        <span aria-hidden="true" class="fa-solid fa-vault"></span> My Wallet
+                    </NavLink>
+                </div>
             </Authorized>
         </AuthorizeView>
         @*<div class="nav-item px-3">*@
-            <a id="darkmode-toggle" class="grow">
-                <i class="fa fa-moon fa-2x darkmode-toggle-icon"></i>
-                <i class="fa fa-sun fa-2x lightmode-toggle-icon"></i>
-            </a>
+        <a id="darkmode-toggle" class="grow">
+            <i class="fa fa-moon fa-2x darkmode-toggle-icon"></i>
+            <i class="fa fa-sun fa-2x lightmode-toggle-icon"></i>
+        </a>
+
         @*</div>*@
         <div class="nav-item px-3">
             <AccessControl />
         </div>
     </div>
 </div>
+<TickerScoll/>
