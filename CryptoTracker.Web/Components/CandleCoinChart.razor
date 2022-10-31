@@ -1,0 +1,22 @@
+﻿@inject IJSRuntime js
+@inject ICoinGeckoData geckoData
+
+<canvas id="candleCanvas"></canvas>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public CoinGeckCoinModel Coin { get; set; }
+    List<OHLCPairModel> candleData;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    protected async Task LoadData()
+    {
+        candleData = await geckoData.GetOHLCPairs(Coin.Id);
+        await js.InvokeVoidAsync("makeCandleChart", "candleCanvas", candleData);
+    }
+}

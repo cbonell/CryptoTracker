@@ -1,4 +1,6 @@
-﻿<input class="star" type="checkbox" checked="@(!ticked)" @onchange="Toggle" title="bookmark page">
+﻿<button type="button" class="btn btn-primary" @onclick="Toggle">
+    <i class="fa-@(ticked ? "solid" : "regular") fa-star"></i>
+</button>
 
 @code {
     [Parameter]
@@ -9,7 +11,7 @@
     private async Task Toggle()
     {
         ticked = !ticked;
-        if(OnToggle.HasDelegate)
+        if (OnToggle.HasDelegate)
         {
             await OnToggle.InvokeAsync(ticked);
         }

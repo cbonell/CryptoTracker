@@ -12,12 +12,12 @@
             <Columns>
                 <RadzenDataGridColumn TItem="UserFavoriteCoinModel" Property="CoinName" Title="Coin Name" CssClass="text-center">
                     <Template Context="coin">
-                        <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.CoinMarketCapId + ".png")"> <a href="/Coin/@coin.CoinMarketCapId" target="_blank">@coin.CoinName</a>
+                        @*<img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.CoinMarketCapId + ".png")">*@ <a href="/Coin/@coin.CoinGeckoId" target="_blank">@coin.Name</a>
                     </Template>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="UserFavoriteCoinModel" Property="PurchaseDate" CssClass="text-center">
                     <Template Context="coin">
-                        <button @onclick="(async () => await RemoveFavorite(coin.CurrencyId))">Remove Favorite</button>
+                        <button @onclick="(async () => await RemoveFavorite(coin.CoinGeckoId))">Remove Favorite</button>
                     </Template>
                 </RadzenDataGridColumn>
             </Columns>
@@ -50,10 +50,10 @@
         }
     }
 
-    private async Task RemoveFavorite(int currencyId)
+    private async Task RemoveFavorite(string geckoId)
     {
-        await favoriteCoinData.RemoveUserFavoriteCoin(userId, currencyId);
-        userFavoriteCoins = userFavoriteCoins.Where(x => x.CurrencyId != currencyId);
+        await favoriteCoinData.RemoveUserFavoriteCoin(userId, geckoId);
+        userFavoriteCoins = userFavoriteCoins.Where(x => x.CoinGeckoId != geckoId);
         StateHasChanged();
     }
 }

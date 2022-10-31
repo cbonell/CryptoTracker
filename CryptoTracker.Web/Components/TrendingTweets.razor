@@ -1,8 +1,9 @@
-﻿<h3 class="text-center">Trending Tweets</h3>
-<div class="col" id="tweet-container">
+﻿<div class="container secondary-container scroll-y">
+    <h3 class="">Trending #@CoinName Tweets</h3>
+
     @foreach (TweetSearchModel tweet in twitterSearchModels)
     {
-        <div class="grow-sm">
+        <div class="grow-sm tweet-container">
             <div class="row">
                 <div class="col-2">
                     <a href="@tweet.User.UserUrl" target="_blank">
@@ -14,7 +15,7 @@
                         </div>
                     </a>
                 </div>
-                <div class="col-1">
+                <div class="col-4">
                     <span> <a href="@tweet.User.UserUrl" target="_blank">@tweet.User.Name </a></span>
                     <small>
                         @@<span>@tweet.User.ScreenName</span>
@@ -34,9 +35,9 @@
         </div>
     }
 
-    @if(twitterSearchModels != null && twitterSearchModels.Count() == 0)
+    @if (twitterSearchModels != null && twitterSearchModels.Count() == 0)
     {
-        <p>No twitter data found</p>    
+        <p>No twitter data found</p>
     }
 </div>
 @code {

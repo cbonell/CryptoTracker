@@ -3,7 +3,7 @@
 :root[color-mode="dark"] {
     --base-background-color: #101014;
     --base-accent-color: #5E9ED6;
-    --hover-link-color: #F4F1D0;
+    --hover-link-color: #6305dc; /*#F4F1D0;*/
     --secondary-background-color: #16171d;
     --tertiary-background-color: #1f2128;
     --base-font-color: var(--hover-link-color);
@@ -63,6 +63,7 @@ html, body {
     color: var(--base-font-color);
     font-size: var(--min-font-size); /*clamp(var(--min-font-size),calc(50% + 1vw),var(--max-font-size));*/
     font-family: var(--base-font-family);
+    font-weight: 800;
     line-height: var(--base-line-height);
     /*-webkit-text-size-adjust: 100%;*/
     background: var(--base-background-color);
@@ -85,8 +86,75 @@ html, body {
     color: var(--red-color);
 }
 
-/*radzen datagrid styling*/
+.large-text {
+    font-size: var(--medium-font-size);
+}
 
+.arrow-down {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid var(--red-color);
+    position:relative;
+    margin-right: .2rem;
+    top: 50%;
+}
+
+.arrow-up {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid var(--green-color);
+    position: relative;
+    margin-right: .2rem;
+    top: -50%;
+}
+
+.main-container {
+    background-color: var(--tertiary-background-color);
+    border-width: 1vw;
+    border-color: var(--tertiary-background-color);
+    border-left: none;
+    /*width: 99vw;*/
+    border-radius: 1em;
+    margin-bottom: 1em;
+}
+
+.tweet-container {
+    background-color: var(--tertiary-background-color);
+    border-width: 1vw;
+    border-color: var(--tertiary-background-color);
+    border-left: none;
+    border-radius: 1em;
+    margin-bottom: 1em;
+    margin-top: 1em;
+    overflow: hidden;
+}
+
+.secondary-container {
+    background-color: var(--base-background-color);
+    border-width: 1vw;
+    border-color: var(--base-background-color);
+    border-left: none;
+    border-radius: 1em;
+    margin-bottom: 1em;
+    margin-top: 1em;
+    margin-left: 1em;
+}
+
+.scroll-y {
+    height: 55vh;
+    overflow-y: auto;
+    color: white;
+}
+
+.width-md{
+    width:50vw;
+}
+
+/*radzen datagrid styling*/
 th.rz-unselectable-text.rz-sortable-column {
     background-color: var(--secondary-background-color);
     text-align: center;
@@ -249,6 +317,9 @@ a, .btn-link {
     display: inline-block;
     margin: 4px 2px;
     border-radius: 16px;
+    /*display: inline-block;*/
+    width: fit-content;
+    height: fit-content;
 }
 
 .text-center {
@@ -262,12 +333,6 @@ a, .btn-link {
 .coin-img {
     height: 32px;
     width: 32px;
-}
-
-#tweet-container {
-    height: 55vh;
-    overflow-y: auto;
-    color: white;
 }
 
 .mainBorder {

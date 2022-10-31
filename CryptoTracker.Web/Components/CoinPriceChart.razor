@@ -20,31 +20,23 @@
 
 <div class="chartWrapper">
     <div id="priceWrapper">
-        <div id="linechart_div" style="width: 62vw; height: 20vh;"></div>
+        <div id="linechart_div" ></div>
     </div>
-    <div id="chart_div" style="width: 62vw; height: 20vh;"></div>
-    @*<div class="mainBorder">*@
-    <canvas style="width: 62vw; height: 40vh;" id="testcanvas"></canvas> @*style="display: @(vis ? "block" : "none")"*@
-    @*<canvas width="1280" height="720" id="testcanvas"></canvas> style="display: @(vis ? "block" : "none")"*@
-    @*</div>*@
+    <div id="chart_div"></div>
 </div>
 
 @code {
-
-
     [Parameter]
     [EditorRequired]
     public CoinGeckCoinModel Coin { get; set; }
 
-    List<OHLCPairModel> candleData;
     List<VolumePairModel> barData;
     List<DatePricePairModel> priceData;
+    int numDays = 7;
 
     public CoinPriceChart()
     {
         Coin = new();
-        candleData = new();
-        barData = new();
         priceData = new();
     }
 
@@ -76,9 +68,7 @@
     protected async Task LoadData()
     {
         priceData = await geckoData.GetPriceHistory(Coin.Id);
-        barData = await geckoData.GetCoinVolume(Coin.Id, 7);
-        candleData = await geckoData.GetOHLCPairs(Coin.Id);
-        await js.InvokeVoidAsync("makeCandleChart", "testcanvas", candleData);
+        barData = await geckoData.GetCoinVolume(Coin.Id, numDays);
         await js.InvokeVoidAsync("makeBarChart", "chart_div", barData);
         await js.InvokeVoidAsync("makeLineChart", "linechart_div", priceData);
     }
