@@ -2,6 +2,10 @@
 @using CryptoTracker.DataAccess.Auth0
 @inject ICurrencyData currencyData
 @inject IPriceAlertData priceAlertData
+<button class="btn btn-primary" @onclick="createModal.ToggleDisplay">
+    <i class="fa-@(hasAlert ? "solid" : "regular") fa-bell"></i>
+</button>
+
 <Modal @ref="createModal" OnSave="CreateAlert" Title="@($"Create alert for {CoinGeckId}")">
     Alert Type
     <select @bind="inputAlertType">
@@ -10,7 +14,7 @@
     </select>
 
     Alert Price
-    <input type="number" @bind="inputAlertPrice"/>
+    <input type="number" @bind="inputAlertPrice" />
 </Modal>
 @code {
     [Parameter]
@@ -19,6 +23,7 @@
     [EditorRequired]
     public string CoinGeckId { get; set; }
     Modal createModal;
+    bool hasAlert = false;
 
     public CreateUserPriceAlert()
     {
@@ -29,15 +34,16 @@
     int inputAlertType;
     double inputAlertPrice;
 
-    public void Open()
+    protected override async Task OnParametersSetAsync()
     {
-        createModal.ToggleDisplay();
+        var userAlerts = await priceAlertData.GetUserAlerts(UserId);
+        hasAlert = userAlerts.Any(x => x.CoinGeckoId == CoinGeckId);
     }
 
     private async Task CreateAlert()
     {
-
         UserMetaDataContainer user = await Auth0.GetUserMetaData(UserId);
         await priceAlertData.CreatePriceAlert(UserId, CoinGeckId, user.Email, (AlertType)inputAlertType, inputAlertPrice);
+        hasAlert = true;
     }
 }

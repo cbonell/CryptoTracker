@@ -7,17 +7,17 @@
 
 <AuthorizeView>
     <Authorized>
-        <h3>Favorites</h3>
+        <h3 class="text-center">Favorites</h3>
         <RadzenDataGrid Data="@userFavoriteCoins" TItem="UserFavoriteCoinModel" AllowPaging="true" AllowSorting="true" PageSize="15">
             <Columns>
-                <RadzenDataGridColumn TItem="UserFavoriteCoinModel" Property="CoinName" Title="Coin Name" CssClass="text-center">
+                <RadzenDataGridColumn TItem="UserFavoriteCoinModel" Property="Name" Title="Coin Name" CssClass="text-center">
                     <Template Context="coin">
-                        @*<img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.CoinMarketCapId + ".png")">*@ <a href="/Coin/@coin.CoinGeckoId" target="_blank">@coin.Name</a>
+                        <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.CoinMarketCapId + ".png")"> <a href="/Coin/@coin.CoinGeckoId">@coin.Name</a>
                     </Template>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="UserFavoriteCoinModel" Property="PurchaseDate" CssClass="text-center">
                     <Template Context="coin">
-                        <button @onclick="(async () => await RemoveFavorite(coin.CoinGeckoId))">Remove Favorite</button>
+                        <button class="btn btn-danger" @onclick="(async () => await RemoveFavorite(coin.CoinGeckoId))">Remove Favorite</button>
                     </Template>
                 </RadzenDataGridColumn>
             </Columns>

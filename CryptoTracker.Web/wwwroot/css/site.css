@@ -241,7 +241,7 @@ html, body {
 
 
 .img-ticker {
-    animation: ticker-kf 30s linear infinite;
+    animation: ticker-kf 50s linear infinite;
 }
 
     .img-ticker:hover {

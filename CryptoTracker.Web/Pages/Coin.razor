@@ -110,9 +110,7 @@ else
                         @coinGeckoMetaDataModel.market_data.price_change_24h_in_currency.eth ETH
                     </div>
                     <div class="col">
-                        <button class="btn btn-primary">
-                            <i class="fa-regular fa-bell"></i>
-                        </button>
+                        <CreateUserPriceAlert @ref="createUserPriceAlert" CoinGeckId="@CoinModel.Id" UserId="@UserId" />
                         <StarInput ticked="@isUserFavorite" OnToggle="HandleFavoriteToggle" />
                     </div>
                 </div>
@@ -198,9 +196,15 @@ else
         </div>
 
     </div>
+    <div class="container main-container">
+        <div class="row">
+            <div class="col-11">
+                <CoinDetails Coin="coinGeckoMetaDataModel"/>
+            </div>
+        </div>
+    </div>
 }
 
-@*<CreateUserPriceAlert @ref="createUserPriceAlert" coinMarketCapId="data.CoinMarketCapId" UserId="@UserId" />*@
 
 @code {
     [Parameter]

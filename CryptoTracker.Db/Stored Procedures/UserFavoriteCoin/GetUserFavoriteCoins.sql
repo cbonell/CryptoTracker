@@ -5,7 +5,7 @@ AS
 		ufc.*,
 		c.CoinMarketCapId,
 		c.Id CurrencyId,
-		c.[Name] CoinName
+		c.[Name] [Name]
 	FROM
 		UserFavoriteCoin ufc
 		INNER JOIN CoinGeckoCoin c ON c.Id = ufc.CoinGeckoId
