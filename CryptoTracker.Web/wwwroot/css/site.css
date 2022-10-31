@@ -224,12 +224,21 @@ html, body {
     }
 }
 
-.paused {
-    -webkit-animation-play-state: paused;
-    -moz-animation-play-state: paused;
-    -o-animation-play-state: paused;
-    animation-play-state: paused;
+.fadeIn {
+    animation: fadeInRight 1s ease-in-out;
 }
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(300px);
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
 
 .img-ticker {
     animation: ticker-kf 30s linear infinite;
