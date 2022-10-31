@@ -200,39 +200,6 @@ else
     </div>
 }
 
-
-@*
-    <div class="row">
-    <div class="col-sm-4">
-    <div class="row mainBorder">
-    @if (createUserPriceAlert != null && IsAuthenticated)
-    {
-    <button @onclick="createUserPriceAlert.Open">Create Alert</button>
-    }
-    <CoinPurchasePanel Coin="CoinModel" />
-    </div>
-    <div class="row mainBorder">
-    <TrendingTweets CoinName="@CoinModel.Symbol" />
-    </div>
-    </div>
-    <div class="col-8">
-    <div class="row mainBorder">
-    <CoinPriceChart Coin="CoinModel" />
-    </div>
-    <div class="row mainBorder">
-    <AuthorizeView>
-    <Authorized>
-    </Authorized>
-    <NotAuthorized>Login in to add to favorites</NotAuthorized>
-    </AuthorizeView>
-
-    <CoinDetails Coin="coinGeckoMetaDataModel" />
-    </div>
-    </div>
-    </div>*@
-
-
-
 @*<CreateUserPriceAlert @ref="createUserPriceAlert" coinMarketCapId="data.CoinMarketCapId" UserId="@UserId" />*@
 
 @code {
@@ -257,29 +224,16 @@ else
         coinGeckoMetaDataModel = new();
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        base.OnParametersSet();
+        await LoadData();
+    }
+
     protected override async Task OnInitializedAsync()
     {
-        loading = true;
         await base.OnInitializedAsync();
-        if (int.TryParse(CoinId, out int coinId))
-        {
-            CoinModel = await coinGeckoData.GetTradeableCoinByCoinMarketCapId(coinId);
-        }
-        else
-        {
-            CoinModel = await coinGeckoData.GetTradeableCoinByCoinGeckoId(CoinId);
-        }
-
-        coinGeckoMetaDataModel = await coinGeckoData.GetMetaData(CoinModel.Id);
-        await SetLogo(coinGeckoMetaDataModel.image.thumb);
-
-        if (IsAuthenticated)
-        {
-            isUserFavorite = await favoriteCoinData.CheckIfCoinIsUsersFavorite(UserId, CoinModel.Id);
-        }
-        //await LoadData();
-        loading = false;
-        await base.OnInitializedAsync();
+        await LoadData();
     }
 
     private async Task HandleFavoriteToggle(bool isChecked)
@@ -318,11 +272,24 @@ else
 
     protected async Task LoadData()
     {
-        priceData = await coinGeckoData.GetPriceHistory(CoinModel.Name);
-        barData = await coinGeckoData.GetCoinVolume(CoinModel.Name, 7);
-        candleData = await coinGeckoData.GetOHLCPairs(CoinModel.Name);
-        await js.InvokeVoidAsync("makeCandleChart", "testcanvas", candleData);
-        await js.InvokeVoidAsync("makeBarChart", "chart_div", barData);
-        await js.InvokeVoidAsync("makeLineChart", "linechart_div", priceData);
+        loading = true;
+        if (int.TryParse(CoinId, out int coinId))
+        {
+            CoinModel = await coinGeckoData.GetTradeableCoinByCoinMarketCapId(coinId);
+        }
+        else
+        {
+            CoinModel = await coinGeckoData.GetTradeableCoinByCoinGeckoId(CoinId);
+        }
+
+        coinGeckoMetaDataModel = await coinGeckoData.GetMetaData(CoinModel.Id);
+        await SetLogo(coinGeckoMetaDataModel.image.thumb);
+
+        if (IsAuthenticated)
+        {
+            isUserFavorite = await favoriteCoinData.CheckIfCoinIsUsersFavorite(UserId, CoinModel.Id);
+        }
+        loading = false;
     }
+
     }
