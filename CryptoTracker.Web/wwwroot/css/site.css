@@ -96,9 +96,20 @@ html, body {
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
     border-top: 5px solid var(--red-color);
-    position:relative;
+    position: relative;
     margin-right: .2rem;
     top: 50%;
+}
+
+.arrow-down-flex {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid var(--red-color);
+    position: relative;
+    margin-right: .2rem;
+    top: 60%;
 }
 
 .arrow-up {
@@ -110,6 +121,17 @@ html, body {
     position: relative;
     margin-right: .2rem;
     top: -50%;
+}
+
+.arrow-up-flex {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid var(--green-color);
+    /*position: relative;*/
+    margin-right: .2rem;
+    top: -60%;
 }
 
 .main-container {
@@ -150,10 +172,79 @@ html, body {
     color: white;
 }
 
-.width-md{
-    width:50vw;
+.width-md {
+    width: 50vw;
 }
 
+.width-sm {
+    width: 10vw;
+}
+
+.ticker-item {
+    width: 10vw;
+    flex: 0 0 150px;
+    height: 100px;
+    flex: 0 0 150px;
+    justify-content: center;
+    align-items: center;
+    /*height: 100vw;*/
+}
+
+.flex-container {
+    list-style: none;
+    padding: 0;
+    margin: 12px;
+    white-space: nowrap;
+    display: flex;
+    /*overflow-x: auto;*/
+    padding: 12px;
+}
+
+
+
+.flex-item {
+    width: 100vw;
+    position: relative;
+    /*flex: 0 0 150px;*/
+    justify-content: center;
+    align-items: center;
+}
+
+    .flex-item > .arrow-down {
+        color: blue;
+    }
+
+@keyframes ticker-kf {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+
+    100% {
+        transform: translate3d(-100rem, 0, 0);
+    }
+}
+
+.paused {
+    -webkit-animation-play-state: paused;
+    -moz-animation-play-state: paused;
+    -o-animation-play-state: paused;
+    animation-play-state: paused;
+}
+
+.img-ticker {
+    animation: ticker-kf 25s linear infinite;
+}
+
+    .img-ticker:hover {
+        -webkit-animation-play-state: paused;
+        -moz-animation-play-state: paused;
+        -o-animation-play-state: paused;
+        animation-play-state: paused;
+    }
+
+.img-small {
+    width: 2em;
+}
 /*radzen datagrid styling*/
 th.rz-unselectable-text.rz-sortable-column {
     background-color: var(--secondary-background-color);

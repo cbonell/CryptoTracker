@@ -316,26 +316,6 @@ else
         await js.InvokeVoidAsync("setIcon", path);
     }
 
-    private string GetPriceArrowClass(double num)
-    {
-        if (num >= 0)
-        {
-            return "arrow-up";
-        }
-
-        return "arrow-down";
-    }
-
-    private string GetPriceColorClass(double num)
-    {
-        if (num >= 0)
-        {
-            return "green";
-        }
-
-        return "red";
-    }
-
     protected async Task LoadData()
     {
         priceData = await coinGeckoData.GetPriceHistory(CoinModel.Name);

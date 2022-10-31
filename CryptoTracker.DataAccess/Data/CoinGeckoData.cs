@@ -117,16 +117,40 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             JArray jArray = JArray.Parse(data["coins"].ToString());
             foreach (var item in jArray)
             {
+                CoinGeckoMetaDataModel coinGeckoMetaData = await GetMetaData(item["item"]["id"].ToString());
+
                 coins.Add(new CoinGeckoTrendingModel()
                 {
                     Name = item["item"]["name"].ToString(),
                     Id = item["item"]["id"].ToString(),
                     ImagePath = item["item"]["thumb"].ToString(),
                     Symbol = item["item"]["symbol"].ToString(),
-                    MarketCapRank = int.Parse(item["item"]["market_cap_rank"].ToString())
+                    MarketCapRank = int.Parse(item["item"]["market_cap_rank"].ToString()),
+                    PriceChange24hr = coinGeckoMetaData.market_data.price_change_24h ?? 0,
+                    CurrentPriceUsd = coinGeckoMetaData.market_data.current_price.usd ?? 0,
                 });
             }
-            _memoryCache.Set(CacheKey.CoinGeckoGetTrending, coins, cacheEntryOptions);
+
+            IEnumerable<CoinGeckoMarketModel> coinGeckoMarketModels = await GetMarkets();
+            int i = 0;
+            foreach (CoinGeckoMarketModel coinGeckoMarketModel in coinGeckoMarketModels)
+            {
+                if(i++ >= 15)
+                {
+                    break;
+                }
+                coins.Add(new CoinGeckoTrendingModel()
+                {
+                    Name = coinGeckoMarketModel.Name,
+                    Id = coinGeckoMarketModel.Id,
+                    ImagePath = coinGeckoMarketModel.image,
+                    Symbol = coinGeckoMarketModel.Symbol,
+                    MarketCapRank = coinGeckoMarketModel.market_cap_rank,
+                    PriceChange24hr = coinGeckoMarketModel.price_change_24h,
+                    CurrentPriceUsd = coinGeckoMarketModel.current_price,
+                });
+            }
+            _memoryCache.Set(CacheKey.CoinGeckoGetTrending, coins.OrderByDescending(x => x.Id), cacheEntryOptions);
         }
 
         return coins;

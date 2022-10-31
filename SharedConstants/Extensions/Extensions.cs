@@ -12,5 +12,23 @@ public static class Extensions
     public static string WithThousandsSeparator(this double number) => number.ToString("n0", CultureInfo.InvariantCulture);
     public static string WithThousandsSeparator(this long? number) => number?.ToString("n0", CultureInfo.InvariantCulture);
     public static string WithThousandsSeparator(this long number) => number.ToString("n0", CultureInfo.InvariantCulture);
+    public static string GetPriceArrowClass(double num)
+    {
+        if (num >= 0)
+        {
+            return "arrow-up";
+        }
 
+        return "arrow-down";
+    }
+
+    public static string GetPriceColorClass(double num)
+    {
+        if (num >= 0)
+        {
+            return "green";
+        }
+
+        return "red";
+    }
 }

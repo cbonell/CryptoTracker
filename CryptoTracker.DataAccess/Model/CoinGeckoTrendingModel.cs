@@ -10,4 +10,6 @@ public class CoinGeckoTrendingModel : CoinGeckCoinModel
 
     [JsonProperty("thumb")]
     public string ImagePath { get; set; }
+    public double PriceChange24hr { get; set; }
+    public double CurrentPriceUsd { get; set; }
 }
