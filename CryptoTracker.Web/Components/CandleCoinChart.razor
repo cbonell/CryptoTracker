@@ -1,22 +1,46 @@
 ﻿@inject IJSRuntime js
 @inject ICoinGeckoData geckoData
 
-<canvas id="candleCanvas"></canvas>
+<EditForm Model="rangeInput">
+    <InputRadioGroup @bind-Value="rangeInput.Name">
+        @foreach (string type in ChartUserTimeOptions)
+        {
+            <InputRadio Value="type" class="form-check-input" />
+            <label class="form-check-label">
+                @type
+            </label>
+        }
+    </InputRadioGroup>
+    <button type="button" @onclick="LoadData" class="btn btn-primary">Load</button>
+</EditForm>
+
+<div class="row">
+    <div class="col">
+        <canvas id="candleCanvas"></canvas>
+    </div>
+</div>
+
 
 @code {
+    public class RangeInput
+    {
+        public string Name { get; set; } = "1d";
+    }
+
     [Parameter]
     [EditorRequired]
     public CoinGeckCoinModel Coin { get; set; }
     List<OHLCPairModel> candleData;
-
+    RangeInput rangeInput = new RangeInput();
     protected override async Task OnInitializedAsync()
     {
+
         await LoadData();
     }
 
     protected async Task LoadData()
     {
-        candleData = await geckoData.GetOHLCPairs(Coin.Id);
+        candleData = await geckoData.GetOHLCPairs(Coin.Id, rangeInput.Name);
         await js.InvokeVoidAsync("makeCandleChart", "candleCanvas", candleData);
     }
 }

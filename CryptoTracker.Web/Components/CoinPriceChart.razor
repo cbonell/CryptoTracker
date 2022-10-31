@@ -1,5 +1,6 @@
 ﻿@using System.Globalization
 @using CryptoTracker.DataAccess.CoinGeckoAccess
+@using static CryptoTracker.Web.Components.CandleCoinChart
 @inject ICoinGeckoData geckoData
 @inject IJSRuntime js
 
@@ -18,9 +19,22 @@
     <div id="canvasParent"></div>
 }
 
+
 <div class="chartWrapper">
+    <EditForm Model="rangeInput">
+        <InputRadioGroup @bind-Value="rangeInput.Name">
+            @foreach (string type in ChartUserTimeOptions)
+            {
+                <InputRadio Value="type" class="form-check-input" />
+                <label class="form-check-label">
+                    @type
+                </label>
+            }
+        </InputRadioGroup>
+        <button type="button" @onclick="LoadData" class="btn btn-primary">Load</button>
+    </EditForm>
     <div id="priceWrapper">
-        <div id="linechart_div" ></div>
+        <div id="linechart_div"></div>
     </div>
     <div id="chart_div"></div>
 </div>
@@ -30,12 +44,14 @@
     [EditorRequired]
     public CoinGeckCoinModel Coin { get; set; }
 
+    RangeInput rangeInput;
     List<VolumePairModel> barData;
     List<DatePricePairModel> priceData;
     int numDays = 7;
 
     public CoinPriceChart()
     {
+        rangeInput = new();
         Coin = new();
         priceData = new();
     }
@@ -67,8 +83,8 @@
 
     protected async Task LoadData()
     {
-        priceData = await geckoData.GetPriceHistory(Coin.Id);
-        barData = await geckoData.GetCoinVolume(Coin.Id, numDays);
+        priceData = await geckoData.GetPriceHistory(Coin.Id, rangeInput.Name);
+        barData = await geckoData.GetCoinVolume(Coin.Id, rangeInput.Name);
         await js.InvokeVoidAsync("makeBarChart", "chart_div", barData);
         await js.InvokeVoidAsync("makeLineChart", "linechart_div", priceData);
     }

@@ -28,7 +28,7 @@ public class Constants
     public static readonly string InvalidQuantity = "Recieved invalid quantity";
     public static readonly string InvalidCoinMarketCapId = "Recieved invalid coin market cap Id";
 
-
+    public static readonly string[] ChartUserTimeOptions = { "7d", "1d", "1hr" };
     public enum CacheKey
     {
         GetCoinMap,
