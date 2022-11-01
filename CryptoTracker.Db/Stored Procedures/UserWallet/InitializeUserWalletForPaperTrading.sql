@@ -4,10 +4,8 @@
 AS
 	IF(NOT EXISTS(SELECT TOP 1 * FROM UserWallet WHERE UserId = @UserId))
 	BEGIN 
-	DECLARE @StartingCurrency INT = (SELECT Id from Currency where Symbol = 'USD');
-
 		INSERT INTO
-			UserWallet(UserId, CurrencyId, Quantity)
-		VALUES(@UserId, @StartingCurrency, @StartingAmount)
+			UserWallet(UserId, CoinGeckoId, Quantity)
+		VALUES(@UserId, 'usd', @StartingAmount)
 	END
 RETURN 0

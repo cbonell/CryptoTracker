@@ -3,15 +3,13 @@
 AS
 	SELECT
 		uw.*,
-		c.CurrencyTypeId,
 		c.[Name] CurrencyName,
 		c.Symbol,
-		c.[Sign],
+		c.Symbol,
 		c.CoinMarketCapId
 	FROM
 		UserWallet uw
-		INNER JOIN Currency c ON c.Id = uw.CurrencyId
-		INNER JOIN CurrencyType ct ON ct.Id = c.CurrencyTypeId
+		INNER JOIN CoinGeckoCoin c ON c.Id = uw.CoinGeckoId
 	WHERE
 		UserId = @UserId
 RETURN 0

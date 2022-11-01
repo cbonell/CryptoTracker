@@ -82,7 +82,7 @@
         {
             if (UserWallet != null && UserWallet.Count() > 0)
             {
-                return UserWallet.Where(x => x.CurrencyTypeId == (int)ICurrencyData.CurrencyType.Fiat);
+                return UserWallet.Where(x => x.CoinGeckoId == "usd");
             }
 
             return Enumerable.Empty<UserWalletModel>();
@@ -95,7 +95,7 @@
         {
             if (UserWallet != null && UserWallet.Count() > 0)
             {
-                return UserWallet.Where(x => x.CurrencyTypeId == (int)ICurrencyData.CurrencyType.Coin);
+                return UserWallet.Where(x => x.CoinGeckoId != "usd");
             }
 
             return Enumerable.Empty<UserWalletModel>();
