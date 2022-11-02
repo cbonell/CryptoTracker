@@ -2,47 +2,127 @@ using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using CryptoTracker.DataAccess.CryptoFacilitiesDataAccess;
 
 namespace CryptoTracker.DataAccess.MLModelAccess;
 
 public class MLModelData : IMLModelData
 {
-    
-	public async Task<double> GetPricePrediction()
+    Dictionary<string, int> supportedModels = new Dictionary<string, int> { 
+        { "btc", 2 },
+        { "xbt", 2 } };
+
+    Dictionary<string, double> normalizationValues = new Dictionary<string, double>
     {
-        // TODO: update path to v1/models/model/bitcoin:predict
-        var client = new RestClient("http://bitcoin-hourly-api.eastus.azurecontainer.io:8501/v1/models/model:predict");
-        var request = new RestRequest()
+        {"btc-highMax",  69000.0 },
+        {"xbt-highMax", 69000.0 },
+        {"btc-lowMax",  68447.0 },
+        {"xbt-lowMax", 68447.0 },
+        {"btc-closeMax", 68627.01 },
+        {"xbt-closeMax", 68627.01 },
+        {"btc-highMin",  3158.34 },
+        {"xbt-highMin", 3158.34 },
+        {"btc-lowMin",  3122.28 },
+        {"xbt-lowMin", 3122.28 },
+        {"btc-closeMin", 3139.76 },
+        {"xbt-closeMin", 3139.76 },
+    };
+        
+	public async Task<List<DatePricePairModel>> GetPricePrediction(string coinSymbol)
+    {
+        coinSymbol = coinSymbol.ToLower();
+        List<DatePricePairModel> predictions = new List<DatePricePairModel>();
+        if (supportedModels.ContainsKey(coinSymbol))
         {
-            Method = Method.Post
-        };
+            int model = supportedModels[coinSymbol];
+            CryptoFacilitiesData cryptoFacilitiesData = new CryptoFacilitiesData();
+            List<OHLCPairModel> features = await cryptoFacilitiesData.GetOHLCPairs(coinSymbol: coinSymbol, days: 7);
+            features = MinMaxNormalize(features, coinSymbol, normalizationValues);
+            List<List<List<double>>> body = Tensorize(features);
 
-        List<List<List<double>>> body = new();
-        List<List<double>> temp = new();
-        List<double> temp2 = new();
-        temp2.Add(0.0);
-        for (int i = 0; i < 31; i++)
-        {
-            temp.Add(temp2);
-        }
-        body.Add(temp);
-
-        request.AddHeader("content-type", "application/json");
-        request.AddJsonBody(
-            new
+            var client = new RestClient($"http://models.eastus.azurecontainer.io:8501/v1/models/crypto/versions/{model}:predict");
+            var request = new RestRequest()
             {
-                instances = body
-            });
-        RestResponse response = await client.ExecuteAsync(request);
-        JObject data = JObject.Parse(response.Content!);
-        if (data != null)
-        {
-            JToken token = data.First;
-            double prediction = JsonConvert.DeserializeObject<double>(token.First.First.First.ToString());
-            return prediction;
+                Method = Method.Post
+            };
+
+            request.AddHeader("content-type", "application/json");
+            request.AddJsonBody(
+                new
+                {
+                    instances = body
+                });
+            RestResponse response = await client.ExecuteAsync(request);
+            JObject data = JObject.Parse(response.Content!);
+            if (data != null)
+            {
+                JArray jArray = (JArray)data["predictions"]!;
+                if (jArray != null && jArray.Count > 0)
+                {
+                    int counter = 0;
+                    jArray = (JArray)jArray[0];
+                    for (int i = 0; i < jArray.Count; i++)
+                    {
+                        if (jArray[i] != null)
+                        {
+                            string? price = jArray[i]?.ToString();
+                            //string? time = DateTime.UtcNow.AddHours(-1 * (168 - counter)).ToString();
+                            counter++;
+
+                            predictions.Add(new DatePricePairModel()
+                            {
+                                //TimeStamp = DateTimeFromUnixTimestampMillis(long.Parse(time)),
+                                TimeStamp = DateTime.UtcNow.AddHours(-1 * (168 - counter)),
+                                Price = Math.Round(double.Parse(price), 2)
+                            });
+                        }
+                    }
+                }
+                return predictions;
+            }
         }
-        return 0;
+            return predictions;
     }
 
+    public static DateTime DateTimeFromUnixTimestampMillis(long millis)
+    {
+        DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        return UnixEpoch.AddMilliseconds(millis);
+    }
 
+    public static List<OHLCPairModel> MinMaxNormalize(List<OHLCPairModel> features, string coinSymbol, Dictionary<string, double> values)
+    {
+        double highMax = values[coinSymbol + "-highMax"];
+        double lowMax = values[coinSymbol + "-lowMax"];
+        double closeMax = values[coinSymbol + "-closeMax"];
+        double highMin = values[coinSymbol + "-highMin"];
+        double lowMin = values[coinSymbol + "-lowMin"];
+        double closeMin = values[coinSymbol + "-closeMin"];
+        
+        for (int i = 0; i < features.Count; i++)
+        {
+            features[i].High = (features[i].High - highMin) / (highMax - highMin);
+            features[i].Low = (features[i].Low- lowMin) / (lowMax - lowMin);
+            features[i].Close = (features[i].Close- closeMin) / (closeMax - closeMin);
+        }
+
+        return features;
+    }
+
+    public static List<List<List<double>>> Tensorize(List<OHLCPairModel> features)
+    {
+        List<List<List<double>>> body = new();
+        List<List<double>> tensor = new();
+        for (int i = 0; i < features.Count; i++)
+        {
+            List<double> tuple = new();
+
+            tuple.Add(features[i].High);
+            tuple.Add(features[i].Low);
+            tuple.Add(features[i].Close);
+            tensor.Add(tuple);
+        }
+        body.Add(tensor);
+        return body;
+    }
 }
