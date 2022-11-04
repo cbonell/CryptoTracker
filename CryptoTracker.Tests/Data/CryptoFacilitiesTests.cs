@@ -1,4 +1,4 @@
-﻿using CryptoTracker.DataAccess.Data;
+using CryptoTracker.DataAccess.Data;
 
 namespace CryptoTracker.Tests.Data;
 
