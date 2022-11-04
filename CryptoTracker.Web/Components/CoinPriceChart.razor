@@ -88,6 +88,13 @@
         CoinPriceVolumePair coinPriceAndVolume = await ccf.GetCoinPriceVolumePair(Coin.Symbol, fromDate, rangeInput.Name);
         List<DatePricePairModel> predictionsData = await mlModeldata.GetPricePrediction(Coin.Symbol);
         await js.InvokeVoidAsync("makeBarChart", "chart_div", coinPriceAndVolume.VolumePairs);
-        await js.InvokeVoidAsync("makeLineChart", "linechart_div", coinPriceAndVolume.DatePricePairs, predictionsData);
+        if (predictionsData.Count > 0)
+        {
+            await js.InvokeVoidAsync("makeLineChart", "linechart_div", coinPriceAndVolume.DatePricePairs);
+        }
+        else
+        {
+            await js.InvokeVoidAsync("makeLineChart", "linechart_div", coinPriceAndVolume.DatePricePairs);
+        }
     }
 }

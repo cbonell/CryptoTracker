@@ -131,7 +131,7 @@ pingpoliCandlestickChart.prototype.draw = function () {
         if (this.candlesticks[i].close == this.candlesticks[i].open) {
             color = this.greenColor;
 
-            this.candlesticks[i].close = this.candlesticks[i].open -1;
+            this.candlesticks[i].close = this.candlesticks[i].open - 0.001;
         }
         
         if (i == this.hoveredCandlestickID) {

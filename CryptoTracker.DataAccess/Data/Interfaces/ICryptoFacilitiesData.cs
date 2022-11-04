@@ -16,5 +16,6 @@ namespace CryptoTracker.DataAccess.Data.Interfaces
         string GetCryptoFacilitiesSymbol(string symbol);
         Task<CoinPriceVolumePair> GetCoinPriceVolumePair(string coinSymbol, DateTimeOffset fromDate, string interval = "1h", DateTimeOffset? _toDate = null);
         DateTimeOffset GetOffsetFromInterval(string interval);
+        string GetCryptoFacilitiesSymbol2(string symbol);
     }
 }

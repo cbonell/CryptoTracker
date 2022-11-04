@@ -30,8 +30,14 @@ public class CryptoFacilitiesData : ICryptoFacilitiesData
         RestRequest request = new RestRequest($"https://www.cryptofacilities.com/api/charts/v1/trade/{GetCryptoFacilitiesSymbol(coinSymbol)}/{interval}?from={from}&to={to}");
         RestClient client = new RestClient();
         RestResponse response = await client.ExecuteAsync(request);
+                     
         JObject responseJsonObject = JObject.Parse(response.Content!);
-
+        if(responseJsonObject["candles"].Count() == 0)
+        {
+            request = new RestRequest($"https://www.cryptofacilities.com/api/charts/v1/trade/{GetCryptoFacilitiesSymbol2(coinSymbol)}/{interval}?from={from}&to={to}");
+            response = await client.ExecuteAsync(request);
+            responseJsonObject = JObject.Parse(response.Content!);
+        }
         return JsonConvert.DeserializeObject<List<OHLCPairModel>>(responseJsonObject["candles"].NullableToString()) ?? new List<OHLCPairModel>();
     }
 
@@ -93,6 +99,29 @@ public class CryptoFacilitiesData : ICryptoFacilitiesData
         }
 
         return ("PI_" + symbol + conversionCurrency).ToLower();
+    }
+    
+    /// <summary>
+    /// Returns the crypto facilities symbol based on market standard symbol
+    /// </summary>
+    /// <param name="symbol"></param>
+    /// <returns>string</returns>
+    public string GetCryptoFacilitiesSymbol2(string symbol)
+    {
+        string conversionCurrency = "USD";
+
+        if (string.IsNullOrEmpty(symbol))
+        {
+            return "";
+        }
+
+        symbol = symbol.ToLower();
+        if (symbol == "btc")
+        {
+            symbol = "xbt";
+        }
+
+        return ("PF_" + symbol + conversionCurrency).ToLower();
     }
 
     public DateTimeOffset GetOffsetFromInterval(string interval)

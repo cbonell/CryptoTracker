@@ -180,7 +180,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
                     ImagePath = item["item"]["thumb"].ToString(),
                     Symbol = item["item"]["symbol"].ToString(),
                     MarketCapRank = int.Parse(item["item"]["market_cap_rank"].ToString()),
-                    PriceChange24hr = coinGeckoMetaData.market_data.price_change_24h ?? 0,
+                    PriceChange24hr = coinGeckoMetaData.market_data.price_change_percentage_24h ?? 0,
                     CurrentPriceUsd = coinGeckoMetaData.market_data.current_price.usd ?? 0,
                 });
             }
@@ -200,7 +200,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
                     ImagePath = coinGeckoMarketModel.image,
                     Symbol = coinGeckoMarketModel.Symbol,
                     MarketCapRank = coinGeckoMarketModel.market_cap_rank,
-                    PriceChange24hr = coinGeckoMarketModel.price_change_24h,
+                    PriceChange24hr = coinGeckoMarketModel.price_change_percentage_24h,
                     CurrentPriceUsd = coinGeckoMarketModel.current_price,
                 });
             }
