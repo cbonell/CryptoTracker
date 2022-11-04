@@ -1,26 +1,29 @@
-﻿using CryptoTracker.DataAccess.Data.Interfaces;
-using Moq;
+﻿using CryptoTracker.DataAccess.Data;
 
 namespace CryptoTracker.Tests.Data;
 
 [TestClass]
 public class CryptoFacilitiesTests
 {
-    Mock<ICryptoFacilitiesData> _cryptoFacilitiesData;
+    CryptoFacilitiesData cryptoFacilitiesData;
     [TestInitialize]
     public void Setup()
     {
-        _cryptoFacilitiesData = new Mock<ICryptoFacilitiesData>();
+        cryptoFacilitiesData = new CryptoFacilitiesData();
     }
 
     [TestMethod]
-    public async Task GetOHLCPairsTest()
+    public async Task GetOHLCPairsTestValidInput()
     {
-        var nullPairs = await _cryptoFacilitiesData.Object.GetOHLCPairs("x", DateTimeOffset.UtcNow);
-        var pairs = await _cryptoFacilitiesData.Object.GetOHLCPairs("btc", DateTimeOffset.UtcNow.AddDays(-1));
+        var pairs = await cryptoFacilitiesData.GetOHLCPairs("xbt", DateTimeOffset.UtcNow.AddDays(-1));
         
-        // verify that a non-supported model returns an array of 0,  while a supported model does not
-        Assert.AreEqual(nullPairs.Count, 0);
         Assert.AreNotEqual(pairs.Count, 0);
+    }
+
+    [TestMethod]
+    public async Task GetOHLCPairsTestInvalidInput()
+    {
+        var nullPairs = await cryptoFacilitiesData.GetOHLCPairs("x", DateTimeOffset.UtcNow);
+        Assert.AreEqual(nullPairs.Count, 0);
     }
 }
