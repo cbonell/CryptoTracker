@@ -16,13 +16,15 @@ public class CoinGeckoDataTests
     Mock<IMemoryCache> _memoryCache;
     CoinGeckoData coinGeckoData;
     Mock<RestClient> mockRestClient;
+    Mock<ICryptoFacilitiesData> _cryptoFacility;
 
     [TestInitialize]
     public void Setup()
     {
         _dataBase = new Mock<ISqlDataAccess>();
         _memoryCache = new Mock<IMemoryCache>();
-        coinGeckoData = new(_dataBase.Object, _memoryCache.Object);
+        _cryptoFacility = new Mock<ICryptoFacilitiesData>();
+        coinGeckoData = new(_dataBase.Object, _memoryCache.Object, _cryptoFacility.Object);
         mockRestClient = new Mock<RestClient>();
     }
 
