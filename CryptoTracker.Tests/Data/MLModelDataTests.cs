@@ -17,7 +17,43 @@ public class MLModelDataTests
     }
 
     [TestMethod]
-    public async Task GetPricePredictionTest()
+    public async Task GetPricePredictionTestSupportedCoins()
+    {
+        List<OHLCPairModel> returned = new List<OHLCPairModel>();
+        _cryptoFacilitiesData.Setup(
+            a => a.GetOHLCPairs("btc", DateTimeOffset.UtcNow.AddDays(-7), "1h", null))
+            .ReturnsAsync(returned);
+
+        Random rnd = new Random();
+
+        for (int i = 0; i < 168; i++)
+        {
+            int val = rnd.Next(20000, 60000);
+            returned.Add(new OHLCPairModel
+            {
+                TimeStamp = DateTime.Now.AddHours(-1 * (168 - i + 1)),
+                Open = val,
+                High = val + 1000,
+                Low = val - 1000,
+                Close = val + rnd.Next(-1000, 1000),
+            });
+        }
+
+        _cryptoFacilitiesData.Setup(
+            a => a.GetOHLCPairs("btc", DateTimeOffset.UtcNow.AddDays(-7), "1h", null))
+            .ReturnsAsync(returned);
+
+        var mlModelData = new MLModelData();
+
+        string supported = "btc";
+
+        List<DatePricePairModel> supportedPairs = await mlModelData.GetPricePrediction(supported);
+        
+        Assert.IsNotNull(supportedPairs);
+    }
+
+    [TestMethod]
+    public async Task GetPricePredictionTestUnsupportedCoins()
     {
         List<OHLCPairModel> returned = new List<OHLCPairModel>();
         _cryptoFacilitiesData.Setup(
@@ -46,15 +82,10 @@ public class MLModelDataTests
         var mlModelData = new MLModelData();
 
         string notSupported = "x";
-        string supported = "btc";
 
         List<DatePricePairModel> notSupportedPairs = await mlModelData.GetPricePrediction(notSupported);
-        List<DatePricePairModel> supportedPairs = await mlModelData.GetPricePrediction(supported);
-        
-        
-        // Test models that are supported and not supported
+
         Assert.IsNotNull(notSupportedPairs);
-        Assert.IsNotNull(supportedPairs);
     }
 
     [TestMethod]
@@ -143,11 +174,5 @@ public class MLModelDataTests
         Assert.AreEqual(tensors.Count, 1);
         Assert.AreEqual(tensors[0].Count, 4);
         Assert.AreEqual(tensors[0][0].Count, 3);
-    }
-
-    [TestMethod]
-    public void convertTODPPMTest()
-    {
-
     }
 }
