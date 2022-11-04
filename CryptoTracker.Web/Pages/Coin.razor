@@ -109,10 +109,13 @@ else
                     <div class="col small-text">
                         @coinGeckoMetaDataModel.market_data.price_change_24h_in_currency.eth ETH
                     </div>
-                    <div class="col">
-                        <CreateUserPriceAlert @ref="createUserPriceAlert" CoinGeckId="@CoinModel.Id" UserId="@UserId" />
-                        <StarInput ticked="@isUserFavorite" OnToggle="HandleFavoriteToggle" />
-                    </div>
+                    @if (IsAuthenticated)
+                    {
+                        <div class="col">
+                            <CreateUserPriceAlert @ref="createUserPriceAlert" CoinGeckId="@CoinModel.Id" UserId="@UserId" />
+                            <StarInput ticked="@isUserFavorite" OnToggle="HandleFavoriteToggle" />
+                        </div>
+                    }
                 </div>
                 <div class="row row-cols-md-2">
                     <div class="col">Market Cap</div>

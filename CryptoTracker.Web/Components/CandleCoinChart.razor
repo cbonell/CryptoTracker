@@ -23,16 +23,19 @@
 
 
 @code {
-    public class RangeInput
-    {
-        public string Name { get; set; } = "1h";
-    }
-
     [Parameter]
     [EditorRequired]
     public CoinGeckCoinModel Coin { get; set; }
     List<OHLCPairModel> candleData;
     RangeInput rangeInput = new RangeInput();
+
+    public CandleCoinChart()
+    {
+        rangeInput = new RangeInput()
+        {
+            Name = "1h"
+        };
+    }
 
     int renderCount = 0;
     protected override async Task OnAfterRenderAsync(bool firstRender)

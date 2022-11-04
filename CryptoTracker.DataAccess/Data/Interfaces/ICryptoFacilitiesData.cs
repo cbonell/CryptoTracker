@@ -1,4 +1,6 @@
-﻿namespace CryptoTracker.DataAccess.Data.Interfaces
+﻿using Newtonsoft.Json.Linq;
+
+namespace CryptoTracker.DataAccess.Data.Interfaces
 {
     public interface ICryptoFacilitiesData
     {

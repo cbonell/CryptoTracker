@@ -7,6 +7,9 @@ using static SharedConstants.Constants;
 namespace CryptoTracker.DataAccess.Data;
 public class CryptoFacilitiesData : ICryptoFacilitiesData
 {
+
+    public CryptoFacilitiesData() { }
+
     /// <summary>
     /// Returns OHLC pairs in 30 minute intervals
     /// </summary>

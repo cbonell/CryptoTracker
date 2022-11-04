@@ -1,8 +1,9 @@
 ﻿@using System.Globalization
 @using CryptoTracker.DataAccess.CoinGeckoAccess
-@using static CryptoTracker.Web.Components.CandleCoinChart
+@using CryptoTracker.DataAccess.MLModelAccess
 @inject ICryptoFacilitiesData ccf
 @inject IJSRuntime js
+@inject IMLModelData mlModeldata
 
 <div class="container">
     <div class="row justify-content-center">
@@ -85,7 +86,8 @@
     {
         DateTimeOffset fromDate = ccf.GetOffsetFromInterval(rangeInput.Name);
         CoinPriceVolumePair coinPriceAndVolume = await ccf.GetCoinPriceVolumePair(Coin.Symbol, fromDate, rangeInput.Name);
+        List<DatePricePairModel> predictionsData = await mlModeldata.GetPricePrediction(Coin.Symbol);
         await js.InvokeVoidAsync("makeBarChart", "chart_div", coinPriceAndVolume.VolumePairs);
-        await js.InvokeVoidAsync("makeLineChart", "linechart_div", coinPriceAndVolume.DatePricePairs);
+        await js.InvokeVoidAsync("makeLineChart", "linechart_div", coinPriceAndVolume.DatePricePairs, predictionsData);
     }
 }
