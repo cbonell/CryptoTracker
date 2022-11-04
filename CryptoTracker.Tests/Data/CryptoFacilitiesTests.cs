@@ -1,23 +1,23 @@
-﻿using CryptoTracker.DataAccess.CryptoFacilitiesDataAccess;
-using CryptoTracker.DataAccess.Data.Interfaces;
-using CryptoTracker.DataAccess.MLModelAccess;
-using CryptoTracker.DataAccess.Model;
+﻿using CryptoTracker.DataAccess.Data.Interfaces;
 using Moq;
-using Newtonsoft.Json.Linq;
-using RestSharp;
 
 namespace CryptoTracker.Tests.Data;
 
 [TestClass]
 public class CryptoFacilitiesTests
 {
+    Mock<ICryptoFacilitiesData> _cryptoFacilitiesData;
+    [TestInitialize]
+    public void Setup()
+    {
+        _cryptoFacilitiesData = new Mock<ICryptoFacilitiesData>();
+    }
+
     [TestMethod]
     public async Task GetOHLCPairsTest()
     {
-        var cryptoFacilitiesDataAccess = new CryptoFacilitiesData();        
-
-        var nullPairs = await cryptoFacilitiesDataAccess.GetOHLCPairs("x");
-        var pairs = await cryptoFacilitiesDataAccess.GetOHLCPairs("btc");
+        var nullPairs = await _cryptoFacilitiesData.Object.GetOHLCPairs("x", DateTimeOffset.UtcNow);
+        var pairs = await _cryptoFacilitiesData.Object.GetOHLCPairs("btc", DateTimeOffset.UtcNow.AddDays(-1));
         
         // verify that a non-supported model returns an array of 0,  while a supported model does not
         Assert.AreEqual(nullPairs.Count, 0);

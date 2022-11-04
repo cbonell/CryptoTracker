@@ -1,13 +1,12 @@
 ﻿CREATE PROCEDURE [dbo].[TradingPurchase_Create]
 	@UserId VARCHAR(255),
-	@CoinId int,
-	@PurchasingCurrencyId INT,
+	@CoinGeckoId NVARCHAR(255),
+	@PurchasingCurrency NVARCHAR(255),
 	@Quantity decimal(20,6),
 	@PurchasePrice decimal(20,2),
 	@PurchaseDate DATETIME
 AS
-	DECLARE @PurchaseType INT = (SELECT TOP 1 Id FROM PurchaseType WHERE [Name] = 'Buy'),
-			@UsdCurrencyId INT = (SELECT TOP 1 Id FROM Currency WHERE [Symbol] = 'USD')
+	DECLARE @PurchaseType INT = (SELECT TOP 1 Id FROM PurchaseType WHERE [Name] = 'Buy')
 
 	IF(@UserId IS NULL)
 	BEGIN
@@ -18,24 +17,24 @@ AS
 	INSERT INTO 
 		TradingPurchase(UserId
 						, CoinId
-						, PurchasingCurrencyId
+						, PurchasingCurrency
 						, PurchaseTypeId
 						, Quantity
 						, PurchasePrice
 						, PurchaseDate)
 	VALUES(@UserId
-		   , @CoinId
-		   , @PurchasingCurrencyId
+		   , @CoinGeckoId
+		   , @PurchasingCurrency
 		   , @PurchaseType
 		   , @Quantity
 		   , @PurchasePrice
 		   , @PurchaseDate)
 
-	IF(NOT EXISTS(SELECT TOP 1 * FROM UserWallet WHERE UserId = @UserId AND CurrencyId = @CoinId))
+	IF(NOT EXISTS(SELECT TOP 1 * FROM UserWallet WHERE UserId = @UserId AND CoinGeckoId = @CoinGeckoId))
 	BEGIN
 		INSERT INTO
-			UserWallet(UserId, CurrencyId, Quantity)
-		VALUES(@UserId, @CoinId, @Quantity)
+			UserWallet(UserId, CoinGeckoId, Quantity)
+		VALUES(@UserId, @CoinGeckoId, @Quantity)
 	END
 	ELSE
 	BEGIN
@@ -45,19 +44,16 @@ AS
 			Quantity = Quantity + @Quantity
 		WHERE 
 			UserId = @UserId 
-			AND CurrencyId = @CoinId
+			AND CoinGeckoId = @CoinGeckoId
 			
 	END
 
-	IF(@PurchasingCurrencyId = @UsdCurrencyId)
-	BEGIN
-		UPDATE
-			UserWallet
-		SET
-			Quantity = Quantity - (@Quantity * @PurchasePrice)
-		WHERE 
-			UserId = @UserId 
-			AND CurrencyId = @UsdCurrencyId
-	END
+	UPDATE
+		UserWallet
+	SET
+		Quantity = Quantity - (@Quantity * @PurchasePrice)
+	WHERE 
+		UserId = @UserId 
+		AND CoinGeckoId = @CoinGeckoId
 
 RETURN 0

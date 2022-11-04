@@ -1,12 +1,31 @@
 ﻿google.charts.load('current', { 'packages': ['line'] });
 
-window.makeLineChart = (id, json) => {
+window.makeLineChart = (id, priceData1, priceData2) => {
     var arr = [];
-    arr.push(['Date', 'Volume']);
+    if (priceData2) {
+        arr.push(['Date', 'Price', 'Prediction Price']);
 
-    for (var i = 0; i < json.length; ++i) {
-        arr.push([new Date(json[i]['timeStamp']), json[i]['price']]);
+        for (var i = 0; i < priceData1.length; ++i) {
+            arr.push([new Date(priceData1[i]['timeStamp']), priceData1[i]['price'], null]);
+        }
+
+        for (var i = 0; i < priceData2.length; ++i) {
+            arr.push([new Date(priceData2[i]['timeStamp']), null, priceData2[i]['price']]);
+        }
     }
+    else {
+        arr.push(['Date', 'Volume']);
+        for (var i = 0; i < priceData1.length; ++i) {
+            arr.push([new Date(priceData1[i]['timeStamp']), priceData1[i]['price']]);
+        }
+    }
+
+
+
+    if (priceData2) {
+
+    }
+
 
     var data = google.visualization.arrayToDataTable(arr);
 

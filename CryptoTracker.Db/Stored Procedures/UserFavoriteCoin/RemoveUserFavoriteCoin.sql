@@ -1,10 +1,10 @@
 ﻿CREATE PROCEDURE [dbo].[RemoveUserFavoriteCoin]
 	@UserId VARCHAR(255),
-	@CurrencyId INT
+	@CoinGeckoId NVARCHAR(255)
 AS
 	DELETE FROM
 		UserFavoriteCoin 
 	WHERE 
 		UserId = @UserId
-		AND CurrencyId = @CurrencyId
+		AND CoinGeckoId = @CoinGeckoId
 RETURN 0

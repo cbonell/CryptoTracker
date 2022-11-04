@@ -11,8 +11,10 @@ namespace CryptoTracker.DataAccess.Data.Interfaces
         /// <param name="coinSymbol">The symbol of the coin</param>
         /// <param name="days">Number of days to be returned (deffault of 1)</param>
         /// <returns>IEnumerable<OHLCPairModel></returns>
-        Task<List<OHLCPairModel>> GetOHLCPairs(string coinSymbol, int days = 1, string interval = "1h");
-        Task<JArray> MakeRequest(string coinSymbol, int days, string interval);
-        List<OHLCPairModel> parseResponse(JArray jObjects);
+        Task<List<OHLCPairModel>> GetOHLCPairs(string coinSymbol, DateTimeOffset fromDate, string interval = "1h", DateTimeOffset? _toDate = null);
+        Task<List<TickerModel>> GetTickers();
+        string GetCryptoFacilitiesSymbol(string symbol);
+        Task<CoinPriceVolumePair> GetCoinPriceVolumePair(string coinSymbol, DateTimeOffset fromDate, string interval = "1h", DateTimeOffset? _toDate = null);
+        DateTimeOffset GetOffsetFromInterval(string interval);
     }
 }

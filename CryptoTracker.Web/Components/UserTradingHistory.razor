@@ -4,13 +4,13 @@
 
 <AuthorizeView>
     <Authorized>
-        <h3>Trading History</h3>
+        <h3 class="text-center">Trading History</h3>
 
         <RadzenDataGrid Data="@UserTrades" TItem="TradingPurchaseModel" AllowPaging="true" AllowSorting="true" PageSize="15">
             <Columns>
                 <RadzenDataGridColumn TItem="TradingPurchaseModel" Property="CoinName" Title="Coin Name" CssClass="text-center">
                     <Template Context="coin">
-                        <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.CoinMarketCapCoinId + ".png")"> <a href="/Coin/@coin.CoinMarketCapCoinId" target="_blank">@coin.CoinName</a>
+                        <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.CoinMarketCapCoinId + ".png")"> <a href="/Coin/@coin.CoinMarketCapCoinId">@coin.CoinName</a>
                     </Template>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="TradingPurchaseModel" Property="TransactionType" Title="Transaction Type" CssClass="text-center" />

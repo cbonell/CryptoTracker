@@ -26,7 +26,7 @@ public class Auth0
         return userMetaData;
     }
 
-    public static async Task AddUserFavoriteCoin(string auth0UserId, int coinId)
+    public static async Task AddUserFavoriteCoin(string auth0UserId, string geckoId)
     {
         var client = new RestClient(AUTH0_API_ENDPOINT + "users/" + auth0UserId);
         var request = new RestRequest()
@@ -34,7 +34,7 @@ public class Auth0
             Method = Method.Patch
         };
         UserMetaDataContainer l = await GetUserMetaData(auth0UserId);
-        l.UserMetaData.FavoriteCoins = l.UserMetaData.FavoriteCoins.Append(new UserFavoriteCoinModel { UserId = auth0UserId, CoinId = coinId });
+        l.UserMetaData.FavoriteCoins = l.UserMetaData.FavoriteCoins.Append(new UserFavoriteCoinModel { UserId = auth0UserId, CoinGeckoId = geckoId });
         string json = JsonConvert.SerializeObject(l);
 
         request.AddHeader("authorization", "Bearer " + AUTH0_API_TOKEN);

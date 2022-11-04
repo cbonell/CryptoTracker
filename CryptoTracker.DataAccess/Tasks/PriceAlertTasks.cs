@@ -9,11 +9,13 @@ public class PriceAlertTasks
     IPriceAlertData _priceAlertData;
     ICoinMarketCapData _coinMarketCapData;
     ICurrencyData _currencyData;
-    public PriceAlertTasks(IPriceAlertData priceAlertData, ICoinMarketCapData coinMarketCapData, ICurrencyData currencyData)
+    ICoinGeckoData _coinGeckoData;
+    public PriceAlertTasks(IPriceAlertData priceAlertData, ICoinMarketCapData coinMarketCapData, ICurrencyData currencyData, ICoinGeckoData coinGeckoData)
     {
         _priceAlertData = priceAlertData;
         _coinMarketCapData = coinMarketCapData;
         _currencyData = currencyData;
+        _coinGeckoData = coinGeckoData;
     }
 
     public async Task SendPriceAlerts()
@@ -23,8 +25,8 @@ public class PriceAlertTasks
         foreach(var alert in alerts)
         {
             AlertType alertType = (AlertType)alert.AlertType;
-            CurrencyModel currency = await _currencyData.GetCurrencyById(alert.CurrencyId);
-            double currentPrice = await _coinMarketCapData.GetPriceConversion(1, currency.CoinMarketCapId, 2781);
+            CoinGeckCoinModel currency = await _coinGeckoData.GetMetaData(alert.CoinGeckoId);
+            double currentPrice = await _coinGeckoData.GetPriceInUsd(currency.Id);
 
             bool sendAlert = false;
             if(alertType == AlertType.Below)

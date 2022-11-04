@@ -1,15 +1,12 @@
-using System.Net;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using CryptoTracker.DataAccess.CryptoFacilitiesDataAccess;
-using System.Reflection;
+using CryptoTracker.DataAccess.Data;
 
 namespace CryptoTracker.DataAccess.MLModelAccess;
 
 public class MLModelData : IMLModelData
 {
-    public Dictionary<string, int> supportedModels = new Dictionary<string, int> { 
+    public Dictionary<string, int> supportedModels = new Dictionary<string, int> {
         { "btc", 2 },
         { "xbt", 2 } };
 
@@ -28,8 +25,8 @@ public class MLModelData : IMLModelData
         {"btc-closeMin", 3139.76 },
         {"xbt-closeMin", 3139.76 },
     };
-        
-	public async Task<List<DatePricePairModel>> GetPricePrediction(string coinSymbol)
+
+    public async Task<List<DatePricePairModel>> GetPricePrediction(string coinSymbol)
     {
         coinSymbol = coinSymbol.ToLower();
         List<DatePricePairModel> predictions = new List<DatePricePairModel>();
@@ -37,19 +34,19 @@ public class MLModelData : IMLModelData
         {
             int model = supportedModels[coinSymbol];
             CryptoFacilitiesData cryptoFacilitiesData = new CryptoFacilitiesData();
-            List<OHLCPairModel> features = await cryptoFacilitiesData.GetOHLCPairs(coinSymbol: coinSymbol, days: 7);
+            List<OHLCPairModel> features = await cryptoFacilitiesData.GetOHLCPairs(coinSymbol, DateTimeOffset.UtcNow.AddDays(-7));
             features = MinMaxNormalize(features, coinSymbol, normalizationValues);
             List<List<List<double>>> body = Tensorize(features);
 
             JObject data = await MakeRequest(body, model);
-            
+
             if (data != null)
             {
                 predictions = convertToDPPM(data, predictions);
                 return predictions;
             }
         }
-            return predictions;
+        return predictions;
     }
 
     public async Task<JObject> MakeRequest(List<List<List<double>>> body, int model)
@@ -71,12 +68,6 @@ public class MLModelData : IMLModelData
         return data;
     }
 
-    public static DateTime DateTimeFromUnixTimestampMillis(long millis)
-    {
-        DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        return UnixEpoch.AddMilliseconds(millis);
-    }
-
     public List<OHLCPairModel> MinMaxNormalize(List<OHLCPairModel> features, string coinSymbol, Dictionary<string, double> values)
     {
         double highMax = values[coinSymbol + "-highMax"];
@@ -85,12 +76,12 @@ public class MLModelData : IMLModelData
         double highMin = values[coinSymbol + "-highMin"];
         double lowMin = values[coinSymbol + "-lowMin"];
         double closeMin = values[coinSymbol + "-closeMin"];
-        
+
         for (int i = 0; i < features.Count; i++)
         {
             features[i].High = (features[i].High - highMin) / (highMax - highMin);
-            features[i].Low = (features[i].Low- lowMin) / (lowMax - lowMin);
-            features[i].Close = (features[i].Close- closeMin) / (closeMax - closeMin);
+            features[i].Low = (features[i].Low - lowMin) / (lowMax - lowMin);
+            features[i].Close = (features[i].Close - closeMin) / (closeMax - closeMin);
         }
 
         return features;
@@ -104,9 +95,9 @@ public class MLModelData : IMLModelData
         {
             List<double> tuple = new();
 
-            tuple.Add(features[i].High);
-            tuple.Add(features[i].Low);
-            tuple.Add(features[i].Close);
+            tuple.Add(features[i].High ?? 0);
+            tuple.Add(features[i].Low ?? 0);
+            tuple.Add(features[i].Close ?? 0);
             tensor.Add(tuple);
         }
         body.Add(tensor);

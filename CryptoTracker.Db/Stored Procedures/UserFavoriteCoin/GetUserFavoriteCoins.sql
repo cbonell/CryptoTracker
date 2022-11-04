@@ -5,10 +5,10 @@ AS
 		ufc.*,
 		c.CoinMarketCapId,
 		c.Id CurrencyId,
-		c.[Name] CoinName
+		c.[Name] [Name]
 	FROM
 		UserFavoriteCoin ufc
-		INNER JOIN Currency c ON c.Id = ufc.CurrencyId
+		INNER JOIN CoinGeckoCoin c ON c.Id = ufc.CoinGeckoId
 	WHERE
 		ufc.UserId = @UserId
 RETURN 0

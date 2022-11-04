@@ -27,6 +27,8 @@ function resetCanvas() {
 function createDrawingCanvas() {
     html2canvas(document.getElementById('priceWrapper')).then(function (canvas) {
         canvas.id = "h2canvas";
+        canvas.width = 400;
+        canvas.height = 400;
         resetCanvas();
         var parent = document.getElementById('canvasParent');        
         parent.appendChild(canvas);

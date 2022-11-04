@@ -6,6 +6,7 @@ https://pingpoli.de
 */
 function pingpoliCandlestick(timestamp, open, close, high, low) {
     this.timestamp = Math.floor(new Date(timestamp).getTime() / 1000)//timestamp;// parseInt(timestamp);
+    console.log(timestamp);
     this.open = parseFloat(open);
     this.close = parseFloat(close);
     this.high = parseFloat(high);
@@ -124,8 +125,15 @@ pingpoliCandlestickChart.prototype.draw = function () {
     if (this.candleWidth % 2 == 0) this.candleWidth--;
 
     for (var i = 0; i < this.candlesticks.length; ++i) {
+
         var color = (this.candlesticks[i].close > this.candlesticks[i].open) ? this.greenColor : this.redColor;
 
+        if (this.candlesticks[i].close == this.candlesticks[i].open) {
+            color = this.greenColor;
+
+            this.candlesticks[i].close = this.candlesticks[i].open -1;
+        }
+        
         if (i == this.hoveredCandlestickID) {
             if (color == this.greenColor) color = this.greenHoverColor;
             else if (color == this.redColor) color = this.redHoverColor;

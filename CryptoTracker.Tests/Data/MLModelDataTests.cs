@@ -1,20 +1,29 @@
 ﻿using CryptoTracker.DataAccess.Data.Interfaces;
+
 using CryptoTracker.DataAccess.MLModelAccess;
 using CryptoTracker.DataAccess.Model;
 using Moq;
-using Newtonsoft.Json.Linq;
 
 namespace CryptoTracker.Tests.Data;
 
 [TestClass]
 public class MLModelDataTests
 {
+    Mock<ICryptoFacilitiesData> _cryptoFacilitiesData;
+    [TestInitialize]
+    public void Setup()
+    {
+        _cryptoFacilitiesData = new Mock<ICryptoFacilitiesData>();
+    }
+
     [TestMethod]
     public async Task GetPricePredictionTest()
     {
-
-        var mockCryptoFacilities = new Mock<ICryptoFacilitiesData>();
         List<OHLCPairModel> returned = new List<OHLCPairModel>();
+        _cryptoFacilitiesData.Setup(
+            a => a.GetOHLCPairs("btc", DateTimeOffset.UtcNow.AddDays(-7), "1h", null))
+            .ReturnsAsync(returned);
+
         Random rnd = new Random();
 
         for (int i = 0; i < 168; i++)
@@ -30,8 +39,8 @@ public class MLModelDataTests
             });
         }
 
-        mockCryptoFacilities.Setup(
-            a => a.GetOHLCPairs("btc", 7, "1h"))
+        _cryptoFacilitiesData.Setup(
+            a => a.GetOHLCPairs("btc", DateTimeOffset.UtcNow.AddDays(-7), "1h", null))
             .ReturnsAsync(returned);
 
         var mlModelData = new MLModelData();

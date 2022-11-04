@@ -14,6 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Components\TickerScoll.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CryptoTracker.DataAccess\CryptoTracker.DataAccess.csproj" />
     <ProjectReference Include="..\SharedConstants\Tools.csproj" />
   </ItemGroup>
@@ -34,6 +38,10 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Components\ResetUserTradingAccount.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Components\TickerScoll.razor.css" />
   </ItemGroup>
 
 </Project>

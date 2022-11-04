@@ -1,9 +1,8 @@
-﻿namespace CryptoTracker.DataAccess.Data.Interfaces
+﻿namespace CryptoTracker.DataAccess.Data.Interfaces;
+
+public interface ITradingPurchaseData
 {
-    public interface ITradingPurchaseData
-    {
-        Task<IEnumerable<TradingPurchaseModel>> GetUserTradingHistory(string userId);
-        Task<bool> Purchase(string userId, int coinId, int purchaseCurrencyId, double quanitity, double purchasePrice, DateTime? purchaseDate);
-        Task<bool> Sell(string userId, int coinId, double quanitity, double sellPrice, DateTime? purchaseDate);
-    }
+    Task<IEnumerable<TradingPurchaseModel>> GetUserTradingHistory(string userId);
+    Task Purchase(string userId, CoinGeckCoinModel coin, double quanitity, double purchasePrice, DateTime? purchaseDate, string purchaseCurrency = "");
+    Task Sell(string userId, CoinGeckCoinModel coin, double quanitity, double sellPrice, DateTime? purchaseDate);
 }

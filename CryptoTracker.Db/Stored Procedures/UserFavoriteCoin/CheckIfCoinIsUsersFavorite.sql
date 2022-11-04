@@ -1,8 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[CheckIfCoinIsUsersFavorite]
-	@CurrencyId INT,
-	@UserId VARCHAR(255)
+	@CoinGeckoId VARCHAR(255),
+	@UserId NVARCHAR(255)
 AS
-	IF(EXISTS(SELECT TOP 1 * FROM UserFavoriteCoin WHERE CurrencyId = @CurrencyId AND UserId = @UserId))
+	IF(EXISTS(SELECT TOP 1 * FROM UserFavoriteCoin WHERE CoinGeckoId = @CoinGeckoId AND UserId = @UserId))
 	BEGIN
 		SELECT 1
 	END

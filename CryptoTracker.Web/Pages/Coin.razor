@@ -1,16 +1,16 @@
-﻿@page "/Coin/{Id:int}"
+﻿@page "/Coin/{CoinId}"
 @using CryptoTracker.Web.Components
 @using System.Security.Claims
 @using CryptoTracker.DataAccess.Auth0
-
+@using static Tools.Extensions.Extensions
 @inject IUserFavoriteCoinData favoriteCoinData
 @inject ICurrencyData currencyData
 @inject IUserFavoriteCoinData favoriteCoinData
-@inject ICoinMarketCapData metaData
 @inject IJSRuntime js
+@inject ICoinGeckoData coinGeckoData
 
 @inherits BasePage
-<PageTitle>@data.Name - Details</PageTitle>
+<PageTitle>@CoinModel.Name - Details</PageTitle>
 
 @if (loading)
 {
@@ -18,84 +18,225 @@
 }
 else
 {
-    <div class="row">
-        <div class="col-sm-4">
-            <div class="row mainBorder">
-                @if (createUserPriceAlert != null && IsAuthenticated)
-                {
-                    <button @onclick="createUserPriceAlert.Open">Create Alert</button>
-                }
-                <CoinPurchasePanel CoinMarketCapId="Id" />
-            </div>
-            <div class="row mainBorder">
-                <TrendingTweets CoinName="@data.Name" />
+    <div class="container main-container fadeIn">
+        <div class="row width-md">
+            <div class="container secondary-container">
+                <div class="col text-center">
+                    <div class="row">
+                        <div class="row">
+
+                            <div class="col-2 mx-auto">
+                                24hr
+                            </div>
+                            <div class="col-2 mx-auto">
+                                7d
+                            </div>
+                            <div class="col-2 mx-auto">
+                                14d
+                            </div>
+                            <div class="col-2 mx-auto">
+                                30d
+                            </div>
+                            <div class="col-2 mx-auto">
+                                60d
+                            </div>
+                            <div class="col-2 mx-auto">
+                                1y
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2 mx-auto">
+                                <span class="@(GetPriceArrowClass(coinGeckoMetaDataModel.market_data.price_change_percentage_24h.Value))"></span>
+                                <span class="@(GetPriceColorClass(coinGeckoMetaDataModel.market_data.price_change_percentage_24h.Value))">
+                                    @( Math.Abs(Math.Round(coinGeckoMetaDataModel.market_data.price_change_percentage_24h.Value, 2)))%
+                                </span>
+                            </div>
+                            <div class="col-2 mx-auto">
+                                <span class="@(GetPriceArrowClass(coinGeckoMetaDataModel.market_data.price_change_percentage_7d.Value))"></span>
+                                <span class="@(GetPriceColorClass(coinGeckoMetaDataModel.market_data.price_change_percentage_7d.Value))">
+                                    @( Math.Abs(Math.Round(coinGeckoMetaDataModel.market_data.price_change_percentage_7d.Value, 2)))%
+                                </span>
+                            </div>
+                            <div class="col-2 mx-auto">
+                                <span class="@(GetPriceArrowClass(coinGeckoMetaDataModel.market_data.price_change_percentage_14d.Value))"></span>
+                                <span class="@(GetPriceColorClass(coinGeckoMetaDataModel.market_data.price_change_percentage_14d.Value))">
+                                    @( Math.Abs(Math.Round(coinGeckoMetaDataModel.market_data.price_change_percentage_14d.Value, 2)))%
+                                </span>
+                            </div>
+                            <div class="col-2 mx-auto">
+                                <span class="@(GetPriceArrowClass(coinGeckoMetaDataModel.market_data.price_change_percentage_30d.Value))"></span>
+                                <span class="@(GetPriceColorClass(coinGeckoMetaDataModel.market_data.price_change_percentage_30d.Value))">
+                                    @( Math.Abs(Math.Round(coinGeckoMetaDataModel.market_data.price_change_percentage_30d.Value, 2)))%
+                                </span>
+                            </div>
+                            <div class="col-2 mx-auto">
+                                <span class="@(GetPriceArrowClass(coinGeckoMetaDataModel.market_data.price_change_percentage_60d.Value))"></span>
+                                <span class="@(GetPriceColorClass(coinGeckoMetaDataModel.market_data.price_change_percentage_60d.Value))">
+                                    @( Math.Abs(Math.Round(coinGeckoMetaDataModel.market_data.price_change_percentage_60d.Value, 2)))%
+                                </span>
+                            </div>
+                            <div class="col-2 mx-auto">
+                                <span class="@(GetPriceArrowClass(coinGeckoMetaDataModel.market_data.price_change_percentage_1y.Value))"></span>
+                                <span class="@(GetPriceColorClass(coinGeckoMetaDataModel.market_data.price_change_percentage_1y.Value))">
+                                    @( Math.Abs(Math.Round(coinGeckoMetaDataModel.market_data.price_change_percentage_1y.Value, 2)))%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-8">
-            <div class="row mainBorder">
-                <CoinPriceChart Coin="data" />
-            </div>
-            <div class="row mainBorder">
-                <AuthorizeView>
-                    <Authorized>
-                        <StarCheckBox ticked="isUersFavorite" OnToggle="HandleFavoriteToggle" />
-                    </Authorized>
-                    <NotAuthorized>Login in to add to favorites</NotAuthorized>
-                </AuthorizeView>
 
-                <CoinDetails Coin="data" />
+        <div class="row">
+            <div class="col-4 secondary-container">
+                <div class="row row-cols-1">
+                    <div class="col">
+                        <Pill>Rank #@(coinGeckoMetaDataModel.market_data.market_cap_rank)</Pill>
+                    </div>
+                    <div class="col">
+                        <img src="@coinGeckoMetaDataModel.image.thumb" /> @CoinModel.Name (@CoinModel.Symbol)
+                    </div>
+                    <div class="col large-text">
+                        $@coinGeckoMetaDataModel.market_data.current_price.usd.AsFormattedNumber()
+                        <span class="@(GetPriceArrowClass(coinGeckoMetaDataModel.market_data.price_change_percentage_24h.Value))"></span>
+                        <span class="@(GetPriceColorClass(coinGeckoMetaDataModel.market_data.price_change_percentage_24h.Value))">
+                            @( Math.Abs(Math.Round(coinGeckoMetaDataModel.market_data.price_change_percentage_24h.Value, 2)))%
+                        </span>
+                    </div>
+                    <div class="col small-text">
+                        @coinGeckoMetaDataModel.market_data.price_change_24h_in_currency.btc BTC
+                    </div>
+                    <div class="col small-text">
+                        @coinGeckoMetaDataModel.market_data.price_change_24h_in_currency.eth ETH
+                    </div>
+                    @if (IsAuthenticated)
+                    {
+                        <div class="col">
+                            <CreateUserPriceAlert @ref="createUserPriceAlert" CoinGeckId="@CoinModel.Id" UserId="@UserId" />
+                            <StarInput ticked="@isUserFavorite" OnToggle="HandleFavoriteToggle" />
+                        </div>
+                    }
+                </div>
+                <div class="row row-cols-md-2">
+                    <div class="col">Market Cap</div>
+                    <div class="col">@coinGeckoMetaDataModel.market_data.market_cap.usd.WithThousandsSeparator()</div>
+                    <div class="col">Volume</div>
+                    <div class="col">@coinGeckoMetaDataModel.market_data.total_volume.usd.WithThousandsSeparator()</div>
+
+                    <div class="col">Circulating Supply</div>
+                    <div class="col">@coinGeckoMetaDataModel.market_data.circulating_supply.WithThousandsSeparator()</div>
+                    <div class="col">Max Supply</div>
+                    <div class="col">@coinGeckoMetaDataModel.market_data.max_supply.WithThousandsSeparator()</div>
+                </div>
+            </div>
+            <div class="col-sm-3 secondary-container">
+                <h2>Convert @CoinModel.Symbol to USD</h2>
+                <input type="number" class="form-control">
+                <input type="number" class="form-control">
+                1 @CoinModel.Name = $@coinGeckoMetaDataModel.market_data.current_price.usd.AsFormattedNumber()
+            </div>
+            <div class="col-sm-4 secondary-container">
+                <h3>@CoinModel.Name Daily Price Statistics</h3>
+
+                <div class="row row-cols-md-2">
+                    <div class="col">Market Cap</div>
+                    <div class="col">@coinGeckoMetaDataModel.market_data.market_cap.usd.WithThousandsSeparator()</div>
+                    <div class="col">Volume</div>
+                    <div class="col">@coinGeckoMetaDataModel.market_data.total_volume.usd.WithThousandsSeparator()</div>
+
+                    <div class="col">Circulating Supply</div>
+                    <div class="col">@coinGeckoMetaDataModel.market_data.circulating_supply.WithThousandsSeparator()</div>
+                    <div class="col">Max Supply</div>
+                    <div class="col">@coinGeckoMetaDataModel.market_data.max_supply.WithThousandsSeparator()</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container main-container">
+        <div class="row">
+            <div class="col-11 secondary-container">
+                <h2 class="text-center">@CoinModel.Symbol Price Data</h2>
+
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#candle" type="button" role="tab" aria-controls="home" aria-selected="true">Candle</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#price" type="button" role="tab" aria-controls="profile" aria-selected="false">Price</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="volume-tab" data-bs-toggle="tab" data-bs-target="#volume" type="button" role="tab" aria-controls="volume" aria-selected="false">Prediction</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="candle" role="tabpanel" aria-labelledby="candle-tab">
+                        <CandleCoinChart Coin="CoinModel" />
+                    </div>
+                    <div class="tab-pane fade" id="price" role="tabpanel" aria-labelledby="candle-tab">
+                        <CoinPriceChart Coin="CoinModel" />
+                    </div>
+                    <div class="tab-pane fade" id="prediction" role="tabpanel" aria-labelledby="volume-tab">
+                        Prediction Data
+                    </div>
+                </div>
+            </div>
+            @*<div class="col-4">
+
+        </div>*@
+        </div>
+
+    </div>
+    <div class="container main-container">
+        <div class="row">
+            <div class="col-7">
+                <CoinDetails Coin="coinGeckoMetaDataModel" />
+            </div>
+            <div class="col-4">
+                <TrendingTweets CoinName="@CoinModel.Symbol" />
             </div>
         </div>
     </div>
 }
 
 
-<CreateUserPriceAlert @ref="createUserPriceAlert" coinMarketCapId="data.CoinMarketCapId" UserId="@UserId" />
-
 @code {
     [Parameter]
-    public int Id { get; set; }
+    public string CoinId { get; set; }
+
+    private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromSeconds(3));
+    public CoinGeckCoinModel CoinModel { get; set; }
+    private CoinGeckoMetaDataModel coinGeckoMetaDataModel { get; set; }
+    List<OHLCPairModel> candleData;
+    List<VolumePairModel> barData;
+    List<DatePricePairModel> priceData;
+
     bool loading = false;
-    CoinMarketCapMetaDataModel data { get; set; }
-    private CurrencyModel Currency;
-    bool isUersFavorite = false;
+    bool isUserFavorite = false;
     CreateUserPriceAlert createUserPriceAlert;
 
     public Coin()
     {
-        data = new();
-        Currency = new();
         createUserPriceAlert = new();
+        CoinModel = new();
+        coinGeckoMetaDataModel = new();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        base.OnParametersSet();
+        await LoadData();
     }
 
     protected override async Task OnInitializedAsync()
     {
-        loading = true;
-        data = await metaData.GetCoinMetaData(Id);
-        var tempCurrencies = await currencyData.GetCurrencyByCoinMarketCapId(Id, ICurrencyData.CurrencyType.Coin);
-        if (tempCurrencies.Count() > 1)
-        {
-            throw new Exception("Expected only one currency models to be returned to encountered multipiple");
-        }
-        else if (tempCurrencies.Count() != 0)
-        {
-            Currency = tempCurrencies.First();
-            await SetLogo(data.LogoPath);
-        }
-
-        if (IsAuthenticated)
-        {
-            isUersFavorite = await favoriteCoinData.CheckIfCoinIsUsersFavorite(UserId, Currency.Id);
-        }
-
-        loading = false;
         await base.OnInitializedAsync();
-
+        await LoadData();
+        RunTimer();
     }
 
     private async Task HandleFavoriteToggle(bool isChecked)
     {
-        isUersFavorite = isChecked;
+        isUserFavorite = isChecked;
         if (isChecked)
         {
             await AddFavorite();
@@ -110,7 +251,7 @@ else
     {
         if (IsAuthenticated)
         {
-            await favoriteCoinData.AddUserFavoriteCoin(UserId, Currency.Id);
+            await favoriteCoinData.AddUserFavoriteCoin(UserId, CoinModel.Id);
         }
     }
 
@@ -118,7 +259,7 @@ else
     {
         if (IsAuthenticated)
         {
-            await favoriteCoinData.RemoveUserFavoriteCoin(UserId, Currency.Id);
+            await favoriteCoinData.RemoveUserFavoriteCoin(UserId, CoinModel.Id);
         }
     }
 
@@ -126,4 +267,53 @@ else
     {
         await js.InvokeVoidAsync("setIcon", path);
     }
-}
+
+    protected async Task LoadData()
+    {
+        loading = true;
+        if (int.TryParse(CoinId, out int coinId))
+        {
+            CoinModel = await coinGeckoData.GetTradeableCoinByCoinMarketCapId(coinId);
+        }
+        else
+        {
+            CoinModel = await coinGeckoData.GetTradeableCoinByCoinGeckoId(CoinId);
+        }
+
+        coinGeckoMetaDataModel = await coinGeckoData.GetMetaData(CoinModel.Id);
+        await SetLogo(coinGeckoMetaDataModel.image.thumb);
+
+        if (IsAuthenticated)
+        {
+            isUserFavorite = await favoriteCoinData.CheckIfCoinIsUsersFavorite(UserId, CoinModel.Id);
+        }
+        loading = false;
+    }
+
+    protected async void RunTimer()
+    {
+        while (await _periodicTimer.WaitForNextTickAsync())
+        {
+            // emulate an async data get
+            await Task.Delay(100);
+            double newPrice = await coinGeckoData.GetCoinPriceInUSDFromSymbol(CoinModel.Symbol);
+            coinGeckoMetaDataModel.market_data.current_price.usd = newPrice;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _periodicTimer.Dispose();
+        }
+    }
+
+    }

@@ -76,7 +76,7 @@ public class CoinGeckoDataTests
         // Act
         try
         {
-            var a = await coinGeckoData.GetPriceHistory("");
+            var a = await coinGeckoData.GetPriceHistory("", "");
         }
         catch (ArgumentNullException e) { exception = e; }
 

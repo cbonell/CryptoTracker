@@ -24,6 +24,7 @@ public static class Services
         builder.Services.AddSingleton<ICoinGeckoData, CoinGeckoData>();
         builder.Services.AddSingleton<IMLModelData, MLModelData>();
         builder.Services.AddSingleton<IPriceAlertData, PriceAlertData>();
+        builder.Services.AddSingleton<ICryptoFacilitiesData, CryptoFacilitiesData>();
 
         builder.Services
     .AddAuth0WebAppAuthentication(options =>

@@ -5,12 +5,11 @@ AS
 		tp.*,
 		pt.[Name] TransactionType,
 		c.[Name] CoinName,
-		c.CoinMarketCapId CoinMarketCapCoinId
+		c.Id CoinGeckdId
 	FROM
 		TradingPurchase tp
 		INNER JOIN PurchaseType pt ON pt.Id = tp.PurchaseTypeId
-		INNER JOIN Currency c ON c.Id = tp.CoinId
-
+		INNER JOIN CoinGeckoCoin c ON c.Id = tp.CoinId
 	WHERE
 		tp.UserId = @UserId
 RETURN 0

@@ -81,7 +81,7 @@ public class UserFavoriteCoinsDataTests
         // Act           
         try
         {
-            await userFavoriteCoinData.AddUserFavoriteCoin(TestUser_UserId, 100);
+            await userFavoriteCoinData.AddUserFavoriteCoin(TestUser_UserId, "bitcoin");
         }
         catch (Exception e) { exception = e; }
 
@@ -98,7 +98,7 @@ public class UserFavoriteCoinsDataTests
         // Act           
         try
         {
-            await userFavoriteCoinData.AddUserFavoriteCoin(null, 100);
+            await userFavoriteCoinData.AddUserFavoriteCoin(null, "");
         }
         catch (Exception e) { exception = e; }
 
@@ -116,7 +116,7 @@ public class UserFavoriteCoinsDataTests
         // Act           
         try
         {
-            await userFavoriteCoinData.AddUserFavoriteCoin(TestUser_UserId, 0);
+            await userFavoriteCoinData.AddUserFavoriteCoin(TestUser_UserId, "");
         }
         catch (Exception e) { exception = e; }
 

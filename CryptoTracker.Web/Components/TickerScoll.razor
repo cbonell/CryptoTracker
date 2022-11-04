@@ -1,0 +1,91 @@
+﻿@inject ICoinGeckoData geckoData
+@using static Tools.Extensions.Extensions
+
+<div class="main-container">
+    <div class="@tickerClass">
+
+        <div class="flex-container">
+            @foreach (CoinGeckoTrendingModel coin in trendingCoins ?? Enumerable.Empty<CoinGeckoTrendingModel>())
+            {
+                <div class="flex-item">
+                    @*<div class="col">*@
+
+                    @*</div>*@
+                    <Pill>
+                        @*<Pill></Pill>*@
+                        Rank #@(coin.MarketCapRank)
+                        <div class="">
+                            <img src="@coin.ImagePath" class="img-small" /> <a href="/Coin/@coin.Id">@coin.Name (@coin.Symbol)</a>
+                        </div>
+                        <div class="large-text">
+                            $@coin.CurrentPriceUsd.AsFormattedNumber()
+                            <span class="@(GetPriceArrowClass(coin.PriceChange24hr)+"-flex")"></span>
+                            <span class="@(GetPriceColorClass(coin.PriceChange24hr))">
+                                @( Math.Abs(Math.Round(coin.PriceChange24hr, 2)))%
+                            </span>
+                        </div>
+                    </Pill>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<CoinGeckoTrendingModel> trendingCoins;
+    string tickerClass = "img-ticker";
+    protected override async Task OnInitializedAsync()
+    {
+        trendingCoins = await geckoData.GetTrending();
+    }
+
+    private void HandleMouseEnter() => tickerClass = tickerClass += " .paused";
+    private void HandleMouseLeave() => tickerClass = tickerClass.Replace(" .paused", "");
+}
+
+
+                                            @*    <div class="overflow-hidden">
+
+        <!-- The slider itself is a flex grid -->
+        <div>
+        @*class="img-ticker"
+
+        <!-- Original set of images -->
+        <!-- Each image is a grid column with width 16rem (w-64) and horiztonal margin 1rem (mx-4) -->
+        <img class="w-64 mx-4 self-start flex-none" src="https://via.placeholder.com/256x341/f4ccccff/434343?text=1">
+        <img class="w-64 mx-4 self-start flex-none" src="https://via.placeholder.com/256x192/f4ccccff/434343?text=2">
+        <img class="w-64 mx-4 self-start flex-none" src="https://via.placeholder.com/256x341/f4ccccff/434343?text=3">
+        <img class="w-64 mx-4 self-start flex-none" src="https://via.placeholder.com/256x192/f4ccccff/434343?text=4">
+        <img class="w-64 mx-4 self-start flex-none" src="https://via.placeholder.com/256x341/f4ccccff/434343?text=5">
+        <img class="w-64 mx-4 self-start flex-none" src="https://via.placeholder.com/256x192/f4ccccff/434343?text=6">
+        <img class="w-64 mx-4 self-start flex-none" src="https://via.placeholder.com/256x192/f4ccccff/434343?text=6">
+
+
+        <div class="d-flex flex-row">
+
+        @foreach (CoinGeckoTrendingModel coin in trendingCoins ?? Enumerable.Empty<CoinGeckoTrendingModel>())
+        {
+        <div class="p-3 ticker-item">
+        <div class="secondary-container">
+        <div>
+        @*<div class="col">
+        <Pill>Rank #@(coin.MarketCapRank)</Pill>
+        @*</div>
+        <div class="col">
+        <img src="@coin.ImagePath" class="img-small"/> @coin.Name (@coin.Symbol)
+        </div>
+        <div class="col large-text">
+        $@coin.CurrentPriceUsd.AsFormattedNumber()
+        <span class="@(GetPriceArrowClass(coin.PriceChange24hr))"></span>
+        <span class="@(GetPriceColorClass(coin.PriceChange24hr))">
+        @( Math.Abs(Math.Round(coin.PriceChange24hr, 2)))%
+        </span>
+        </div>
+        </div>
+        </div>
+        </div>
+
+        }
+        </div>
+        </div>
+        </div>*@

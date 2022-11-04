@@ -1,9 +1,10 @@
 ﻿using CryptoTracker.DataAccess.Data.Interfaces;
-using CryptoTracker.DataAccess.MLModelAccess;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using static SharedConstants.Constants;
 
-namespace CryptoTracker.DataAccess.CryptoFacilitiesDataAccess;
+namespace CryptoTracker.DataAccess.Data;
 public class CryptoFacilitiesData : ICryptoFacilitiesData
 {
 
@@ -15,67 +16,125 @@ public class CryptoFacilitiesData : ICryptoFacilitiesData
     /// <param name="coinSymbol">The symbol of the coin</param>
     /// <param name="days">Number of days to be returned (deffault of 1)</param>
     /// <returns>List<OHLCPairModel></returns>
-    public virtual async Task<List<OHLCPairModel>> GetOHLCPairs(string coinSymbol, int days = 1, string interval = "1h")
+    public async Task<List<OHLCPairModel>> GetOHLCPairs(string coinSymbol, DateTimeOffset fromDate, string interval = "1h", DateTimeOffset? _toDate = null)
     {
-        if (string.IsNullOrEmpty(coinSymbol) || days < 1)
+        if (string.IsNullOrEmpty(coinSymbol) || !ChartUserTimeOptions.Contains(interval))
         {
             throw new ArgumentException();
         }
 
-        if (coinSymbol == "btc")
-        {
-            coinSymbol = "xbt";
-        }
+        DateTimeOffset toDate = _toDate ?? DateTimeOffset.UtcNow;
+        long to = toDate.ToUnixTimeSeconds();
+        long from = fromDate.ToUnixTimeSeconds();
 
-        JArray responseData = await MakeRequest(coinSymbol, days, interval);
-        List<OHLCPairModel> OHLCPairs = parseResponse(responseData);
+        RestRequest request = new RestRequest($"https://www.cryptofacilities.com/api/charts/v1/trade/{GetCryptoFacilitiesSymbol(coinSymbol)}/{interval}?from={from}&to={to}");
+        RestClient client = new RestClient();
+        RestResponse response = await client.ExecuteAsync(request);
+        JObject responseJsonObject = JObject.Parse(response.Content!);
 
-        return OHLCPairs;
+        return JsonConvert.DeserializeObject<List<OHLCPairModel>>(responseJsonObject["candles"].NullableToString()) ?? new List<OHLCPairModel>();
     }
 
-    public virtual async Task<JArray> MakeRequest(string coinSymbol, int days, string interval)
+    /// <summary>
+    /// Returns collection of Ticker models
+    /// </summary>
+    /// <returns>List<TickerModel></returns>
+    public async Task<List<TickerModel>> GetTickers()
     {
         RestClient client = new RestClient();
-        long to = (long)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        long from = (long)DateTimeOffset.UtcNow.AddHours(-1 * days * 24).ToUnixTimeSeconds();
-
-        RestRequest request = new RestRequest($"https://www.cryptofacilities.com/api/charts/v1/trade/PI_{coinSymbol}USD/{interval}?from={from}&to={to}");
-
+        RestRequest request = new RestRequest("https://www.cryptofacilities.com/derivatives/api/v3/tickers");
         RestResponse response = await client.ExecuteAsync(request);
-        JObject joResponse = JObject.Parse(response.Content!);
-        JArray jObjects = (JArray)joResponse["candles"]!;
-        return jObjects;
+
+        JToken responseData = JToken.Parse(response.Content.NullableToString());
+
+        return JsonConvert.DeserializeObject<List<TickerModel>>(responseData["tickers"].NullableToString()) ?? new List<TickerModel>();
     }
 
-    public List<OHLCPairModel> parseResponse(JArray jObjects)
+    public async Task<CoinPriceVolumePair> GetCoinPriceVolumePair(string coinSymbol, DateTimeOffset fromDate, string interval = "1h", DateTimeOffset? _toDate = null)
     {
-        List<OHLCPairModel> responseData = new();
-        if (jObjects != null)
+        List<OHLCPairModel> ohlcPairs = await GetOHLCPairs(coinSymbol, fromDate, interval, _toDate);
+        CoinPriceVolumePair coinPriceVolumePair = new CoinPriceVolumePair();
+        foreach (OHLCPairModel pair in ohlcPairs)
         {
-            foreach (var i in jObjects)
+            coinPriceVolumePair.VolumePairs.Add(new VolumePairModel()
             {
-                string? time = i["time"]!.ToString()!;
-                string? open = i["open"]!.ToString()!;
-                string? high = i["high"]!.ToString()!;
-                string? low = i["low"]!.ToString()!;
-                string? close = i["close"]!.ToString()!;
+                TimeStamp = pair.TimeStamp,
+                Volume = pair.Volume
+            });
 
-                responseData.Add(new OHLCPairModel()
-                {
-                    TimeStamp = DateTimeFromUnixTimestampMillis(long.Parse(time)),
-                    Open = double.Parse(open),
-                    High = double.Parse(high),
-                    Low = double.Parse(low),
-                    Close = double.Parse(close),
-                });
-            }
+            coinPriceVolumePair.DatePricePairs.Add(new DatePricePairModel()
+            {
+                TimeStamp = pair.TimeStamp,
+                Price = pair.Close
+            });
         }
-        return responseData;
+
+        return coinPriceVolumePair;
     }
 
-    public static DateTime DateTimeFromUnixTimestampMillis(long millis)
+    /// <summary>
+    /// Returns the crypto facilities symbol based on market standard symbol
+    /// </summary>
+    /// <param name="symbol"></param>
+    /// <returns>string</returns>
+    public string GetCryptoFacilitiesSymbol(string symbol)
     {
-        DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        return UnixEpoch.AddMilliseconds(millis);
+        string conversionCurrency = "USD";
+
+        if (string.IsNullOrEmpty(symbol))
+        {
+            return "";
+        }
+
+        symbol = symbol.ToLower();
+        if (symbol == "btc")
+        {
+            symbol = "xbt";
+        }
+
+        return ("PI_" + symbol + conversionCurrency).ToLower();
+    }
+
+    public DateTimeOffset GetOffsetFromInterval(string interval)
+    {
+        DateTimeOffset fromDate;
+        if (interval == "1w")
+        {
+            fromDate = DateTimeOffset.UtcNow.AddDays(-7 * 168);
+        }
+        else if (interval == "1d")
+        {
+            fromDate = DateTimeOffset.UtcNow.AddDays(-168);
+        }
+        else if (interval == "4h")
+        {
+            fromDate = DateTimeOffset.UtcNow.AddHours(-168 * 4);
+        }
+        else if (interval == "1h")
+        {
+            fromDate = DateTimeOffset.UtcNow.AddHours(-168);
+        }
+        else if (interval == "30m")
+        {
+            fromDate = DateTimeOffset.UtcNow.AddHours(-168 / 2);
+        }
+        else if (interval == "15m")
+        {
+            fromDate = DateTimeOffset.UtcNow.AddHours(-168 / 4);
+        }
+        else if (interval == "5m")
+        {
+            fromDate = DateTimeOffset.UtcNow.AddMinutes(-168 * 5);
+        }
+        else if (interval == "1m")
+        {
+            fromDate = DateTimeOffset.UtcNow.AddMinutes(-168);
+        }
+        else
+        {
+            fromDate = DateTimeOffset.UtcNow.AddHours(-1);
+        }
+
+        return fromDate;
     }
 }

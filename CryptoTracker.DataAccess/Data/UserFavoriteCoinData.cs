@@ -17,9 +17,9 @@ public class UserFavoriteCoinData : DataBase, IUserFavoriteCoinData
         return _db.LoadData<UserFavoriteCoinModel, dynamic>("[dbo].[GetUserFavoriteCoins]", new { UserId = userId });
     }
 
-    public Task AddUserFavoriteCoin(string userId, int coinId)
+    public Task AddUserFavoriteCoin(string userId, string geckoId)
     {
-        if(coinId <= 0)
+        if(string.IsNullOrEmpty(geckoId))
         {
             throw new Exception(InvalidCoinId);
         }
@@ -29,16 +29,16 @@ public class UserFavoriteCoinData : DataBase, IUserFavoriteCoinData
             throw new Exception(InvalidUserId);
         }
 
-        return _db.SaveData<dynamic>("[dbo].[AddUserFavoriteCoin]", new { UserId = userId, CurrencyId = coinId });
+        return _db.SaveData<dynamic>("[dbo].[AddUserFavoriteCoin]", new { UserId = userId, CoinGeckoId = geckoId });
     }
 
-    public Task RemoveUserFavoriteCoin(string userId, int coinId) =>
-        _db.SaveData<dynamic>("[dbo].[RemoveUserFavoriteCoin]", new { UserId = userId, CurrencyId = coinId });
+    public Task RemoveUserFavoriteCoin(string userId, string geckoId) =>
+        _db.SaveData<dynamic>("[dbo].[RemoveUserFavoriteCoin]", new { UserId = userId, CoinGeckoId = geckoId });
 
-    public async Task<bool> CheckIfCoinIsUsersFavorite(string userId, int coinId)
+    public async Task<bool> CheckIfCoinIsUsersFavorite(string userId, string geckoId)
     {
-        var temp = await _db.LoadData<bool, dynamic>("[dbo].[CheckIfCoinIsUsersFavorite]", new { UserId = userId, CurrencyId = coinId });
-        if (temp.Any())
+        var temp = await _db.LoadData<bool, dynamic>("[dbo].[CheckIfCoinIsUsersFavorite]", new { UserId = userId, CoinGeckoId = geckoId });
+        if (!temp.Any())
         {
             return false;
         }
