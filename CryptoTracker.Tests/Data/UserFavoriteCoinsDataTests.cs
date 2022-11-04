@@ -104,7 +104,7 @@ public class UserFavoriteCoinsDataTests
 
         // Assert
         Assert.IsNotNull(exception);
-        Assert.AreEqual(exception.Message, InvalidUserId);
+        Assert.AreEqual(exception.Message, "Recieved invalid CoinId");
     }
 
     [TestMethod]

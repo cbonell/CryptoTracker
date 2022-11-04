@@ -10,7 +10,6 @@
 @inject ICoinGeckoData coinGeckoData
 
 @inherits BasePage
-<PageTitle>@CoinModel.Name - Details</PageTitle>
 
 @if (loading)
 {
@@ -18,6 +17,8 @@
 }
 else
 {
+    <PageTitle>@coinGeckoMetaDataModel.market_data.current_price.usd?.AsFormattedNumber() @CoinModel.Symbol/USD</PageTitle>
+
     <div class="container main-container fadeIn">
         <div class="row width-md">
             <div class="container secondary-container">
