@@ -1,21 +1,22 @@
 ﻿@inject IJSRuntime js
 @inject ICoinGeckoData geckoData
+@inject ICryptoFacilitiesData cfd
 
 <EditForm Model="rangeInput">
     <InputRadioGroup @bind-Value="rangeInput.Name">
         @foreach (string type in ChartUserTimeOptions)
         {
-            <InputRadio Value="type" class="form-check-input" />
+            <InputRadio Value="type" class="form-check-input" @onclick="LoadData" />
             <label class="form-check-label">
                 @type
             </label>
         }
     </InputRadioGroup>
-    <button type="button" @onclick="LoadData" class="btn btn-primary">Load</button>
 </EditForm>
 
 <div class="row">
     <div class="col">
+        @*<LoadingSpinner />*@
         <canvas id="candleCanvas"></canvas>
     </div>
 </div>
@@ -24,7 +25,7 @@
 @code {
     public class RangeInput
     {
-        public string Name { get; set; } = "1d";
+        public string Name { get; set; } = "1h";
     }
 
     [Parameter]
@@ -32,15 +33,22 @@
     public CoinGeckCoinModel Coin { get; set; }
     List<OHLCPairModel> candleData;
     RangeInput rangeInput = new RangeInput();
-    protected override async Task OnInitializedAsync()
-    {
 
-        await LoadData();
+    int renderCount = 0;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (renderCount < 2)
+        {
+            await LoadData();
+            renderCount++;
+        }
+
     }
 
     protected async Task LoadData()
     {
-        candleData = await geckoData.GetOHLCPairs(Coin.Id, rangeInput.Name);
+        DateTimeOffset fromDate = cfd.GetOffsetFromInterval(rangeInput.Name);
+        candleData = await cfd.GetOHLCPairs(Coin.Symbol, fromDate, rangeInput.Name);
         await js.InvokeVoidAsync("makeCandleChart", "candleCanvas", candleData);
     }
 }

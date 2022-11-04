@@ -151,55 +151,45 @@ else
     </div>
     <div class="container main-container">
         <div class="row">
-            <div class="col-7 secondary-container">
+            <div class="col-11 secondary-container">
                 <h2 class="text-center">@CoinModel.Symbol Price Data</h2>
 
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#price" type="button" role="tab" aria-controls="home" aria-selected="true">Price</button>
+                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#candle" type="button" role="tab" aria-controls="home" aria-selected="true">Candle</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#candle" type="button" role="tab" aria-controls="profile" aria-selected="false">Candle</button>
+                        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#price" type="button" role="tab" aria-controls="profile" aria-selected="false">Price</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="volume-tab" data-bs-toggle="tab" data-bs-target="#volume" type="button" role="tab" aria-controls="volume" aria-selected="false">Prediction</button>
                     </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="price" role="tabpanel" aria-labelledby="candle-tab">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col">
-                                    <CoinPriceChart Coin="CoinModel" />
-                                </div>
-                            </div>
-                        </div>
+                    <div class="tab-pane fade show active" id="candle" role="tabpanel" aria-labelledby="candle-tab">
+                        <CandleCoinChart Coin="CoinModel" />
                     </div>
-                    <div class="tab-pane fade" id="candle" role="tabpanel" aria-labelledby="candle-tab">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col">
-                                    <CandleCoinChart Coin="CoinModel" />
-                                </div>
-                            </div>
-                        </div>
+                    <div class="tab-pane fade" id="price" role="tabpanel" aria-labelledby="candle-tab">
+                        <CoinPriceChart Coin="CoinModel" />
                     </div>
-                    <div class="tab-pane fade" id="volume" role="tabpanel" aria-labelledby="volume-tab">
+                    <div class="tab-pane fade" id="prediction" role="tabpanel" aria-labelledby="volume-tab">
                         Prediction Data
                     </div>
                 </div>
             </div>
-            <div class="col-4">
-                <TrendingTweets CoinName="@CoinModel.Symbol" />
+            @*<div class="col-4">
 
-            </div>
+        </div>*@
         </div>
 
     </div>
     <div class="container main-container">
         <div class="row">
-            <div class="col-11">
-                <CoinDetails Coin="coinGeckoMetaDataModel"/>
+            <div class="col-7">
+                <CoinDetails Coin="coinGeckoMetaDataModel" />
+            </div>
+            <div class="col-4">
+                <TrendingTweets CoinName="@CoinModel.Symbol" />
             </div>
         </div>
     </div>
@@ -210,7 +200,7 @@ else
     [Parameter]
     public string CoinId { get; set; }
 
-
+    private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromSeconds(3));
     public CoinGeckCoinModel CoinModel { get; set; }
     private CoinGeckoMetaDataModel coinGeckoMetaDataModel { get; set; }
     List<OHLCPairModel> candleData;
@@ -238,6 +228,7 @@ else
     {
         await base.OnInitializedAsync();
         await LoadData();
+        RunTimer();
     }
 
     private async Task HandleFavoriteToggle(bool isChecked)
@@ -294,6 +285,32 @@ else
             isUserFavorite = await favoriteCoinData.CheckIfCoinIsUsersFavorite(UserId, CoinModel.Id);
         }
         loading = false;
+    }
+
+    protected async void RunTimer()
+    {
+        while (await _periodicTimer.WaitForNextTickAsync())
+        {
+            // emulate an async data get
+            await Task.Delay(100);
+            double newPrice = await coinGeckoData.GetCoinPriceInUSDFromSymbol(CoinModel.Symbol);
+            coinGeckoMetaDataModel.market_data.current_price.usd = newPrice;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _periodicTimer.Dispose();
+        }
     }
 
     }

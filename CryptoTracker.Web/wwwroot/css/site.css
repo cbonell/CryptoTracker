@@ -254,6 +254,21 @@ html, body {
 .img-small {
     width: 2em;
 }
+
+input[type='radio'] {
+    box-sizing: border-box;
+    appearance: none;
+    background: white;
+    outline: 2px solid #333;
+    border: 3px solid white;
+    width: 16px;
+    height: 16px;
+}
+
+    input[type='radio']:checked {
+        background: #333;
+    }
+
 /*radzen datagrid styling*/
 th.rz-unselectable-text.rz-sortable-column {
     background-color: var(--secondary-background-color);

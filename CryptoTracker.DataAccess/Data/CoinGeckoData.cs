@@ -12,9 +12,11 @@ namespace CryptoTracker.DataAccess.CoinGeckoAccess;
 public class CoinGeckoData : DataBase, ICoinGeckoData
 {
     internal IMemoryCache _memoryCache;
-    public CoinGeckoData(ISqlDataAccess db, IMemoryCache memory) : base(db)
+    internal ICryptoFacilitiesData _cryptoFacilitiesData;
+    public CoinGeckoData(ISqlDataAccess db, IMemoryCache memory, ICryptoFacilitiesData cryptoFacilitiesData) : base(db)
     {
         _memoryCache = memory;
+        _cryptoFacilitiesData = cryptoFacilitiesData;
     }
 
     public async Task<double> GetPriceInUsd(string currency, double amount = 1)
@@ -53,7 +55,30 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
         return price * amount;
     }
 
-    public async Task<List<DatePricePairModel>> GetPriceHistory(string coinName, string searchTerm)
+    public async Task<double> GetCoinPriceInUSDFromSymbol(string coinGeckoId)
+    {
+        string cryptoFacilitiesSymbol = _cryptoFacilitiesData.GetCryptoFacilitiesSymbol(coinGeckoId);
+        List<TickerModel> tickers = new List<TickerModel>();
+        string cacheKey = $"cryptofacilities-{tickers}";
+        if (!_memoryCache.TryGetValue(cacheKey, out tickers))
+        {
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(3));
+            tickers = await _cryptoFacilitiesData.GetTickers();
+            _memoryCache.Set(cacheKey, tickers, cacheEntryOptions);
+        }
+
+        TickerModel tickerModel = tickers.Where(x => x.Symbol == cryptoFacilitiesSymbol).FirstOrDefault();
+        if(tickerModel == null)
+        {
+
+            return 0;
+        }
+
+        return tickerModel.MarkPrice;
+    }
+
+        public async Task<List<DatePricePairModel>> GetPriceHistory(string coinName, string searchTerm)
     {
         if (string.IsNullOrWhiteSpace(coinName))
         {
@@ -99,7 +124,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
 
                             if (hours.HasValue)
                             {
-                                DateTime timeVal = long.Parse(time).DateTimeFromUnixTimestampMillis();
+                                DateTime timeVal = long.Parse(time).DateTimeFromUnixTimeStampMillis();
                                 if ((DateTime.Now - timeVal).TotalHours <= hours + 1)
                                 {
                                     responseData.Add(new DatePricePairModel()
@@ -113,7 +138,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
                             {
                                 responseData.Add(new DatePricePairModel()
                                 {
-                                    TimeStamp = long.Parse(time).DateTimeFromUnixTimestampMillis(),
+                                    TimeStamp = long.Parse(time).DateTimeFromUnixTimeStampMillis(),
                                     Price = double.Parse(price)
                                 });
                             }
@@ -306,12 +331,12 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
 
                         if (hours.HasValue)
                         {
-                            DateTime timeVal = long.Parse(time).DateTimeFromUnixTimestampMillis();
+                            DateTime timeVal = long.Parse(time).DateTimeFromUnixTimeStampMillis();
                             if ((DateTime.Now - timeVal).TotalHours <= hours + 1)
                             {
                                 responseData.Add(new OHLCPairModel()
                                 {
-                                    TimeStamp = timeVal,
+                                    //TimeStamp = timeVal,
                                     Open = double.Parse(open),
                                     High = double.Parse(high),
                                     Low = double.Parse(low),
@@ -323,7 +348,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
                         {
                             responseData.Add(new OHLCPairModel()
                             {
-                                TimeStamp = long.Parse(time).DateTimeFromUnixTimestampMillis(),
+                                //TimeStamp = long.Parse(time).DateTimeFromUnixTimeStampMillis(),
                                 Open = double.Parse(open),
                                 High = double.Parse(high),
                                 Low = double.Parse(low),
@@ -385,7 +410,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             JObject data = JObject.Parse(response.Content!);
             if (data != null)
             {
-                JToken token = JObject.Parse(response.Content!)["total_volumes"];
+                JToken token = JObject.Parse(response?.Content)["total_volumes"];
                 JArray jArray = JArray.Parse(token.ToString());
                 if (jArray != null && jArray.Count > 0)
                 {
@@ -401,7 +426,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
 
                                 if (hours.HasValue)
                                 {
-                                    DateTime timeVal = long.Parse(time).DateTimeFromUnixTimestampMillis();
+                                    DateTime timeVal = long.Parse(time).DateTimeFromUnixTimeStampMillis();
                                     if ((DateTime.Now - timeVal).TotalHours <= hours + 1)
                                     {
                                         responseData.Add(new VolumePairModel()
@@ -415,7 +440,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
                                 {
                                     responseData.Add(new VolumePairModel()
                                     {
-                                        TimeStamp = long.Parse(time).DateTimeFromUnixTimestampMillis(),
+                                        TimeStamp = long.Parse(time).DateTimeFromUnixTimeStampMillis(),
                                         Volume = double.Parse(volume)
                                     });
                                 }
@@ -442,7 +467,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
            "[dbo].[GetTradeableCoinGeckoCoinByCoinMarketCapId]",
            new { CoinMarketCapId = coinMarketCapId });
 
-        return result.FirstOrDefault();
+        return result.FirstOrDefault() ?? new();
     }
 
     public async Task<CoinGeckCoinModel> GetTradeableCoinByCoinGeckoId(string coinGeckoId)
@@ -451,7 +476,16 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
            "[dbo].[GetTradeableCoinByCoinGeckoId]",
            new { Id = coinGeckoId });
 
-        return result.FirstOrDefault();
+        return result.FirstOrDefault() ?? new();
+    }
+    
+    public async Task<CoinGeckCoinModel> GetTradeableCoinByCoinGeckoSymbol(string coinGeckoSymbol)
+    {
+        var result = await _db.LoadData<CoinGeckCoinModel, dynamic>(
+           "[dbo].[GetTradeableCoinByCoinGeckoSymbol]",
+           new { Symbol = coinGeckoSymbol });
+
+        return result.FirstOrDefault() ?? new();
     }
 }
 

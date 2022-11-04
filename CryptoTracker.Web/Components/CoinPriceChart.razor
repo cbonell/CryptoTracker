@@ -1,23 +1,21 @@
 ﻿@using System.Globalization
 @using CryptoTracker.DataAccess.CoinGeckoAccess
 @using static CryptoTracker.Web.Components.CandleCoinChart
-@inject ICoinGeckoData geckoData
+@inject ICryptoFacilitiesData ccf
 @inject IJSRuntime js
 
-@if (priceData.Count > 0)
-{
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-sm-4 btn-group">
-                <button id="chartDrawButton" class="btn btn-primary">Draw</button>
-                <button id="chartDrawCloseButton" class="btn btn-danger" style="display: none">Close</button>
-            </div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-sm-4 btn-group">
+            <button id="chartDrawButton" class="btn btn-primary">Draw</button>
+            <button id="chartDrawCloseButton" class="btn btn-danger" style="display: none">Close</button>
         </div>
     </div>
+</div>
 
-    @*Used as a placeholder for the drawing chart*@
-    <div id="canvasParent"></div>
-}
+@*Used as a placeholder for the drawing chart*@
+<div id="canvasParent"></div>
+
 
 
 <div class="chartWrapper">
@@ -25,14 +23,14 @@
         <InputRadioGroup @bind-Value="rangeInput.Name">
             @foreach (string type in ChartUserTimeOptions)
             {
-                <InputRadio Value="type" class="form-check-input" />
+                <InputRadio Value="type" class="form-check-input" @onclick="LoadData" />
                 <label class="form-check-label">
                     @type
                 </label>
             }
         </InputRadioGroup>
-        <button type="button" @onclick="LoadData" class="btn btn-primary">Load</button>
     </EditForm>
+
     <div id="priceWrapper">
         <div id="linechart_div"></div>
     </div>
@@ -45,15 +43,11 @@
     public CoinGeckCoinModel Coin { get; set; }
 
     RangeInput rangeInput;
-    List<VolumePairModel> barData;
-    List<DatePricePairModel> priceData;
-    int numDays = 7;
 
     public CoinPriceChart()
     {
         rangeInput = new();
         Coin = new();
-        priceData = new();
     }
 
     string FormatAsMonth(object value)
@@ -76,16 +70,22 @@
         return string.Empty;
     }
 
-    protected override async Task OnInitializedAsync()
+    int renderCount = 0;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await LoadData();
+        if (renderCount < 2)
+        {
+            await LoadData();
+            renderCount++;
+        }
+
     }
 
     protected async Task LoadData()
     {
-        priceData = await geckoData.GetPriceHistory(Coin.Id, rangeInput.Name);
-        barData = await geckoData.GetCoinVolume(Coin.Id, rangeInput.Name);
-        await js.InvokeVoidAsync("makeBarChart", "chart_div", barData);
-        await js.InvokeVoidAsync("makeLineChart", "linechart_div", priceData);
+        DateTimeOffset fromDate = ccf.GetOffsetFromInterval(rangeInput.Name);
+        CoinPriceVolumePair coinPriceAndVolume = await ccf.GetCoinPriceVolumePair(Coin.Symbol, fromDate, rangeInput.Name);
+        await js.InvokeVoidAsync("makeBarChart", "chart_div", coinPriceAndVolume.VolumePairs);
+        await js.InvokeVoidAsync("makeLineChart", "linechart_div", coinPriceAndVolume.DatePricePairs);
     }
 }

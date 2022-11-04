@@ -1,5 +1,6 @@
 ﻿@page "/d"
-@inject ICoinGeckoData geckoData
+@inject ICryptoFacilitiesData cfd
+@inject ICoinGeckoData cdd
 @inject IJSRuntime js
 
 <PageTitle>Index</PageTitle>
@@ -8,6 +9,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await geckoData.GetTradeableCoins();
+        //await cfd.GetOHLCPairs("btc");
+        await cdd.GetCoinPriceInUSDFromSymbol("btc");
     }
 }

@@ -115,6 +115,7 @@
     <Build Include="Stored Procedures\CoinGeckoCoin\GetTradeableCoinGeckoCoins.sql" />
     <Build Include="Stored Procedures\CoinGeckoCoin\GetTradeableCoinGeckoCoinByCoinMarketCapId.sql" />
     <Build Include="Stored Procedures\CoinGeckoCoin\GetTradeableCoinByCoinGeckoId.sql" />
+    <Build Include="Stored Procedures\CoinGeckoCoin\GetTradeableCoinByCoinGeckoSymbol.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CryptoTracker.Db.publish.xml" />

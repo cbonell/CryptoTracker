@@ -1,8 +1,6 @@
-using System.Net;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using CryptoTracker.DataAccess.CryptoFacilitiesDataAccess;
+using CryptoTracker.DataAccess.Data;
 
 namespace CryptoTracker.DataAccess.MLModelAccess;
 
@@ -36,7 +34,7 @@ public class MLModelData : IMLModelData
         {
             int model = supportedModels[coinSymbol];
             CryptoFacilitiesData cryptoFacilitiesData = new CryptoFacilitiesData();
-            List<OHLCPairModel> features = await cryptoFacilitiesData.GetOHLCPairs(coinSymbol: coinSymbol, days: 7);
+            List<OHLCPairModel> features = await cryptoFacilitiesData.GetOHLCPairs(coinSymbol, DateTimeOffset.UtcNow.AddDays(-7));
             features = MinMaxNormalize(features, coinSymbol, normalizationValues);
             List<List<List<double>>> body = Tensorize(features);
 
@@ -66,12 +64,10 @@ public class MLModelData : IMLModelData
                         if (jArray[i] != null)
                         {
                             string? price = jArray[i]?.ToString();
-                            //string? time = DateTime.UtcNow.AddHours(-1 * (168 - counter)).ToString();
                             counter++;
 
                             predictions.Add(new DatePricePairModel()
                             {
-                                //TimeStamp = DateTimeFromUnixTimestampMillis(long.Parse(time)),
                                 TimeStamp = DateTime.UtcNow.AddHours(-1 * (168 - counter)),
                                 Price = Math.Round(double.Parse(price), 2)
                             });
@@ -82,12 +78,6 @@ public class MLModelData : IMLModelData
             }
         }
             return predictions;
-    }
-
-    public static DateTime DateTimeFromUnixTimestampMillis(long millis)
-    {
-        DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        return UnixEpoch.AddMilliseconds(millis);
     }
 
     public static List<OHLCPairModel> MinMaxNormalize(List<OHLCPairModel> features, string coinSymbol, Dictionary<string, double> values)
@@ -117,9 +107,9 @@ public class MLModelData : IMLModelData
         {
             List<double> tuple = new();
 
-            tuple.Add(features[i].High);
-            tuple.Add(features[i].Low);
-            tuple.Add(features[i].Close);
+            tuple.Add(features[i].High ?? 0);
+            tuple.Add(features[i].Low ?? 0);
+            tuple.Add(features[i].Close ?? 0);
             tensor.Add(tuple);
         }
         body.Add(tensor);

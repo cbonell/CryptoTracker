@@ -34,7 +34,7 @@ public class TradingPurchaseData : DataBase, ITradingPurchaseData
             throw new Exception(InvalidPurchasePrice);
         }
 
-        purchaseDate = DateTime.Now;
+        purchaseDate = purchaseDate ?? DateTime.Now;
 
         dynamic parameters = new { UserId = userId, CoinId = coinId, PurchasingCurrencyId = purchaseCurrencyId, Quantity = quanitity, PurchasePrice = purchasePrice, PurchaseDate = purchaseDate };
         await _db.SaveData<dynamic>("dbo.TradingPurchase_Create", parameters);
@@ -78,5 +78,47 @@ public class TradingPurchaseData : DataBase, ITradingPurchaseData
         await _db.SaveData<dynamic>("dbo.TradingPurchase_Sell", parameters);
 
         return true;
+    }
+
+    public async Task Purchase(string userId, CoinGeckCoinModel coin, double quanitity, double purchasePrice, DateTime? purchaseDate, string purchaseCurrency = "")
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            throw new Exception(InvalidUserId);
+        }
+
+        if (quanitity <= 0.00)
+        {
+            throw new Exception(InvalidQuantity);
+        }
+
+        if (purchasePrice <= 0.00)
+        {
+            throw new Exception(InvalidPurchasePrice);
+        }
+
+        dynamic parameters = new { UserId = userId, CoinId = coin.Id, PurchasingCurrency = purchaseCurrency, Quantity = quanitity, PurchasePrice = purchasePrice, PurchaseDate = purchaseDate };
+        await _db.SaveData<dynamic>("dbo.TradingPurchase_Create", parameters);
+    }
+
+    public async Task Sell(string userId, CoinGeckCoinModel coin, double quanitity, double sellPrice, DateTime? purchaseDate)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            throw new Exception(InvalidUserId);
+        }
+
+        if (quanitity <= 0.00)
+        {
+            throw new Exception(InvalidQuantity);
+        }
+
+        if (sellPrice <= 0.00)
+        {
+            throw new Exception(InvalidSellPrice);
+        }
+
+        dynamic parameters = new { UserId = userId, CoinGeckoId = coin.Id, Quantity = quanitity, SellPrice = sellPrice, PurchaseDate = purchaseDate };
+        await _db.SaveData<dynamic>("dbo.TradingPurchase_Sell", parameters);
     }
 }
