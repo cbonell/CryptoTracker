@@ -1,19 +1,21 @@
-﻿using CryptoTracker.DataAccess.Data;
-using CryptoTracker.DataAccess.Data.Interfaces;
-using Microsoft.Extensions.Caching.Memory;
+﻿using CryptoTracker.DataAccess.Data.Interfaces;
+using CryptoTracker.DataAccess.MLModelAccess;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 
 namespace CryptoTracker.DataAccess.CryptoFacilitiesDataAccess;
 public class CryptoFacilitiesData : ICryptoFacilitiesData
 {
+
+    public CryptoFacilitiesData() { }
+
     /// <summary>
     /// Returns OHLC pairs in 30 minute intervals
     /// </summary>
     /// <param name="coinSymbol">The symbol of the coin</param>
     /// <param name="days">Number of days to be returned (deffault of 1)</param>
     /// <returns>List<OHLCPairModel></returns>
-    public async Task<List<OHLCPairModel>> GetOHLCPairs(string coinSymbol, int days = 1, string interval = "1h")
+    public virtual async Task<List<OHLCPairModel>> GetOHLCPairs(string coinSymbol, int days = 1, string interval = "1h")
     {
         if (string.IsNullOrEmpty(coinSymbol) || days < 1)
         {
@@ -25,7 +27,14 @@ public class CryptoFacilitiesData : ICryptoFacilitiesData
             coinSymbol = "xbt";
         }
 
-        List<OHLCPairModel> responseData = new();
+        JArray responseData = await MakeRequest(coinSymbol, days, interval);
+        List<OHLCPairModel> OHLCPairs = parseResponse(responseData);
+
+        return OHLCPairs;
+    }
+
+    public virtual async Task<JArray> MakeRequest(string coinSymbol, int days, string interval)
+    {
         RestClient client = new RestClient();
         long to = (long)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         long from = (long)DateTimeOffset.UtcNow.AddHours(-1 * days * 24).ToUnixTimeSeconds();
@@ -35,6 +44,12 @@ public class CryptoFacilitiesData : ICryptoFacilitiesData
         RestResponse response = await client.ExecuteAsync(request);
         JObject joResponse = JObject.Parse(response.Content!);
         JArray jObjects = (JArray)joResponse["candles"]!;
+        return jObjects;
+    }
+
+    public List<OHLCPairModel> parseResponse(JArray jObjects)
+    {
+        List<OHLCPairModel> responseData = new();
         if (jObjects != null)
         {
             foreach (var i in jObjects)
@@ -55,7 +70,6 @@ public class CryptoFacilitiesData : ICryptoFacilitiesData
                 });
             }
         }
-
         return responseData;
     }
 
