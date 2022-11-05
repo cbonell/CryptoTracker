@@ -8,27 +8,40 @@ public class MLModelData : IMLModelData
 {
     public Dictionary<string, int> supportedModels = new Dictionary<string, int> {
         { "btc", 2 },
-        { "xbt", 2 } };
+        { "xrp", 3 },
+        { "eth", 4 }
+    };
 
     public Dictionary<string, double> normalizationValues = new Dictionary<string, double>
     {
-        {"btc-highMax",  69000.0 },
         {"xbt-highMax", 69000.0 },
-        {"btc-lowMax",  68447.0 },
         {"xbt-lowMax", 68447.0 },
-        {"btc-closeMax", 68627.01 },
         {"xbt-closeMax", 68627.01 },
-        {"btc-highMin",  3158.34 },
         {"xbt-highMin", 3158.34 },
-        {"btc-lowMin",  3122.28 },
         {"xbt-lowMin", 3122.28 },
-        {"btc-closeMin", 3139.76 },
         {"xbt-closeMin", 3139.76 },
+
+        {"xrp-highMax", 1.96695 },
+        {"xrp-lowMax", 1.91374 },
+        {"xrp-closeMax", 1.94093 },
+        {"xrp-highMin", 0.1335 },
+        {"xrp-lowMin", 0.114 },
+        {"xrp-closeMin", 0.1248 },
+
+        {"eth-highMax", 4864.9 },
+        {"eth-lowMax", 4833.3 },
+        {"eth-closeMax", 4845.7 },
+        {"eth-highMin", 84.34 },
+        {"eth-lowMin", 83 },
+        {"eth-closeMin", 83.56 },
     };
 
     public async Task<List<DatePricePairModel>> GetPricePrediction(string coinSymbol)
     {
         coinSymbol = coinSymbol.ToLower();
+        if (coinSymbol == "btc")
+            coinSymbol = "xbt";
+
         List<DatePricePairModel> predictions = new List<DatePricePairModel>();
         if (supportedModels.ContainsKey(coinSymbol))
         {
@@ -51,7 +64,7 @@ public class MLModelData : IMLModelData
 
     public async Task<JObject> MakeRequest(List<List<List<double>>> body, int model)
     {
-        var client = new RestClient($"http://models.eastus.azurecontainer.io:8501/v1/models/crypto/versions/{model}:predict");
+        var client = new RestClient($"http://prices.eastus.azurecontainer.io:8501/v1/models/crypto/versions/{model}:predict");
         var request = new RestRequest()
         {
             Method = Method.Post
