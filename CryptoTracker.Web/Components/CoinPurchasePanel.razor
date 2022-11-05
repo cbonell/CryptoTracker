@@ -40,18 +40,6 @@
                 <input type="number" placeholder="Number of @Coin.Symbol" class="form-control" @bind="numberToSell" />
                 <button @onclick="Sell" class="form-control">Sell</button>
             </RadzenTabsItem>
-
-            @if (Coin.Id == "bitcoin")
-            {
-                <RadzenTabsItem Text="Price Prediction">
-                    <button @onclick="GetPredictedPrice" class="btn btn-primary">Get Prediction</button>
-                <br>
-                <br>
-                @predictionMsg
-                <br>
-                @predictionTime
-            </RadzenTabsItem>
-            }
         </Tabs>
     </RadzenTabs>
 </RadzenCard>
@@ -151,23 +139,5 @@
         }
         sellModal.ToggleDisplay();
         purcahsePrice = currentPrice;
-    }
-
-    private async Task GetPredictedPrice()
-    {
-        //if (IsAuthenticated)
-        //{
-        //    double price = await mlModelData.GetPricePrediction(Coin.Symbol);
-        //    price = Math.Round(price, 2);
-        //    predictionMsg = "Predicted price : $" + price.ToString();
-
-        //    DateTime time = DateTime.Now;
-        //    predictionTime = DateTime.SpecifyKind(time.AddHours(1), DateTimeKind.Local).ToString();
-        //    predictionTime = "When: " + predictionTime;
-        //}
-        //else
-        //{
-        //    predictionMsg = "Please login to use this feature";
-        //}
     }
 }

@@ -14,12 +14,12 @@ public class MLModelData : IMLModelData
 
     public Dictionary<string, double> normalizationValues = new Dictionary<string, double>
     {
-        {"xbt-highMax", 69000.0 },
-        {"xbt-lowMax", 68447.0 },
-        {"xbt-closeMax", 68627.01 },
-        {"xbt-highMin", 3158.34 },
-        {"xbt-lowMin", 3122.28 },
-        {"xbt-closeMin", 3139.76 },
+        {"btc-highMax", 69000.0 },
+        {"btc-lowMax", 68447.0 },
+        {"btc-closeMax", 68627.01 },
+        {"btc-highMin", 3158.34 },
+        {"btc-lowMin", 3122.28 },
+        {"btc-closeMin", 3139.76 },
 
         {"xrp-highMax", 1.96695 },
         {"xrp-lowMax", 1.91374 },
@@ -39,8 +39,6 @@ public class MLModelData : IMLModelData
     public async Task<List<DatePricePairModel>> GetPricePrediction(string coinSymbol)
     {
         coinSymbol = coinSymbol.ToLower();
-        if (coinSymbol == "btc")
-            coinSymbol = "xbt";
 
         List<DatePricePairModel> predictions = new List<DatePricePairModel>();
         if (supportedModels.ContainsKey(coinSymbol))
