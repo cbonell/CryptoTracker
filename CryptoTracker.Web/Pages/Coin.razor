@@ -178,9 +178,6 @@ else
                     </div>
                 </div>
             </div>
-            @*<div class="col-4">
-
-        </div>*@
         </div>
 
     </div>
@@ -294,8 +291,7 @@ else
     {
         while (await _periodicTimer.WaitForNextTickAsync())
         {
-            // emulate an async data get
-            await Task.Delay(100);
+
             double newPrice = await coinGeckoData.GetCoinPriceInUSDFromSymbol(CoinModel.Symbol);
             coinGeckoMetaDataModel.market_data.current_price.usd = newPrice;
             await InvokeAsync(StateHasChanged);
