@@ -1,16 +1,39 @@
-﻿google.charts.load('current', { 'packages': ['corechart', 'bar'] });
-
-window.makeCandleChart = (canvasId, json) => {
+﻿window.makeCandleChart = (canvasId, chartData) => {
     var canvas = document.getElementById(canvasId);
-    canvas.style.width = '100%';
-    //canvas.style.height = '100%';
-    // ...then set the internal size to match
-    canvas.width = canvas.offsetWidth -100;
-//    canvas.height = canvas.offsetHeight;
-//]]]
-    candlestickChart = new pingpoliCandlestickChart(canvasId);
-    for (var i = 0; i < json.length; ++i) {
-        candlestickChart.addCandlestick(new pingpoliCandlestick(json[i]['timeStamp'], json[i]['open'], json[i]['close'], json[i]['high'], json[i]['low']));
+    canvas.innerHTML = '';
+
+    var dataArr = [];
+    for (var i = 0; i < chartData.length; i++) {
+        dataArr.push(
+            {
+                x: chartData[i]['timeStamp'],
+                y: [chartData[i]['open'], chartData[i]['high'], chartData[i]['low'], chartData[i]['close']]
+            }
+        );
     }
-    candlestickChart.draw();
+
+    var options = {
+        series: [{
+            data: dataArr,
+        }],
+        chart: {
+            type: 'candlestick',
+            height: 350
+        },
+        title: {
+            text: 'CandleStick Chart',
+            align: 'left'
+        },
+        xaxis: {
+            type: 'datetime'
+        },
+        yaxis: {
+            tooltip: {
+                enabled: true
+            }
+        }
+    };
+
+    var chart = new ApexCharts(canvas, options);
+    chart.render();
 }
