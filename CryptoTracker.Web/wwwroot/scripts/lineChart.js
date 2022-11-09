@@ -1,4 +1,4 @@
-﻿google.charts.load('current', { 'packages': ['line'] });
+﻿google.charts.load('current', { 'packages': ['line', 'corechart', 'bar'] });
 
 window.makeLineChart = (id, priceData1, priceData2) => {
     var arr = [];

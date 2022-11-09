@@ -7,7 +7,7 @@ namespace CryptoTracker.DataAccess.Data;
 
 public class TwitterSearch
 {
-    private static string[] blackListWords = { "giveaway", "winner" };
+    private static string[] blackListWords = { "giveaway", "winner", "\"giving away\"" };
     public static async Task<IEnumerable<TweetSearchModel>> GetTrendingByHashTag(string hashTag)
     {
         if (string.IsNullOrEmpty(hashTag))
