@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoTracker.Web", "CryptoTracker.Web\CryptoTracker.Web.csproj", "{3BA96517-41B6-4F61-928C-C8B44A952F85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonTrading", "MoonTrading\MoonTrading.csproj", "{3BA96517-41B6-4F61-928C-C8B44A952F85}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoTracker.DataAccess", "CryptoTracker.DataAccess\CryptoTracker.DataAccess.csproj", "{4B7A689E-0445-4377-9827-65C9B7A35DDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonTrading.DataAccess", "MoonTrading.DataAccess\MoonTrading.DataAccess.csproj", "{4B7A689E-0445-4377-9827-65C9B7A35DDF}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "CryptoTracker.Db", "CryptoTracker.Db\CryptoTracker.Db.sqlproj", "{84A6F788-C029-4DA1-9E49-4953B05A8332}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "MoonTrading.DataBase", "MoonTrading.DataBase\MoonTrading.DataBase.sqlproj", "{84A6F788-C029-4DA1-9E49-4953B05A8332}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoTracker.Tests", "CryptoTracker.Tests\CryptoTracker.Tests.csproj", "{27DCFCC4-EB88-422D-8FC4-D93D1A8A775A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonTrading.Tests", "MoonTrading.Tests\MoonTrading.Tests.csproj", "{27DCFCC4-EB88-422D-8FC4-D93D1A8A775A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tools", "SharedConstants\Tools.csproj", "{57399399-DDD3-4B1C-A756-0E45EE702776}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonTrading.Tools", "SharedConstants\MoonTrading.Tools.csproj", "{57399399-DDD3-4B1C-A756-0E45EE702776}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

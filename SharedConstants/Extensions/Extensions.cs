@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Tools.Extensions;
+namespace MoonTrading.Tools.Extensions;
 
 public static class Extensions
 {

@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>MoonTrading.DataBase</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{84a6f788-c029-4da1-9e49-4953b05a8332}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.SqlAzureV12DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>CryptoTracker.Db</RootNamespace>
+    <AssemblyName>CryptoTracker.Db</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="Tables" />
+    <Folder Include="Functions" />
+    <Folder Include="Stored Procedures" />
+    <Folder Include="Stored Procedures\User" />
+    <Folder Include="Post Deployment Scripts" />
+    <Folder Include="Stored Procedures\Currency" />
+    <Folder Include="Stored Procedures\UserWallet" />
+    <Folder Include="Stored Procedures\TradingPurchase" />
+    <Folder Include="Stored Procedures\UserFavoriteCoin" />
+    <Folder Include="Stored Procedures\ResponseCache" />
+    <Folder Include="Stored Procedures\PriceAlert" />
+    <Folder Include="Stored Procedures\CoinGeckoCoin" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Tables\User.sql" />
+    <Build Include="Tables\UserEmail.sql" />
+    <Build Include="Functions\ChkValidEmail.sql" />
+    <Build Include="Stored Procedures\User\GetUsers.sql" />
+    <Build Include="Stored Procedures\User\GetUser.sql" />
+    <Build Include="Stored Procedures\User\CreateUser.sql" />
+    <Build Include="Stored Procedures\User\DeleteUser.sql" />
+    <Build Include="Stored Procedures\User\UpdateUser.sql" />
+    <Build Include="Tables\CoinMarketCapIdMap.sql" />
+    <Build Include="Tables\TradingPurchase.sql" />
+    <Build Include="Tables\Currency.sql" />
+    <Build Include="Tables\UserWallet.sql" />
+    <Build Include="Tables\CurrencyType.sql" />
+    <Build Include="Tables\PurchaseType.sql" />
+    <Build Include="Functions\ChkCurrencyIsFiat.sql" />
+    <Build Include="Functions\ChkCurrencyIsCoin.sql" />
+    <Build Include="Tables\UserPaperBank.sql" />
+    <Build Include="Stored Procedures\Currency\GetCurrencies.sql" />
+    <Build Include="Stored Procedures\Currency\GetCurrencyByCoinMarketCapId.sql" />
+    <Build Include="Stored Procedures\Currency\GetCurrenciesByType.sql" />
+    <Build Include="Stored Procedures\UserWallet\InitializeUserWalletForPaperTrading.sql" />
+    <Build Include="Stored Procedures\UserWallet\GetUserWallet.sql" />
+    <Build Include="Stored Procedures\TradingPurchase\TradingPurchase_Create.sql" />
+    <Build Include="Stored Procedures\TradingPurchase\GetUserTradingHistory.sql" />
+    <Build Include="Tables\UserFavoriteCoin.sql" />
+    <Build Include="Stored Procedures\UserFavoriteCoin\GetUserFavoriteCoins.sql" />
+    <Build Include="Stored Procedures\UserFavoriteCoin\AddUserFavoriteCoin.sql" />
+    <Build Include="Stored Procedures\UserFavoriteCoin\RemoveUserFavoriteCoin.sql" />
+    <Build Include="Stored Procedures\UserFavoriteCoin\CheckIfCoinIsUsersFavorite.sql" />
+    <Build Include="Stored Procedures\TradingPurchase\TradingPurchase_Sell.sql" />
+    <Build Include="Stored Procedures\UserWallet\ResetUserTradingProfile.sql" />
+    <Build Include="Tables\ResponseCache.sql" />
+    <Build Include="Stored Procedures\ResponseCache\GetCachedResponse.sql" />
+    <Build Include="Stored Procedures\ResponseCache\SaveCachedResponse.sql" />
+    <Build Include="Tables\PriceAlert.sql" />
+    <Build Include="Stored Procedures\PriceAlert\CreatePriceAlert.sql" />
+    <Build Include="Stored Procedures\PriceAlert\DeletePriceAlert.sql" />
+    <Build Include="Stored Procedures\PriceAlert\GetPriceAlerts.sql" />
+    <Build Include="Stored Procedures\Currency\GetCurrencyById.sql" />
+    <Build Include="Stored Procedures\PriceAlert\GetUserAlerts.sql" />
+    <Build Include="Tables\CoinGeckoCoin.sql" />
+    <Build Include="Stored Procedures\CoinGeckoCoin\CreatCoinGeckoCoin.sql" />
+    <Build Include="Stored Procedures\CoinGeckoCoin\GetTradeableCoinGeckoCoins.sql" />
+    <Build Include="Stored Procedures\CoinGeckoCoin\GetTradeableCoinGeckoCoinByCoinMarketCapId.sql" />
+    <Build Include="Stored Procedures\CoinGeckoCoin\GetTradeableCoinByCoinGeckoId.sql" />
+    <Build Include="Stored Procedures\CoinGeckoCoin\GetTradeableCoinByCoinGeckoSymbol.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CryptoTracker.Db.publish.xml" />
+    <None Include="Post Deployment Scripts\Script.PostDeployment.sql" />
+  </ItemGroup>
+</Project>

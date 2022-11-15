@@ -1,0 +1,29 @@
+﻿@using System.Security.Claims
+@using MoonTrading.Tests.Auth0
+
+@inject AuthenticationStateProvider AuthState
+@inject IUserData ud
+<AuthorizeView>
+    <Authorized>
+        Welcome, @Username
+        <NavLink class="nav-link  grow" href="logout">
+            Log out
+        </NavLink>
+    </Authorized>
+    <NotAuthorized>
+         <NavLink class="nav-link  grow" href="login?redirectUri=/">
+            Log In
+        </NavLink>
+    </NotAuthorized>
+</AuthorizeView>
+@code {
+    public string? Username { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthState.GetAuthenticationStateAsync();
+        Username = state.User?.Identity?.Name ?? string.Empty;
+
+        await base.OnInitializedAsync();
+    }
+}
