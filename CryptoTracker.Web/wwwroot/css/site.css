@@ -3,8 +3,9 @@
 :root[color-mode="dark"] {
     --base-background-color: #101014;
     --base-accent-color: #5E9ED6;
-    --hover-link-color: #6305dc; /*#F4F1D0;*/
+    --hover-link-color: #948f8f; /*#F4F1D0;*/
     --secondary-background-color: #16171d;
+    --input-area-color: #948f8f;
     --tertiary-background-color: #1f2128;
     --base-font-color: var(--hover-link-color);
     --secondary-font-color: #9BA0B3;
@@ -24,7 +25,7 @@
     --hover-box-shadow: 0 2px 10px 1px rgba(0,0,0,.5);
     --min-font-size: var(--base-font-size);
     --max-font-size: var(--large-font-size);
-    --base-font-family: 'IBM Plex Sans', Arial, Sans-Serif;
+    --base-font-family: 'IBM Plex Sans', Helvetica, Sans-Serif;
     --arabic-font-family: 'IBM Plex Sans Arabic', Arial, Sans-Serif;
     --secondary-font-family: 'IBM Plex Mono', monospace;
 }
@@ -63,7 +64,7 @@ html, body {
     color: var(--base-font-color);
     font-size: var(--min-font-size); /*clamp(var(--min-font-size),calc(50% + 1vw),var(--max-font-size));*/
     font-family: var(--base-font-family);
-    font-weight: 800;
+    font-weight: 700;
     line-height: var(--base-line-height);
     /*-webkit-text-size-adjust: 100%;*/
     background: var(--base-background-color);
@@ -74,8 +75,33 @@ html, body {
     -webkit-box-sizing: border-box;
 }
 
+input[type=number] {
+    background-color: var(--input-area-color);
+    border-color: var(--input-area-color);
+    margin-bottom:1em;
+}
+
+input[type=radio] {
+    background-color: var(--input-area-color);
+    border-color: var(--input-area-color);
+}
+
+input[type=radio]:checked {
+    background-color: red;
+    color: red;
+}
+
+input[type=radio]:not(:first-child) {
+    padding-left:1em;
+}
+
+    input[type=number]:not(:first-child) {
+        border-top:1em;
+    }
+
 #h2canvas {
     background-color: var(--base-background-color);
+    border-color: var(--base-background-color);
 }
 
 .green {
@@ -153,6 +179,7 @@ html, body {
     margin-bottom: 1em;
     margin-top: 1em;
     overflow: hidden;
+    color: var(--base-font-color);
 }
 
 .secondary-container {
@@ -164,6 +191,7 @@ html, body {
     margin-bottom: 1em;
     margin-top: 1em;
     margin-left: 1em;
+    color: var(--base-font-color);
 }
 
 .scroll-y {
@@ -423,7 +451,7 @@ a, .btn-link {
     }
 
 .pill {
-    background-color: #ddd;
+    background-color: var(--input-area-color);
     border: none;
     color: black;
     padding: 10px 20px;
