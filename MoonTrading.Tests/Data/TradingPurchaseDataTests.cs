@@ -29,7 +29,7 @@ public class TradingPurchaseDataTests
         // Act           
         try
         {
-            await tradingPurchaseData.GetUserTradingHistory(null);
+            await tradingPurchaseData.GetUserTradingHistory("");
         }
         catch (Exception e) { exception = e; }
 
@@ -64,7 +64,7 @@ public class TradingPurchaseDataTests
         // Act           
         try
         {
-            await tradingPurchaseData.Sell(null, 100, 2.0, 100, DateTime.Now);
+            await tradingPurchaseData.Sell("", 100, 2.0, 100, DateTime.Now);
         }
         catch (Exception e) { exception = e; }
 
@@ -153,7 +153,7 @@ public class TradingPurchaseDataTests
         // Act           
         try
         {
-            await tradingPurchaseData.Purchase(null, 100, 100, 2.0, 100, DateTime.Now);
+            await tradingPurchaseData.Purchase("", 100, 100, 2.0, 100, DateTime.Now);
         }
         catch (Exception e) { exception = e; }
 

@@ -1,5 +1,6 @@
 ﻿window.makeCandleChart = (canvasId, chartData) => {
     var canvas = document.getElementById(canvasId);
+    //canvas.innerHTML = '';
     canvas.innerHTML = '';
 
     var dataArr = [];

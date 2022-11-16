@@ -1,44 +1,50 @@
-﻿@using System.Timers
-@using System.Security.Claims
-@using MoonTrading.Tests.CoinGeckoAccess
-@using MoonTrading.Tests.MLModelAccess
-@using MoonTrading.Pages
+﻿@using MoonTrading.Pages
+@using static MoonTrading.Extensions.Extensions
 
 @inject ICurrencyData currencyData
 @inject ITradingPurchaseData tradingPurchaseData
 @inject IUserWalletData userWalletData
-@inject ICoinGeckoData coinGeckoData
-@inject ICoinMarketCapData marketCapData
-@inject IMLModelData mlModelData
 
 @inherits BasePage
 
 <Modal @ref=purchaseModal
        Title="Purchase Confirmation">
-    @Coin.Name purchased at @purcahsePrice
+    @Coin.Name purchased at @CurrentPrice
 </Modal>
 
 <Modal @ref=sellModal
        Title="Sale Confirmation">
-    Sold @numberToSell @Coin.Name at @purcahsePrice
+    Sold @numberToSell @Coin.Name at @CurrentPrice
 </Modal>
 
-<Modal @ref=purcahseConfirmationModal Title="Purchase Confirmation">
-    Are you sure that you want to purchase @numberToBuy @Coin.Name for @liveConvertedPurchasePrice.ToString("C0")?
+<Modal @ref=purcahseConfirmationModal Title="Purchase Confirmation" OnSave="() => MakePurchase(true)">
+    Are you sure that you want to purchase @numberToBuy @Coin.Name for @CurrentPrice.AsFormattedNumber()
 </Modal>
 <RadzenCard>
     <RadzenTabs>
         <Tabs>
-            <RadzenTabsItem Text="Trade">
-                Current price: @currentPrice
-                <input type="number" placeholder="Number of @Coin.Name" class="form-control" @bind="numberToBuy" />
-                <button @onclick="() => MakePurchase()" class="btn btn-primary">Purchase</button>
+            <RadzenTabsItem Text="Buy">
+                <label>Number to purchase</label>
+                <label>@sellError</label>
+                <EditForm Model="percentageValues">
+                    <InputRadioGroup ValueChanged="@((e) => OnRadiochangeBuy(e))" TValue="string" ValueExpression="() => selectedSellValue">
+                        @foreach (string s in percentageValues)
+                        {
+                            <InputRadio Value="@(s)" class="form-check-input" /> @(s)
+                        }
+                    </InputRadioGroup>
+                </EditForm>
+                <input type="number" @bind="numberToBuy" class="form-control">
+                Your USD = @userUSDWallet?.Quantity
+                1 @Coin.Name = $@CurrentPrice.AsFormattedNumber()
+                <button @onclick="() => MakePurchase(false)" class="form-control">Purchase</button>
+
             </RadzenTabsItem>
             <RadzenTabsItem Text="Sell">
-                Current price: @currentPrice
-                <small>Max you can sell @userWallet.Quantity</small>
+                Current price: @CurrentPrice
+                <small>Max you can sell @userCoinWallet.Quantity</small>
                 <input type="number" placeholder="Number of @Coin.Symbol" class="form-control" @bind="numberToSell" />
-                <button @onclick="Sell" class="form-control">Sell</button>
+                <button @onclick="Sell" class="form-control" disabled="@(userCoinWallet.Quantity <= 0)">Sell</button>
             </RadzenTabsItem>
         </Tabs>
     </RadzenTabs>
@@ -49,29 +55,44 @@
     [EditorRequired]
     public CoinGeckCoinModel Coin { get; set; }
 
-    double currentPrice;
-    double purcahsePrice;
-    double liveConvertedPurchasePrice;
-    string predictionMsg = "";
-    string predictionTime = "";
+    [Parameter]
+    [EditorRequired]
+    public double CurrentPrice { get; set; }
+
+    private string[] percentageValues = {"100%", "75%", "50%", "25%"};
 
     double? numberToSell, numberToBuy;
     Modal purchaseModal, sellModal, purcahseConfirmationModal;
-    UserWalletModel userWallet { get; set; }
+    string selectedSellValue, selectedBuyValue = "100%";
+    string sellError = "";
+    UserWalletModel userCoinWallet { get; set; }
+    UserWalletModel userUSDWallet { get; set; }
 
     public CoinPurchasePanel()
     {
         purchaseModal = sellModal = purcahseConfirmationModal = new();
-        userWallet = new();
+        userCoinWallet = new();
         Coin = new();
     }
 
-    private System.Threading.Timer? timer;
-
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
         await LoadData();
-        SetTimer();
+    }
+
+    private void OnRadiochangeSell(object sender)
+    {
+        selectedSellValue = (string)sender;
+        HandlePercentageSellSelection();
+        StateHasChanged();
+    }
+
+    private void OnRadiochangeBuy(object sender)
+    {
+        selectedBuyValue = (string)sender;
+        HandlePercentageBuySelection();
+        StateHasChanged();
     }
 
     private async Task LoadData()
@@ -81,63 +102,52 @@
             var tempWallet = await userWalletData.GetUserWallet(UserId);
             if (tempWallet != null && tempWallet.Count() > 0)
             {
-                userWallet = tempWallet.Where(x => x.CurrencyId == Coin.CoinMarketCapId).FirstOrDefault() ?? new UserWalletModel();
+                userCoinWallet = tempWallet.Where(x => x.CoinGeckoId == Coin.Id).FirstOrDefault() ?? new UserWalletModel();
+                userUSDWallet = tempWallet.Where(x => x.CoinGeckoId == "usd").FirstOrDefault() ?? new UserWalletModel();
             }
         }
     }
 
-    private void SetTimer()
+    private void HandlePercentageSellSelection()
     {
-
-        if (timer == null)
-        {
-            timer = new System.Threading.Timer(async (object? stateInfo) =>
-            {
-                try
-                {
-                    currentPrice = await coinGeckoData.GetPriceInUsd(Coin.Id);
-                }
-                catch{}
-                await InvokeAsync(() => StateHasChanged()); // NOTE: MUST CALL StateHasChanged() BECAUSE THIS IS TRIGGERED BY A TIMER INSTEAD OF A USER EVENT
-            }, new System.Threading.AutoResetEvent(false), 2000, 2000); // fire every 2000 milliseconds
-        }
+        double percentage = selectedSellValue.PercentToDouble();
+        numberToSell = (userUSDWallet.Quantity * percentage) / CurrentPrice;
     }
 
-    void Refresh()
+    private void HandlePercentageBuySelection()
     {
-        Random rd = new Random();
-        currentPrice = rd.Next(100, 30000);
-        currentPrice += (rd.Next(1, 99) / (double)10);
-        //StateHasChanged();
+        double percentage = selectedBuyValue.PercentToDouble();
+        numberToBuy = (userUSDWallet.Quantity * percentage) / CurrentPrice;
     }
 
     protected async Task MakePurchase(bool isConfirmed = false)
     {
         if (IsAuthenticated)
         {
-            if (isConfirmed)
+            if (true)//userWalletData.UserCanBuy(userUSDWallet, numberToBuy ?? 0, CurrentPrice))
             {
-
-                //await tradingPurchaseData.Purchase(UserId, Coin, 100, numberToBuy ?? 0, currentPrice, DateTime.Now);
-            }
-            else
-            {
-                liveConvertedPurchasePrice = await coinGeckoData.GetPriceInUsd(Coin.Id, 1);
-                purcahseConfirmationModal.ToggleDisplay();
+                if (isConfirmed)
+                {
+                    await tradingPurchaseData.Purchase(UserId, Coin, numberToBuy ?? 0, CurrentPrice, DateTime.Now);
+                    await LoadData();
+                    purchaseModal.ToggleDisplay();
+                }
+                else
+                {
+                    purcahseConfirmationModal.ToggleDisplay();
+                }
             }
         }
-        purchaseModal.ToggleDisplay();
-        purcahsePrice = currentPrice;
     }
 
     private async Task Sell()
     {
         if (IsAuthenticated)
         {
-            //await tradingPurchaseData.Sell(UserId, Coin.Id, numberToSell ?? 0, currentPrice, DateTime.Now);
+            await tradingPurchaseData.Sell(UserId, Coin, numberToSell ?? 0, CurrentPrice, DateTime.Now);
             await LoadData();
+            sellModal.ToggleDisplay();
+
         }
-        sellModal.ToggleDisplay();
-        purcahsePrice = currentPrice;
     }
 }

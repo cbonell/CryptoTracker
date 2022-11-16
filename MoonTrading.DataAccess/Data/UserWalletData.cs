@@ -1,5 +1,7 @@
 ﻿using MoonTrading.Tests.Data.Interfaces;
 using static SharedConstants.Constants;
+using static MoonTrading.BusinessLogic.Validation.UserWalletDataValidation;
+
 namespace MoonTrading.Tests.Data;
 
 public class UserWalletData : DataBase, IUserWalletData
@@ -8,7 +10,7 @@ public class UserWalletData : DataBase, IUserWalletData
 
     public Task<IEnumerable<UserWalletModel>> GetUserWallet(string userId)
     { 
-        if(string.IsNullOrWhiteSpace(userId))
+        if(!IsValidUser(userId))
         {
             throw new Exception(InvalidUserId);
         }
@@ -18,7 +20,7 @@ public class UserWalletData : DataBase, IUserWalletData
 
     public Task ResetUserWallet(string userId)
     {
-        if (string.IsNullOrWhiteSpace(userId))
+        if (!IsValidUser(userId))
         {
             throw new Exception(InvalidUserId);
         }
@@ -28,7 +30,7 @@ public class UserWalletData : DataBase, IUserWalletData
 
     public Task InitializeUserWalletForPaperTrading(string userId)
     {
-        if (string.IsNullOrWhiteSpace(userId))
+        if (!IsValidUser(userId))
         {
             throw new Exception(InvalidUserId);
         }

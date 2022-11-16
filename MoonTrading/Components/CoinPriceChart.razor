@@ -1,9 +1,10 @@
-﻿@using System.Globalization
+﻿@inject IJSRuntime js
+@inject IMLModelData mlModeldata
+
+@using static MoonTrading.DataAccess.Data.CryptoWatchData
+@using System.Globalization
 @using MoonTrading.Tests.CoinGeckoAccess
 @using MoonTrading.Tests.MLModelAccess
-@inject ICryptoFacilitiesData ccf
-@inject IJSRuntime js
-@inject IMLModelData mlModeldata
 
 <div class="container">
     <div class="row justify-content-center">
@@ -71,22 +72,16 @@
         return string.Empty;
     }
 
-    int renderCount = 0;
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (renderCount < 2)
-        {
-            await LoadData();
-            renderCount++;
-        }
-
+        await LoadData();
     }
 
     protected async Task LoadData()
     {
-        DateTimeOffset fromDate = ccf.GetOffsetFromInterval(rangeInput.Name);
-        CoinPriceVolumePair coinPriceAndVolume = await ccf.GetCoinPriceVolumePair(Coin.Symbol, fromDate, rangeInput.Name);
-        List<DatePricePairModel> predictionsData = await mlModeldata.GetPricePrediction(Coin.Symbol);
+        DateTimeOffset fromDate = GetOffsetFromInterval(rangeInput.Name);
+        CoinPriceVolumePair coinPriceAndVolume = await GetCoinPriceVolumePair(Coin.Symbol, fromDate, rangeInput.Name);
+        List<DatePricePairModel> predictionsData = new();// await mlModeldata.GetPricePrediction(Coin.Symbol);
         await js.InvokeVoidAsync("makeBarChart", "chart_div", coinPriceAndVolume.VolumePairs);
         if (predictionsData.Count > 0)
         {

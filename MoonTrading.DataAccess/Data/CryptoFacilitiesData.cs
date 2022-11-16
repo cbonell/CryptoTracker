@@ -1,13 +1,13 @@
 ﻿using MoonTrading.Tests.Data.Interfaces;
+using MoonTrading.Tools;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using static SharedConstants.Constants;
+using static MoonTrading.BusinessLogic.Validation.CryptoFacilitiesDataValidation;
 
 namespace MoonTrading.Tests.Data;
 public class CryptoFacilitiesData : ICryptoFacilitiesData
 {
-
     public CryptoFacilitiesData() { }
 
     /// <summary>
@@ -18,27 +18,39 @@ public class CryptoFacilitiesData : ICryptoFacilitiesData
     /// <returns>List<OHLCPairModel></returns>
     public async Task<List<OHLCPairModel>> GetOHLCPairs(string coinSymbol, DateTimeOffset fromDate, string interval = "1h", DateTimeOffset? _toDate = null)
     {
-        if (string.IsNullOrEmpty(coinSymbol) || !ChartUserTimeOptions.Contains(interval))
+        if (!IsValidCoinSymbol(coinSymbol))
         {
-            throw new ArgumentException();
+            throw new ArgumentException(coinSymbol);
+        }
+
+        if (!IsValidChartTimeOption(interval))
+        {
+            throw new ArgumentException(interval);
         }
 
         DateTimeOffset toDate = _toDate ?? DateTimeOffset.UtcNow;
+        if (!IsValidTimeInterval(fromDate, toDate))
+        {
+            throw new Exception("From date must come before to date");
+        }
+
+
         long to = toDate.ToUnixTimeSeconds();
         long from = fromDate.ToUnixTimeSeconds();
 
         RestRequest request = new RestRequest($"https://www.cryptofacilities.com/api/charts/v1/trade/{GetCryptoFacilitiesSymbol(coinSymbol)}/{interval}?from={from}&to={to}");
         RestClient client = new RestClient();
         RestResponse response = await client.ExecuteAsync(request);
-                     
+
         JObject responseJsonObject = JObject.Parse(response.Content!);
-        if(responseJsonObject["candles"].Count() == 0)
+        var tempCandlObj = responseJsonObject["candles"];
+        if (tempCandlObj != null && tempCandlObj.Count() == 0)
         {
             request = new RestRequest($"https://www.cryptofacilities.com/api/charts/v1/trade/{GetCryptoFacilitiesSymbol2(coinSymbol)}/{interval}?from={from}&to={to}");
             response = await client.ExecuteAsync(request);
             responseJsonObject = JObject.Parse(response.Content!);
         }
-        return JsonConvert.DeserializeObject<List<OHLCPairModel>>(responseJsonObject["candles"].NullableToString()) ?? new List<OHLCPairModel>();
+        return JsonConvert.DeserializeObject<List<OHLCPairModel>>(tempCandlObj.NullableToString()) ?? new List<OHLCPairModel>();
     }
 
     /// <summary>
@@ -100,7 +112,7 @@ public class CryptoFacilitiesData : ICryptoFacilitiesData
 
         return ("PI_" + symbol + conversionCurrency).ToLower();
     }
-    
+
     /// <summary>
     /// Returns the crypto facilities symbol based on market standard symbol
     /// </summary>

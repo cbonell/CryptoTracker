@@ -1,15 +1,26 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Net;
 using System.Net.Mail;
 
 namespace MoonTrading.Tools.Email;
 
-public class EmailClient
+public class EmailClient : IEmailClient
 {
-    static readonly string sendMailFrom = "moontradingexchange@gmail.com";
-    static readonly string pwd = "78^%Wy56ghqw";
-    static readonly string appPwd = "gbzmryzjnksyessg";
-    public static void SendEmail(string subject, string body, params string[] sendTo)
+    readonly string sendMailFrom = "moontradingexchange@gmail.com";
+    readonly string pwd = "78^%Wy56ghqw";
+    readonly string appPwd = "gbzmryzjnksyessg";
+    private IConfiguration _config;
+
+    public EmailClient(IConfiguration config)
+    {
+        _config = config;
+        sendMailFrom = "moontradingexchange@gmail.com";
+        pwd = "78^%Wy56ghqw";
+        appPwd = "gbzmryzjnksyessg";
+    }
+
+    public bool SendEmail(string subject, string body, params string[] sendTo)
     {
         try
         {
@@ -30,8 +41,11 @@ public class EmailClient
             SmtpServer.Credentials = new NetworkCredential(sendMailFrom, appPwd);
             SmtpServer.Send(email);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
+            return false;
         }
+
+        return true;
     }
 }

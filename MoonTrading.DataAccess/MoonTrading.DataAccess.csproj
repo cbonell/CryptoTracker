@@ -17,6 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MoonTrading.BusinessLogic\MoonTrading.BusinessLogic.csproj" />
+    <ProjectReference Include="..\MoonTrading.DataModels\MoonTrading.DataModels.csproj" />
     <ProjectReference Include="..\SharedConstants\MoonTrading.Tools.csproj" />
   </ItemGroup>
 

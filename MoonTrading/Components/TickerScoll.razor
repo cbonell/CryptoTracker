@@ -1,5 +1,5 @@
 ﻿@inject ICoinGeckoData geckoData
-@using static MoonTrading.Tools.Extensions.Extensions
+@using static MoonTrading.Extensions.Extensions
 
 <div class="main-container">
     <div class="@tickerClass">
@@ -28,7 +28,7 @@
 </div>
 
 @code {
-    private List<CoinGeckoTrendingModel> trendingCoins;
+    private List<CoinGeckoTrendingModel> trendingCoins { get; set; } = new();
     string tickerClass = "img-ticker";
     protected override async Task OnInitializedAsync()
     {

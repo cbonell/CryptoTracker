@@ -10,6 +10,6 @@
     protected override async Task OnInitializedAsync()
     {
         //await cfd.GetOHLCPairs("btc");
-        await cdd.GetCoinPriceInUSDFromSymbol("btc");
+        await MoonTrading.DataAccess.Data.CryptoWatchData.GetOHLCPairs("btc", DateTimeOffset.UtcNow.AddDays(-7));
     }
 }

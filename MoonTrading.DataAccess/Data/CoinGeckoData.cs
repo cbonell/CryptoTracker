@@ -1,11 +1,12 @@
-﻿using MoonTrading.Tests.Caching;
-using MoonTrading.Tests.Data;
+﻿using MoonTrading.Tests.Data;
 using MoonTrading.Tests.Data.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using static SharedConstants.Constants;
+using static MoonTrading.Extensions.Extensions;
+using MoonTrading.BusinessLogic.Actions;
 
 namespace MoonTrading.Tests.CoinGeckoAccess;
 
@@ -41,13 +42,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             RestClient client = new RestClient();
             RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/simple/price?ids={currency}&vs_currencies=usd");
             RestResponse response = await client.ExecuteAsync(request);
-            JObject data = JObject.Parse(response.Content!);
-
-            if (data != null)
-            {
-                JToken token = data.First;
-                price = JsonConvert.DeserializeObject<double>(token.First.First.First.ToString())!;
-            }
+            price = CoinGeckoDataHandler.HandleGetPriceInUsdResponse(response);
 
             _memoryCache.Set(cacheKey, price);
         }
@@ -67,92 +62,9 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             tickers = await _cryptoFacilitiesData.GetTickers();
             _memoryCache.Set(cacheKey, tickers, cacheEntryOptions);
         }
+          
 
-        TickerModel tickerModel = tickers.Where(x => x.Symbol == cryptoFacilitiesSymbol).FirstOrDefault();
-        if(tickerModel == null)
-        {
-
-            return 0;
-        }
-
-        return tickerModel.MarkPrice;
-    }
-
-        public async Task<List<DatePricePairModel>> GetPriceHistory(string coinName, string searchTerm)
-    {
-        if (string.IsNullOrWhiteSpace(coinName))
-        {
-            throw new ArgumentNullException("currency");
-        }
-
-        List<DatePricePairModel> responseData;
-        if (!_memoryCache.TryGetValue(CacheKey.CoinGeckoGetTrending, out responseData))
-        {
-            responseData = new();
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetAbsoluteExpiration(TimeSpan.FromHours(1));
-
-            int days = 1;
-            int? hours = null;
-            string interval = "hourly";
-            if (searchTerm.Contains("d"))
-            {
-                days = int.Parse(searchTerm.Replace("d", "")); ;
-            }
-            else if (searchTerm.Contains("hr"))
-            {
-                hours = int.Parse(searchTerm.Replace("hr", ""));
-                days = 1;
-            }
-
-            RestClient client = new RestClient();
-            RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/coins/{coinName}/market_chart?vs_currency=usd&days={days}&interval={interval}");
-            RestResponse response = await client.ExecuteAsync(request);
-            JObject data = JObject.Parse(response.Content!);
-            if (data != null)
-            {
-                JToken token = JObject.Parse(response.Content!)["prices"];
-                JArray jArray = JArray.Parse(token.ToString());
-                if (jArray != null && jArray.Count > 0)
-                {
-                    for (int i = 0; i < jArray.Count; i++)
-                    {
-                        if (jArray[i] != null)
-                        {
-                            string? time = jArray[i][0]?.ToString();
-                            string? price = jArray[i][1]?.ToString();
-
-                            if (hours.HasValue)
-                            {
-                                DateTime timeVal = long.Parse(time).DateTimeFromUnixTimeStampMillis();
-                                if ((DateTime.Now - timeVal).TotalHours <= hours + 1)
-                                {
-                                    responseData.Add(new DatePricePairModel()
-                                    {
-                                        TimeStamp = timeVal,
-                                        Price = double.Parse(price)
-                                    });
-                                }
-                            }
-                            else
-                            {
-                                responseData.Add(new DatePricePairModel()
-                                {
-                                    TimeStamp = long.Parse(time).DateTimeFromUnixTimeStampMillis(),
-                                    Price = double.Parse(price)
-                                });
-                            }
-
-
-                        }
-                    }
-                }
-            }
-
-            _memoryCache.Set(CacheKey.CoinGeckoGetTrending, responseData, cacheEntryOptions);
-        }
-
-        return responseData;
+        return CoinGeckoDataHandler.HandleGetCoinPriceInUSDFromSymbol(tickers, cryptoFacilitiesSymbol);
     }
 
     public async Task<List<CoinGeckoTrendingModel>> GetTrending()
@@ -167,22 +79,53 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             RestClient client = new RestClient();
             RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/search/trending");
             RestResponse response = await client.ExecuteAsync(request);
+
+            if(!response.IsSuccessful)
+            {
+                Guid corralationId = Guid.NewGuid();
+                throw new Exception("An unexpected error occured when retrieving trending coins " + corralationId.ToString());
+            }
+
+            if (string.IsNullOrWhiteSpace(response.Content))
+            {
+                Guid corralationId = Guid.NewGuid();
+                throw new Exception("An unexpected error occured when retrieving trending coins " + corralationId.ToString());
+            }
+
             JObject data = JObject.Parse(response.Content.ToString()!);
-            JArray jArray = JArray.Parse(data["coins"].ToString());
+            JArray jArray = JArray.Parse(Extensions.Extensions.NullableToString(data["coins"]));
             foreach (var item in jArray)
             {
-                CoinGeckoMetaDataModel coinGeckoMetaData = await GetMetaData(item["item"]["id"].ToString());
-
-                coins.Add(new CoinGeckoTrendingModel()
+                if (item != null && item["item"] != null)
                 {
-                    Name = item["item"]["name"].ToString(),
-                    Id = item["item"]["id"].ToString(),
-                    ImagePath = item["item"]["thumb"].ToString(),
-                    Symbol = item["item"]["symbol"].ToString(),
-                    MarketCapRank = int.Parse(item["item"]["market_cap_rank"].ToString()),
-                    PriceChange24hr = coinGeckoMetaData.market_data.price_change_percentage_24h ?? 0,
-                    CurrentPriceUsd = coinGeckoMetaData.market_data.current_price.usd ?? 0,
-                });
+                    if (item["item"]?["id"] != null && item["item"]?["name"] != null)
+                    {
+                        string id = Extensions.Extensions.NullableToString(item["item"]?["id"]);
+                        if (!string.IsNullOrWhiteSpace(id))
+                        {
+                            CoinGeckoMetaDataModel coinGeckoMetaData;
+                            try
+                            {
+                                coinGeckoMetaData = await GetMetaData(id);
+                            }
+                            catch(Exception)
+                            {
+                                coinGeckoMetaData = new();
+                            }
+
+                            coins.Add(new CoinGeckoTrendingModel()
+                            {
+                                Name = Extensions.Extensions.NullableToString(item["item"]?["name"]),
+                                Id = Extensions.Extensions.NullableToString(item["item"]?["id"]),
+                                ImagePath = Extensions.Extensions.NullableToString(item["item"]?["thumb"]),
+                                Symbol = Extensions.Extensions.NullableToString(item["item"]?["symbol"]),
+                                MarketCapRank = int.Parse(Extensions.Extensions.NullableToString(item["item"]?["market_cap_rank"])),
+                                PriceChange24hr = coinGeckoMetaData.market_data.price_change_percentage_24h ?? 0,
+                                CurrentPriceUsd = coinGeckoMetaData.market_data.current_price.usd ?? 0,
+                            });
+                        }
+                    }
+                }
             }
 
             IEnumerable<CoinGeckoMarketModel> coinGeckoMarketModels = await GetMarkets();
@@ -282,91 +225,91 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
     /// <param name="coinName">Name of the coin</param>
     /// <param name="days">Number of days to be returned (deffault of 1)</param>
     /// <returns>List<OHLCPairModel></returns>
-    public async Task<List<OHLCPairModel>> GetOHLCPairs(string coinName, string searchTerm = "7d")
-    {
-        if (string.IsNullOrEmpty(coinName) || string.IsNullOrEmpty(searchTerm))
-        {
-            throw new ArgumentException();
-        }
-        coinName = coinName.ToLower();
+    //public async Task<List<OHLCPairModel>> GetOHLCPairs(string coinName, string searchTerm = "7d")
+    //{
+    //    if (string.IsNullOrEmpty(coinName) || string.IsNullOrEmpty(searchTerm))
+    //    {
+    //        throw new ArgumentException();
+    //    }
+    //    coinName = coinName.ToLower();
 
-        string cacheKey = $"GetOHLCPairs-{coinName}-{searchTerm}";
-        List<OHLCPairModel> responseData = new();
-        if (!_memoryCache.TryGetValue(cacheKey, out responseData))
-        {
-            responseData = new();
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
+    //    string cacheKey = $"GetOHLCPairs-{coinName}-{searchTerm}";
+    //    List<OHLCPairModel> responseData = new();
+    //    if (!_memoryCache.TryGetValue(cacheKey, out responseData))
+    //    {
+    //        responseData = new();
+    //        var cacheEntryOptions = new MemoryCacheEntryOptions()
+    //            .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
 
-            int days = 1;
-            int? hours = null;
-            if (searchTerm.Contains("d"))
-            {
-                days = int.Parse(searchTerm.Replace("d", "")); ;
-            }
-            else if (searchTerm.Contains("hr"))
-            {
-                hours = int.Parse(searchTerm.Replace("hr", ""));
-                days = 1;
-            }
+    //        int days = 1;
+    //        int? hours = null;
+    //        if (searchTerm.Contains("d"))
+    //        {
+    //            days = int.Parse(searchTerm.Replace("d", "")); ;
+    //        }
+    //        else if (searchTerm.Contains("hr"))
+    //        {
+    //            hours = int.Parse(searchTerm.Replace("hr", ""));
+    //            days = 1;
+    //        }
 
-            RestClient client = new RestClient();
-            string searchParams = "vs_currency=usd&days=" + days;
-            RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/coins/{coinName}/ohlc?{searchParams}");
-            RestResponse response = await client.ExecuteAsync(request);
-            JArray jArray = JArray.Parse(response.Content!);
+    //        RestClient client = new RestClient();
+    //        string searchParams = "vs_currency=usd&days=" + days;
+    //        RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/coins/{coinName}/ohlc?{searchParams}");
+    //        RestResponse response = await client.ExecuteAsync(request);
+    //        JArray jArray = JArray.Parse(response.Content!);
 
-            if (jArray != null && jArray.Count > 0)
-            {
-                for (int i = 0; i < jArray.Count; i++)
-                {
-                    if (jArray[i] != null)
-                    {
-                        string? time = jArray[i][0]?.ToString();
-                        string? open = jArray[i][1]?.ToString();
-                        string? high = jArray[i][2]?.ToString();
-                        string? low = jArray[i][3]?.ToString();
-                        string? close = jArray[i][4]?.ToString();
-
-
-                        if (hours.HasValue)
-                        {
-                            DateTime timeVal = long.Parse(time).DateTimeFromUnixTimeStampMillis();
-                            if ((DateTime.Now - timeVal).TotalHours <= hours + 1)
-                            {
-                                responseData.Add(new OHLCPairModel()
-                                {
-                                    //TimeStamp = timeVal,
-                                    Open = double.Parse(open),
-                                    High = double.Parse(high),
-                                    Low = double.Parse(low),
-                                    Close = double.Parse(close),
-                                });
-                            }
-                        }
-                        else
-                        {
-                            responseData.Add(new OHLCPairModel()
-                            {
-                                //TimeStamp = long.Parse(time).DateTimeFromUnixTimeStampMillis(),
-                                Open = double.Parse(open),
-                                High = double.Parse(high),
-                                Low = double.Parse(low),
-                                Close = double.Parse(close),
-                            });
-                        }
+    //        if (jArray != null && jArray.Count > 0)
+    //        {
+    //            for (int i = 0; i < jArray.Count; i++)
+    //            {
+    //                if (jArray[i] != null)
+    //                {
+    //                    string? time = jArray[i][0]?.ToString();
+    //                    string? open = jArray[i][1]?.ToString();
+    //                    string? high = jArray[i][2]?.ToString();
+    //                    string? low = jArray[i][3]?.ToString();
+    //                    string? close = jArray[i][4]?.ToString();
 
 
-                    }
-                }
-            }
+    //                    if (hours.HasValue)
+    //                    {
+    //                        DateTime timeVal = long.Parse(time).DateTimeFromUnixTimeStampMillis();
+    //                        if ((DateTime.Now - timeVal).TotalHours <= hours + 1)
+    //                        {
+    //                            responseData.Add(new OHLCPairModel()
+    //                            {
+    //                                //TimeStamp = timeVal,
+    //                                Open = double.Parse(open),
+    //                                High = double.Parse(high),
+    //                                Low = double.Parse(low),
+    //                                Close = double.Parse(close),
+    //                            });
+    //                        }
+    //                    }
+    //                    else
+    //                    {
+    //                        responseData.Add(new OHLCPairModel()
+    //                        {
+    //                            //TimeStamp = long.Parse(time).DateTimeFromUnixTimeStampMillis(),
+    //                            Open = double.Parse(open),
+    //                            High = double.Parse(high),
+    //                            Low = double.Parse(low),
+    //                            Close = double.Parse(close),
+    //                        });
+    //                    }
 
 
-            _memoryCache.Set(CacheKey.CoinGeckoGetTrending, responseData, cacheEntryOptions);
-        }
+    //                }
+    //            }
+    //        }
 
-        return responseData;
-    }
+
+    //        _memoryCache.Set(CacheKey.CoinGeckoGetTrending, responseData, cacheEntryOptions);
+    //    }
+
+    //    return responseData;
+    //}
 
     /// <summary>
     /// Returns OHLC pairs in 30 minute intervals
@@ -374,87 +317,87 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
     /// <param name="coinName">Name of the coin</param>
     /// <param name="days">Number of days to be returned (deffault of 1)</param>
     /// <returns>List<VolumePairModel></returns>
-    public async Task<List<VolumePairModel>> GetCoinVolume(string coinName, string searchTerm)
-    {
-        if (string.IsNullOrEmpty(coinName) || string.IsNullOrEmpty(searchTerm))
-        {
-            throw new ArgumentException();
-        }
+    //public async Task<List<VolumePairModel>> GetCoinVolume(string coinName, string searchTerm)
+    //{
+    //    if (string.IsNullOrEmpty(coinName) || string.IsNullOrEmpty(searchTerm))
+    //    {
+    //        throw new ArgumentException();
+    //    }
 
-        coinName = coinName.ToLower();
+    //    coinName = coinName.ToLower();
 
-        string cacheKey = $"GetCoinVolume-{coinName}-{searchTerm}";
-        List<VolumePairModel> responseData = new();
-        if (!_memoryCache.TryGetValue(cacheKey, out responseData))
-        {
-            responseData = new();
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
+    //    string cacheKey = $"GetCoinVolume-{coinName}-{searchTerm}";
+    //    List<VolumePairModel> responseData = new();
+    //    if (!_memoryCache.TryGetValue(cacheKey, out responseData))
+    //    {
+    //        responseData = new();
+    //        var cacheEntryOptions = new MemoryCacheEntryOptions()
+    //            .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
 
-            int days = 1;
-            int? hours = null;
-            string interval = "hourly";
-            if (searchTerm.Contains("d"))
-            {
-                days = int.Parse(searchTerm.Replace("d", "")); ;
-            }
-            else if (searchTerm.Contains("hr"))
-            {
-                hours = int.Parse(searchTerm.Replace("hr", ""));
-                days = 1;
-            }
+    //        int days = 1;
+    //        int? hours = null;
+    //        string interval = "hourly";
+    //        if (searchTerm.Contains("d"))
+    //        {
+    //            days = int.Parse(searchTerm.Replace("d", "")); ;
+    //        }
+    //        else if (searchTerm.Contains("hr"))
+    //        {
+    //            hours = int.Parse(searchTerm.Replace("hr", ""));
+    //            days = 1;
+    //        }
 
-            RestClient client = new RestClient();
-            RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/coins/{coinName}/market_chart?vs_currency=usd&days={days}&interval={interval}");
-            RestResponse response = await client.ExecuteAsync(request);
-            JObject data = JObject.Parse(response.Content!);
-            if (data != null)
-            {
-                JToken token = JObject.Parse(response?.Content)["total_volumes"];
-                JArray jArray = JArray.Parse(token.ToString());
-                if (jArray != null && jArray.Count > 0)
-                {
-                    for (int i = 0; i < jArray.Count; i++)
-                    {
-                        if (jArray[i] != null)
-                        {
-                            string? time = jArray[i][0]?.ToString();
-                            string? volume = jArray[i][1]?.ToString();
+    //        RestClient client = new RestClient();
+    //        RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/coins/{coinName}/market_chart?vs_currency=usd&days={days}&interval={interval}");
+    //        RestResponse response = await client.ExecuteAsync(request);
+    //        JObject data = JObject.Parse(response.Content!);
+    //        if (data != null)
+    //        {
+    //            JToken token = JObject.Parse(response?.Content)["total_volumes"];
+    //            JArray jArray = JArray.Parse(token.ToString());
+    //            if (jArray != null && jArray.Count > 0)
+    //            {
+    //                for (int i = 0; i < jArray.Count; i++)
+    //                {
+    //                    if (jArray[i] != null)
+    //                    {
+    //                        string? time = jArray[i][0]?.ToString();
+    //                        string? volume = jArray[i][1]?.ToString();
 
-                            if (time != null && volume != null)
-                            {
+    //                        if (time != null && volume != null)
+    //                        {
 
-                                if (hours.HasValue)
-                                {
-                                    DateTime timeVal = long.Parse(time).DateTimeFromUnixTimeStampMillis();
-                                    if ((DateTime.Now - timeVal).TotalHours <= hours + 1)
-                                    {
-                                        responseData.Add(new VolumePairModel()
-                                        {
-                                            TimeStamp = timeVal,
-                                            Volume = double.Parse(volume)
-                                        });
-                                    }
-                                }
-                                else
-                                {
-                                    responseData.Add(new VolumePairModel()
-                                    {
-                                        TimeStamp = long.Parse(time).DateTimeFromUnixTimeStampMillis(),
-                                        Volume = double.Parse(volume)
-                                    });
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+    //                            if (hours.HasValue)
+    //                            {
+    //                                DateTime timeVal = long.Parse(time).DateTimeFromUnixTimeStampMillis();
+    //                                if ((DateTime.Now - timeVal).TotalHours <= hours + 1)
+    //                                {
+    //                                    responseData.Add(new VolumePairModel()
+    //                                    {
+    //                                        TimeStamp = timeVal,
+    //                                        Volume = double.Parse(volume)
+    //                                    });
+    //                                }
+    //                            }
+    //                            else
+    //                            {
+    //                                responseData.Add(new VolumePairModel()
+    //                                {
+    //                                    TimeStamp = long.Parse(time).DateTimeFromUnixTimeStampMillis(),
+    //                                    Volume = double.Parse(volume)
+    //                                });
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //        }
 
-            _memoryCache.Set(CacheKey.CoinGeckoGetTrending, responseData, cacheEntryOptions);
-        }
+    //        _memoryCache.Set(CacheKey.CoinGeckoGetTrending, responseData, cacheEntryOptions);
+    //    }
 
-        return responseData;
-    }
+    //    return responseData;
+    //}
 
     public async Task<IEnumerable<CoinGeckCoinModel>> GetTradeableCoins() =>
         await _db.LoadData<CoinGeckCoinModel, dynamic>(
@@ -478,7 +421,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
 
         return result.FirstOrDefault() ?? new();
     }
-    
+
     public async Task<CoinGeckCoinModel> GetTradeableCoinByCoinGeckoSymbol(string coinGeckoSymbol)
     {
         var result = await _db.LoadData<CoinGeckCoinModel, dynamic>(

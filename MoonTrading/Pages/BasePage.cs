@@ -10,6 +10,13 @@ public class BasePage : ComponentBase
     [Inject]
     AuthenticationStateProvider AuthState { get; set; }
 
+    public BasePage()
+    {
+        //if(AuthState == null)
+        //{
+        //    throw new Exception("Failed to get authentication state of user");
+        //}
+    }
     public string UserId { get; private set; } = "";
     public bool IsAuthenticated { get; private set; } = false;
 

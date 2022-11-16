@@ -23,12 +23,12 @@ public class UserFavoriteCoinsDataTests
     public async Task GetUserFavoriteCoins_NullUserId_ExpectException()
     {
         // Arrange             
-        Exception exception = null;
+        Exception? exception = null;
 
         // Act           
         try
         {
-            await userFavoriteCoinData.GetUserFavoriteCoins(null);
+            await userFavoriteCoinData.GetUserFavoriteCoins("");
         }
         catch (Exception e) { exception = e; }
 
@@ -90,7 +90,7 @@ public class UserFavoriteCoinsDataTests
     }
 
     [TestMethod]
-    public async Task AddUserFavoriteCoins_NullUserId_ExpectException()
+    public async Task AddUserFavoriteCoins_InvalidUserId_ExpectException()
     {
         // Arrange 
         Exception? exception = null;
@@ -98,7 +98,7 @@ public class UserFavoriteCoinsDataTests
         // Act           
         try
         {
-            await userFavoriteCoinData.AddUserFavoriteCoin(null, "");
+            await userFavoriteCoinData.AddUserFavoriteCoin("", "");
         }
         catch (Exception e) { exception = e; }
 

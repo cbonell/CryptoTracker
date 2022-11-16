@@ -1,6 +1,7 @@
 ﻿@inject IJSRuntime js
 @inject ICoinGeckoData geckoData
-@inject ICryptoFacilitiesData cfd
+
+@using static MoonTrading.DataAccess.Data.CryptoWatchData
 
 <EditForm Model="rangeInput">
     <InputRadioGroup @bind-Value="rangeInput.Name">
@@ -32,20 +33,15 @@
         candleData = new List<OHLCPairModel>();
     }
 
-    int renderCount = 0;
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (renderCount < 1)
-        {
-            await LoadData();
-            renderCount++;
-        }
+        await LoadData();
     }
 
     protected async Task LoadData()
     {
-        DateTimeOffset fromDate = cfd.GetOffsetFromInterval(rangeInput.Name);
-        candleData = await cfd.GetOHLCPairs(Coin.Symbol, fromDate, rangeInput.Name);
+        DateTimeOffset fromDate = GetOffsetFromInterval(rangeInput.Name);
+        candleData = await GetOHLCPairs(Coin.Symbol, fromDate, rangeInput.Name);
         await js.InvokeVoidAsync("makeCandleChart", chartId, candleData);
     }
 }

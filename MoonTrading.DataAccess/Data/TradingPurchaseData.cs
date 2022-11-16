@@ -1,8 +1,8 @@
 ﻿using MoonTrading.Tests.Data.Interfaces;
 using static SharedConstants.Constants;
+using static MoonTrading.BusinessLogic.Validation.TradingPurchaseDataValidation;
 
 namespace MoonTrading.Tests.Data;
-
 public class TradingPurchaseData : DataBase, ITradingPurchaseData
 {
     public TradingPurchaseData(ISqlDataAccess db) : base(db) { }
@@ -97,7 +97,7 @@ public class TradingPurchaseData : DataBase, ITradingPurchaseData
             throw new Exception(InvalidPurchasePrice);
         }
 
-        dynamic parameters = new { UserId = userId, CoinId = coin.Id, PurchasingCurrency = purchaseCurrency, Quantity = quanitity, PurchasePrice = purchasePrice, PurchaseDate = purchaseDate };
+        dynamic parameters = new { UserId = userId, CoinGeckoId = coin.Id, PurchasingCurrency = purchaseCurrency, Quantity = quanitity, PurchasePrice = purchasePrice, PurchaseDate = purchaseDate };
         await _db.SaveData<dynamic>("dbo.TradingPurchase_Create", parameters);
     }
 

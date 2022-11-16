@@ -2,6 +2,7 @@
 using MoonTrading.Tests.CoinGeckoAccess;
 using MoonTrading.Tests.MLModelAccess;
 using Hangfire;
+using MoonTrading.Tools.Email;
 
 namespace MoonTrading.Startup;
 
@@ -15,12 +16,12 @@ public static class Services
 
 
         builder.Services.AddTransient<ISqlDataAccess, SqlDataAccess>();
+        builder.Services.AddSingleton<IEmailClient, EmailClient>();
         builder.Services.AddSingleton<IUserData, UserData>();
         builder.Services.AddSingleton<ICurrencyData, CurrencyData>();
         builder.Services.AddSingleton<IUserWalletData, UserWalletData>();
         builder.Services.AddSingleton<ITradingPurchaseData, TradingPurchaseData>();
         builder.Services.AddSingleton<IUserFavoriteCoinData, UserFavoriteCoinData>();
-        builder.Services.AddSingleton<ICoinMarketCapData, CoinMarketCapData>();
         builder.Services.AddSingleton<ICoinGeckoData, CoinGeckoData>();
         builder.Services.AddSingleton<IMLModelData, MLModelData>();
         builder.Services.AddSingleton<IPriceAlertData, PriceAlertData>();

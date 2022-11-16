@@ -28,7 +28,7 @@ public class UserWalletDataTests
         // Act           
         try
         {
-            await userWalletData.GetUserWallet(null);
+            await userWalletData.GetUserWallet("");
         }
         catch (Exception e) { exception = e; }
 
@@ -63,7 +63,7 @@ public class UserWalletDataTests
         // Act           
         try
         {
-            await userWalletData.GetUserWallet(null);
+            await userWalletData.GetUserWallet("");
         }
         catch (Exception e) { exception = e; }
 
@@ -98,7 +98,7 @@ public class UserWalletDataTests
         // Act           
         try
         {
-            await userWalletData.InitializeUserWalletForPaperTrading(null);
+            await userWalletData.InitializeUserWalletForPaperTrading("");
         }
         catch (Exception e) { exception = e; }
 

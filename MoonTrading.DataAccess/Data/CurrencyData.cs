@@ -1,6 +1,5 @@
 ﻿using MoonTrading.Tests.Data.Interfaces;
-using System.Linq;
-using static MoonTrading.Tests.Data.Interfaces.ICurrencyData;
+using static MoonTrading.BusinessLogic.Validation.CurrencyDataValidation;
 using static SharedConstants.Constants;
 
 namespace MoonTrading.Tests.Data;
@@ -14,7 +13,7 @@ public class CurrencyData : DataBase, ICurrencyData
 
     public Task<IEnumerable<CurrencyModel>> GetCurrenciesByType(CurrencyType currencyType)
     { 
-        if (!Enum.IsDefined(typeof(CurrencyType), (int)currencyType))
+        if (!IsCurrencyEnum(currencyType))
         {
             throw new InvalidDataException(string.Format("Recieved invalid enum value for {0}", nameof(CurrencyType)));
         }
@@ -24,7 +23,7 @@ public class CurrencyData : DataBase, ICurrencyData
 
     public Task<IEnumerable<CurrencyModel>> GetCurrencyByCoinMarketCapId(int coinMarketCapId, CurrencyType currencyType)
     {
-        if (!Enum.IsDefined(typeof(CurrencyType), (int)currencyType))
+        if (!IsCurrencyEnum(currencyType))
         {
             throw new InvalidDataException(string.Format("Recieved invalid enum value for {0}", nameof(CurrencyType)));
         }
@@ -39,6 +38,11 @@ public class CurrencyData : DataBase, ICurrencyData
 
     public async Task<CurrencyModel> GetCurrencyById(int Id)
     {
+        if(!IsValidCurrencyId(Id))
+        {
+            throw new ArgumentException("Invalid Currency Id");
+        }
+
         var data = await _db.LoadData<CurrencyModel, dynamic>("[dbo].[GetCurrencyById]", new {Id = Id});
 
         if(data != null)

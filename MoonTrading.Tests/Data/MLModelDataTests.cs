@@ -1,7 +1,7 @@
 ﻿using MoonTrading.Tests.Data.Interfaces;
 
 using MoonTrading.Tests.MLModelAccess;
-using MoonTrading.Tests.Model;
+using MoonTrading.Model;
 using Moq;
 
 namespace MoonTrading.Tests.Data;

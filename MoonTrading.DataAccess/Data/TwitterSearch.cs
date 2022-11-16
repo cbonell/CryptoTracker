@@ -2,12 +2,12 @@
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using static SharedConstants.Constants;
-
+using MoonTrading.BusinessLogic.Actions;
 namespace MoonTrading.Tests.Data;
 
 public class TwitterSearch
 {
-    private static string[] blackListWords = { "giveaway", "winner", "\"giving away\"" };
+    private static string[] blackListWords = { "giveaway", "winner", "\"giving away\"", "won" };
     public static async Task<IEnumerable<TweetSearchModel>> GetTrendingByHashTag(string hashTag)
     {
         if (string.IsNullOrEmpty(hashTag))
@@ -24,19 +24,6 @@ public class TwitterSearch
         request.AddHeader("content-type", "application/json");
 
         RestResponse response = await client.ExecuteAsync(request);
-
-        JObject data = JObject.Parse(response.Content!);
-
-        if (data != null)
-        {
-            JToken token = data.First;
-            try
-            {
-                return JsonConvert.DeserializeObject<IEnumerable<TweetSearchModel>>(token.First.ToString())!;
-            }
-            catch { }
-        }
-
-        return Enumerable.Empty<TweetSearchModel>();
+        return TweetSearchDataHandler.HandleTwitterReponse(response);
     }
 }

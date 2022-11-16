@@ -129,11 +129,14 @@ public class MLModelData : IMLModelData
                     string? price = jArray[i]?.ToString();
                     counter++;
 
-                    predictions.Add(new DatePricePairModel()
+                    if (!string.IsNullOrWhiteSpace(price))
                     {
-                        TimeStamp = DateTime.UtcNow.AddHours(counter),
-                        Price = Math.Round(double.Parse(price), 2)
-                    });
+                        predictions.Add(new DatePricePairModel()
+                        {
+                            TimeStamp = DateTime.UtcNow.AddHours(counter),
+                            Price = Math.Round(double.Parse(price), 2)
+                        });
+                    }
                 }
             }
         }

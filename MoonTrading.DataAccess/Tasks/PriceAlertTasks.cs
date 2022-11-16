@@ -7,15 +7,16 @@ namespace MoonTrading.Tests.Tasks;
 public class PriceAlertTasks
 {
     IPriceAlertData _priceAlertData;
-    ICoinMarketCapData _coinMarketCapData;
     ICurrencyData _currencyData;
     ICoinGeckoData _coinGeckoData;
-    public PriceAlertTasks(IPriceAlertData priceAlertData, ICoinMarketCapData coinMarketCapData, ICurrencyData currencyData, ICoinGeckoData coinGeckoData)
+    IEmailClient _emailClient;
+
+    public PriceAlertTasks(IPriceAlertData priceAlertData, ICurrencyData currencyData, ICoinGeckoData coinGeckoData, IEmailClient emailClient)
     {
         _priceAlertData = priceAlertData;
-        _coinMarketCapData = coinMarketCapData;
         _currencyData = currencyData;
         _coinGeckoData = coinGeckoData;
+        _emailClient = emailClient;
     }
 
     public async Task SendPriceAlerts()
@@ -53,7 +54,7 @@ public class PriceAlertTasks
                                              , alert.AlertPrice.ToString("0.0000")
                                              , currentPrice.ToString("0.0000"));
                 string to = alert.email;
-                EmailClient.SendEmail(subject, body, to);
+                _emailClient.SendEmail(subject, body, to);
             }
         }
     }

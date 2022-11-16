@@ -37,7 +37,7 @@ public class CoinGeckoDataTests
         // Act
         try
         {
-            var a = await coinGeckoData.GetPriceInUsd(null);
+            var a = await coinGeckoData.GetPriceInUsd("");
         }
         catch (ArgumentNullException e) { exception = e; }
 
@@ -69,21 +69,21 @@ public class CoinGeckoDataTests
         Assert.IsNull(exception);
     }
     
-    [TestMethod]
-    public async Task GetPriceHistory_InvalidCurrency_ExpectException()
-    {
-        // Arrange
-        ArgumentException? exception = null;
+    //[TestMethod]
+    //public async Task GetPriceHistory_InvalidCurrency_ExpectException()
+    //{
+    //    // Arrange
+    //    ArgumentException? exception = null;
 
-        // Act
-        try
-        {
-            var a = await coinGeckoData.GetPriceHistory("", "");
-        }
-        catch (ArgumentNullException e) { exception = e; }
+    //    // Act
+    //    try
+    //    {
+    //        var a = await coinGeckoData.GetPriceHistory("", "");
+    //    }
+    //    catch (ArgumentNullException e) { exception = e; }
 
-        // Assert
-        Assert.IsNotNull(exception);
-        Assert.AreEqual(exception.Message, "Value cannot be null. (Parameter 'currency')");
-    }
+    //    // Assert
+    //    Assert.IsNotNull(exception);
+    //    Assert.AreEqual(exception.Message, "Value cannot be null. (Parameter 'currency')");
+    //}
 }

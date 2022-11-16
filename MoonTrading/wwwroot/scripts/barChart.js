@@ -1,28 +1,51 @@
 ﻿window.makeBarChart = (canvasId, json) => {
-    var arr = [];
-    arr.push(['Date', 'Volume']);
-    for (var i = 0; i < json.length; ++i) {
-        var date = new Date(json[i]['timeStamp']);
-        
-        arr.push([date.toLocaleDateString(undefined, { month: "short", day: "numeric", hour: "2-digit"  }), json[i]['volume']]);
+    var canvas = document.getElementById(canvasId);
+    canvas.innerHTML = '';
 
+    var dataArr = [];
+    for (var i = 0; i < json.length; i++) {
+        var date = new Date(json[i]['timeStamp']);
+        dataArr.push(
+            {
+                x: json[i]['timeStamp'],
+                y: json[i]['volume']
+            }
+        );
     }
 
-    var data = google.visualization.arrayToDataTable(arr);
-
     var options = {
-        //title: 'Price',
-        //curveType: 'function',
-        legend: { position: 'none' },
-        //bar: { groupWidth: '100%' },
-        //chartArea: {
-        //    backgroundColor: '#252525'
-        //},
-        backgroundColor: '#252525',
-        //bars: 'vertical',
-        chartArea: {  top: 0 }
+        series: [{
+            data: dataArr,
+        }],
+        chart: {
+            type: 'bar',
+            height: 150
+        },
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                columnWidth: '55%',
+                endingShape: 'rounded'
+            },
+        },
+        dataLabels: {
+            enabled: false
+        },
+        xaxis: {
+            type: 'datetime'
+        },
+        
+        fill: {
+            opacity: 1
+        },
+        yaxis: {
+            tooltip: {
+                enabled: true
+            }
+        }
     };
 
-    var chart = new google.visualization.ColumnChart(document.getElementById(canvasId));
-    chart.draw(data, options);
+    var chart = new ApexCharts(canvas, options);
+    chart.render();
 }
+

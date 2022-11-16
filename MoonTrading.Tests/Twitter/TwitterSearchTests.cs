@@ -20,7 +20,7 @@ public class TwitterSearchTests
         // Act
         try
         {
-            await TwitterSearch.GetTrendingByHashTag(null);
+            await TwitterSearch.GetTrendingByHashTag("!@!#!@#$@!#");
         }
         catch(ArgumentNullException e) { exception = e; }
 

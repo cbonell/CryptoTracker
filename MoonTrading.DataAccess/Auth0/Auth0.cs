@@ -21,7 +21,7 @@ public class Auth0
         UserMetaDataContainer userMetaData = new UserMetaDataContainer();
         if (response.IsSuccessful)
         {
-            userMetaData = JsonConvert.DeserializeObject<UserMetaDataContainer>(response.Content)!;
+            userMetaData = JsonConvert.DeserializeObject<UserMetaDataContainer>(response.Content ?? "")!;
         }
         return userMetaData;
     }
