@@ -1,0 +1,153 @@
+﻿@using MoonTrading.Pages
+@using static MoonTrading.Extensions.Extensions
+
+@inject ICurrencyData currencyData
+@inject ITradingPurchaseData tradingPurchaseData
+@inject IUserWalletData userWalletData
+
+@inherits BasePage
+
+<Modal @ref=purchaseModal
+       Title="Purchase Confirmation">
+    @Coin.Name purchased at @CurrentPrice
+</Modal>
+
+<Modal @ref=sellModal
+       Title="Sale Confirmation">
+    Sold @numberToSell @Coin.Name at @CurrentPrice
+</Modal>
+
+<Modal @ref=purcahseConfirmationModal Title="Purchase Confirmation" OnSave="() => MakePurchase(true)">
+    Are you sure that you want to purchase @numberToBuy @Coin.Name for @CurrentPrice.AsFormattedNumber()
+</Modal>
+<RadzenCard>
+    <RadzenTabs>
+        <Tabs>
+            <RadzenTabsItem Text="Buy">
+                <label>Number to purchase</label>
+                <label>@sellError</label>
+                <EditForm Model="percentageValues">
+                    <InputRadioGroup ValueChanged="@((e) => OnRadiochangeBuy(e))" TValue="string" ValueExpression="() => selectedSellValue">
+                        @foreach (string s in percentageValues)
+                        {
+                            <InputRadio Value="@(s)" class="form-check-input" /> @(s)
+                        }
+                    </InputRadioGroup>
+                </EditForm>
+                <input type="number" @bind="numberToBuy" class="form-control">
+                Your USD = @userUSDWallet?.Quantity
+                1 @Coin.Name = $@CurrentPrice.AsFormattedNumber()
+                <button @onclick="() => MakePurchase(false)" class="form-control">Purchase</button>
+
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Sell">
+                Current price: @CurrentPrice
+                <small>Max you can sell @userCoinWallet.Quantity</small>
+                <input type="number" placeholder="Number of @Coin.Symbol" class="form-control" @bind="numberToSell" />
+                <button @onclick="Sell" class="form-control" disabled="@(userCoinWallet.Quantity <= 0)">Sell</button>
+            </RadzenTabsItem>
+        </Tabs>
+    </RadzenTabs>
+</RadzenCard>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public CoinGeckCoinModel Coin { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public double CurrentPrice { get; set; }
+
+    private string[] percentageValues = {"100%", "75%", "50%", "25%"};
+
+    double? numberToSell, numberToBuy;
+    Modal purchaseModal, sellModal, purcahseConfirmationModal;
+    string selectedSellValue, selectedBuyValue = "100%";
+    string sellError = "";
+    UserWalletModel userCoinWallet { get; set; }
+    UserWalletModel userUSDWallet { get; set; }
+
+    public CoinPurchasePanel()
+    {
+        purchaseModal = sellModal = purcahseConfirmationModal = new();
+        userCoinWallet = new();
+        Coin = new();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await LoadData();
+    }
+
+    private void OnRadiochangeSell(object sender)
+    {
+        selectedSellValue = (string)sender;
+        HandlePercentageSellSelection();
+        StateHasChanged();
+    }
+
+    private void OnRadiochangeBuy(object sender)
+    {
+        selectedBuyValue = (string)sender;
+        HandlePercentageBuySelection();
+        StateHasChanged();
+    }
+
+    private async Task LoadData()
+    {
+        if (IsAuthenticated)
+        {
+            var tempWallet = await userWalletData.GetUserWallet(UserId);
+            if (tempWallet != null && tempWallet.Count() > 0)
+            {
+                userCoinWallet = tempWallet.Where(x => x.CoinGeckoId == Coin.Id).FirstOrDefault() ?? new UserWalletModel();
+                userUSDWallet = tempWallet.Where(x => x.CoinGeckoId == "usd").FirstOrDefault() ?? new UserWalletModel();
+            }
+        }
+    }
+
+    private void HandlePercentageSellSelection()
+    {
+        double percentage = selectedSellValue.PercentToDouble();
+        numberToSell = (userUSDWallet.Quantity * percentage) / CurrentPrice;
+    }
+
+    private void HandlePercentageBuySelection()
+    {
+        double percentage = selectedBuyValue.PercentToDouble();
+        numberToBuy = (userUSDWallet.Quantity * percentage) / CurrentPrice;
+    }
+
+    protected async Task MakePurchase(bool isConfirmed = false)
+    {
+        if (IsAuthenticated)
+        {
+            if (true)//userWalletData.UserCanBuy(userUSDWallet, numberToBuy ?? 0, CurrentPrice))
+            {
+                if (isConfirmed)
+                {
+                    await tradingPurchaseData.Purchase(UserId, Coin, numberToBuy ?? 0, CurrentPrice, DateTime.Now);
+                    await LoadData();
+                    purchaseModal.ToggleDisplay();
+                }
+                else
+                {
+                    purcahseConfirmationModal.ToggleDisplay();
+                }
+            }
+        }
+    }
+
+    private async Task Sell()
+    {
+        if (IsAuthenticated)
+        {
+            await tradingPurchaseData.Sell(UserId, Coin, numberToSell ?? 0, CurrentPrice, DateTime.Now);
+            await LoadData();
+            sellModal.ToggleDisplay();
+
+        }
+    }
+}

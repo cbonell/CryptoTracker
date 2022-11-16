@@ -1,0 +1,95 @@
+﻿@inject IJSRuntime js
+@inject IMLModelData mlModeldata
+
+@using static MoonTrading.DataAccess.Data.CryptoWatchData
+@using System.Globalization
+@using MoonTrading.Tests.CoinGeckoAccess
+@using MoonTrading.Tests.MLModelAccess
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-sm-4 btn-group">
+            <button id="chartDrawButton" class="btn btn-primary">Draw</button>
+            <button id="chartDrawCloseButton" class="btn btn-danger" style="display: none">Close</button>
+        </div>
+    </div>
+</div>
+
+@*Used as a placeholder for the drawing chart*@
+<div id="canvasParent"></div>
+
+
+
+<div class="chartWrapper">
+    <EditForm Model="rangeInput">
+        <InputRadioGroup @bind-Value="rangeInput.Name">
+            @foreach (string type in ChartUserTimeOptions)
+            {
+                <InputRadio Value="type" class="form-check-input" @onclick="LoadData" />
+                <label class="form-check-label">
+                    @type
+                </label>
+            }
+        </InputRadioGroup>
+    </EditForm>
+
+    <div id="priceWrapper">
+        <div id="linechart_div"></div>
+    </div>
+    <div id="chart_div"></div>
+</div>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public CoinGeckCoinModel Coin { get; set; }
+
+    RangeInput rangeInput;
+
+    public CoinPriceChart()
+    {
+        rangeInput = new();
+        Coin = new();
+    }
+
+    string FormatAsMonth(object value)
+    {
+        if (value != null)
+        {
+            return Convert.ToDateTime(value).ToString("MMMM dd h:mm tt");
+        }
+
+        return string.Empty;
+    }
+
+    string FormatAsUSD(object value)
+    {
+        if (value != null)
+        {
+            return Convert.ToDouble(value).ToString("C2");
+        }
+
+        return string.Empty;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    protected async Task LoadData()
+    {
+        DateTimeOffset fromDate = GetOffsetFromInterval(rangeInput.Name);
+        CoinPriceVolumePair coinPriceAndVolume = await GetCoinPriceVolumePair(Coin.Symbol, fromDate, rangeInput.Name);
+        List<DatePricePairModel> predictionsData = new();// await mlModeldata.GetPricePrediction(Coin.Symbol);
+        await js.InvokeVoidAsync("makeBarChart", "chart_div", coinPriceAndVolume.VolumePairs);
+        if (predictionsData.Count > 0)
+        {
+            await js.InvokeVoidAsync("makeLineChart", "linechart_div", coinPriceAndVolume.DatePricePairs, predictionsData);
+        }
+        else
+        {
+            await js.InvokeVoidAsync("makeLineChart", "linechart_div", coinPriceAndVolume.DatePricePairs);
+        }
+    }
+}

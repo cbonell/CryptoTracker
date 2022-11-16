@@ -1,0 +1,48 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@namespace MoonTrading.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en" color-mode="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="~/" />
+    <script src="https://kit.fontawesome.com/4ffb503e0b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/default-base.css">
+    <link rel="icon" href="~/Coin.ico">
+
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link href="css/site.css" rel="stylesheet" />
+
+    <link href="MoonTrading.styles.css" rel="stylesheet" />
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+
+
+</head>
+<body>
+    @RenderBody()
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            An error has occurred. This application may no longer respond until reloaded.
+        </environment>
+        <environment include="Development">
+            An unhandled exception has occurred. See browser dev MoonTrading.Tools for details.
+        </environment>
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="scripts/bootstrap.js"></script>
+    <script src="scripts/DrawOnCanvas.js"></script>
+    <script src="scripts/ColorModeHandler.js"></script>
+    <script src="scripts/candleChart.js"></script>
+    <script src="scripts/barChart.js"></script>
+    <script src="scripts/lineChart.js"></script>
+    <script src="scripts/iconManager.js"></script>
+    <script src="_framework/blazor.server.js"></script>
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+</body>
+</html>
