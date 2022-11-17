@@ -2,6 +2,7 @@ using MoonTrading.Tests.Tasks;
 using MoonTrading.Startup;
 using Hangfire;
 using HangfireBasicAuthenticationFilter;
+using MoonTrading.DataAccess.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,8 +31,11 @@ app.UseHangfireDashboard("/AutomatedTasks", new DashboardOptions()
 });
 
 // cron exprssion checker https://crontab.cronhub.io/
-string cronExp = "*/5 * * * *"; // Every 5 minutes
+string cronExp = "*/10 * * * *"; // Every 10 minutes
 RecurringJob.AddOrUpdate<PriceAlertTasks>("1", x => x.SendPriceAlerts(), cronExp, TimeZoneInfo.Local);
+
+cronExp = "*/5 * * * *"; // Every 5 minutes
+RecurringJob.AddOrUpdate<MarketOrderTasks>("2", x => x.ExecuteMarketOrders(), cronExp, TimeZoneInfo.Local);
 
 app.UseHttpsRedirection();
 

@@ -55,6 +55,7 @@ public class PriceAlertTasks
                                              , currentPrice.ToString("0.0000"));
                 string to = alert.email;
                 _emailClient.SendEmail(subject, body, to);
+                await _priceAlertData.DeletePriceAlert(alert.Id);
             }
         }
     }

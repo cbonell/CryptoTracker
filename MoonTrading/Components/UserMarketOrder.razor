@@ -1,0 +1,69 @@
+﻿@using System.Security.Claims
+@using MoonTrading.DataAccess.Data
+@using MoonTrading.DataModels.Model
+@using MoonTrading.Tests.Auth0
+@using MoonTrading.Tests.Auth0.Model
+
+@inject AuthenticationStateProvider AuthState
+@inject IMarketOrderData marketOrderData
+
+<AuthorizeView>
+    <Authorized>
+        <h3 class="text-center">Open Market Orders</h3>
+        <RadzenDataGrid Data="@userMarketOrders" TItem="MarketOrderModel" AllowPaging="true" AllowSorting="true" PageSize="15">
+            <Columns>
+                <RadzenDataGridColumn TItem="MarketOrderModel" Property="OrderType" Title="Order Type" CssClass="text-center">
+                    <Template Context="coin">
+                        @(coin.OrderType == 0 ? "Stop Market" : "Stop Loss")
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="MarketOrderModel" Property="Name" Title="Coin Name" CssClass="text-center">
+                    <Template Context="coin">
+                        <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.CoinMarketCapId + ".png")"> <a href="/Coin/@coin.CoinGeckoId">@coin.Name</a>
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="MarketOrderModel" Property="Quantity" Title="Quantity" CssClass="text-center" />
+                <RadzenDataGridColumn TItem="MarketOrderModel" Property="PurchasePrice" Title="Price" CssClass="text-center" />
+                <RadzenDataGridColumn TItem="MarketOrderModel" Property="Name" Title="Coin Name" CssClass="text-center">
+                    <Template Context="coin">
+                        <button class="btn btn-danger" @onclick="(async () => await RemoveOrder(coin.Id))">Remove Order</button>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private IEnumerable<MarketOrderModel> userMarketOrders { get; set; } = Enumerable.Empty<MarketOrderModel>();
+    string userId = "";
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        var state = await AuthState.GetAuthenticationStateAsync();
+        if (state != null && state.User != null && state.User.Identity != null)
+        {
+            if (state.User.Identity.IsAuthenticated)
+            {
+                var tempUserClaim = state.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                if (tempUserClaim != null)
+                {
+                    userId = tempUserClaim.Value;
+                    userMarketOrders = await marketOrderData.GetUserMarketOrders(userId);
+                }
+            }
+        }
+    }
+
+    private async Task RemoveOrder(string orderId)
+    {
+        int oId = int.Parse(orderId);
+        await marketOrderData.DeleteMarketOrder(oId);
+        userMarketOrders = userMarketOrders.Where(x => x.Id != orderId);
+        StateHasChanged();
+    }
+}

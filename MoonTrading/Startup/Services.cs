@@ -3,6 +3,7 @@ using MoonTrading.Tests.CoinGeckoAccess;
 using MoonTrading.Tests.MLModelAccess;
 using Hangfire;
 using MoonTrading.Tools.Email;
+using MoonTrading.DataAccess.Data;
 
 namespace MoonTrading.Startup;
 
@@ -26,6 +27,8 @@ public static class Services
         builder.Services.AddSingleton<IMLModelData, MLModelData>();
         builder.Services.AddSingleton<IPriceAlertData, PriceAlertData>();
         builder.Services.AddSingleton<ICryptoFacilitiesData, CryptoFacilitiesData>();
+        builder.Services.AddSingleton<ICryptoWatchData, CryptoWatchData>();
+        builder.Services.AddSingleton<IMarketOrderData, MarketOrderData>();
 
         builder.Services
     .AddAuth0WebAppAuthentication(options =>

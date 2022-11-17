@@ -1,8 +1,10 @@
 ﻿@inject IJSRuntime js
 @inject IMLModelData mlModeldata
+@inject ICryptoWatchData cryptoWatch
 
 @using static MoonTrading.DataAccess.Data.CryptoWatchData
 @using System.Globalization
+@using MoonTrading.DataAccess.Data
 @using MoonTrading.Tests.CoinGeckoAccess
 @using MoonTrading.Tests.MLModelAccess
 
@@ -80,7 +82,7 @@
     protected async Task LoadData()
     {
         DateTimeOffset fromDate = GetOffsetFromInterval(rangeInput.Name);
-        CoinPriceVolumePair coinPriceAndVolume = await GetCoinPriceVolumePair(Coin.Symbol, fromDate, rangeInput.Name);
+        CoinPriceVolumePair coinPriceAndVolume = await cryptoWatch.GetCoinPriceVolumePair(Coin.Symbol, fromDate, rangeInput.Name);
         List<DatePricePairModel> predictionsData = new();// await mlModeldata.GetPricePrediction(Coin.Symbol);
         await js.InvokeVoidAsync("makeBarChart", "chart_div", coinPriceAndVolume.VolumePairs);
         if (predictionsData.Count > 0)

@@ -4,10 +4,10 @@ namespace MoonTrading.Model;
 
 public class CoinGeckoMetaDataModel : CoinGeckCoinModel
 {
-    public object asset_platform_id { get; set; } = "";
+    //public object asset_platform_id { get; set; } = "";
     public int?  block_time_in_minutes { get; set; } = new();
     public string hashing_algorithm { get; set; } = "";
-    public List<object> additional_notices { get; set; } = new();
+    //public List<object> additional_notices { get; set; } = new();
     public Description description { get; set; } = new();
     public Links links { get; set; } = new();
     public Image image { get; set; } = new();
@@ -99,10 +99,10 @@ public class MarketCap
 public class MarketData
 {
     public CurrentPrice current_price { get; set; } = new();
-    public object total_value_locked { get; set; } = "";
-    public object mcap_to_tvl_ratio { get; set; } = new();
-    public object fdv_to_tvl_ratio { get; set; } = new();
-    public object roi { get; set; } = "";
+    //public object total_value_locked { get; set; } = "";
+    //public object mcap_to_tvl_ratio { get; set; } = new();
+    //public object fdv_to_tvl_ratio { get; set; } = new();
+    //public object roi { get; set; } = "";
     public MarketCap market_cap { get; set; } = new();
     public int?  market_cap_rank { get; set; }
     public TotalVolume total_volume { get; set; } = new();

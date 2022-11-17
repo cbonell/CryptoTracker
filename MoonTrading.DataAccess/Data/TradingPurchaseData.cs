@@ -118,7 +118,7 @@ public class TradingPurchaseData : DataBase, ITradingPurchaseData
             throw new Exception(InvalidSellPrice);
         }
 
-        dynamic parameters = new { UserId = userId, CoinGeckoId = coin.Id, Quantity = quanitity, SellPrice = sellPrice, PurchaseDate = purchaseDate };
+        dynamic parameters = new { UserId = userId, CoinId = coin.Id, Quantity = quanitity, SellPrice = sellPrice, PurchaseDate = purchaseDate };
         await _db.SaveData<dynamic>("dbo.TradingPurchase_Sell", parameters);
     }
 }

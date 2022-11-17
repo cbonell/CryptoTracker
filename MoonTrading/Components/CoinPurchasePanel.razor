@@ -1,9 +1,13 @@
-﻿@using MoonTrading.Pages
+﻿@using MoonTrading.DataAccess.Data
+@using MoonTrading.Pages
+@using MoonTrading.Tests.Auth0.Model
 @using static MoonTrading.Extensions.Extensions
+@using MoonTrading.Tests.Auth0
 
 @inject ICurrencyData currencyData
 @inject ITradingPurchaseData tradingPurchaseData
 @inject IUserWalletData userWalletData
+@inject IMarketOrderData marketOrderData
 
 @inherits BasePage
 
@@ -23,7 +27,7 @@
 <RadzenCard>
     <RadzenTabs>
         <Tabs>
-            <RadzenTabsItem Text="Buy">
+            <RadzenTabsItem Text="Market Order">
                 <label>Number to purchase</label>
                 <label>@sellError</label>
                 <EditForm Model="percentageValues">
@@ -37,14 +41,27 @@
                 <input type="number" @bind="numberToBuy" class="form-control">
                 Your USD = @userUSDWallet?.Quantity
                 1 @Coin.Name = $@CurrentPrice.AsFormattedNumber()
-                <button @onclick="() => MakePurchase(false)" class="form-control">Purchase</button>
-
+                <button @onclick="() => MakePurchase(false)" class="form-control">Market Order</button>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Stop Market">
+                Stop Market Price
+                <input type="number" @bind="stopMarketPrice" class="form-control">
+                Quantity
+                <input type="number" @bind="stopMarketQuantity" class="form-control">
+                <button @onclick="CreateStopMarket" class="form-control">Stop Market Purchase</button>
             </RadzenTabsItem>
             <RadzenTabsItem Text="Sell">
                 Current price: @CurrentPrice
                 <small>Max you can sell @userCoinWallet.Quantity</small>
                 <input type="number" placeholder="Number of @Coin.Symbol" class="form-control" @bind="numberToSell" />
                 <button @onclick="Sell" class="form-control" disabled="@(userCoinWallet.Quantity <= 0)">Sell</button>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Stop Loss">
+                Stop Loss Price
+                <input type="number" @bind="stopLossPrice" class="form-control">
+                Quantity
+                <input type="number" @bind="stopLossQuantity" class="form-control">
+                <button @onclick="CreateStopLoss" class="form-control">Stop Loss</button>
             </RadzenTabsItem>
         </Tabs>
     </RadzenTabs>
@@ -59,9 +76,10 @@
     [EditorRequired]
     public double CurrentPrice { get; set; }
 
-    private string[] percentageValues = {"100%", "75%", "50%", "25%"};
+    private string[] percentageValues = { "100%", "75%", "50%", "25%" };
 
     double? numberToSell, numberToBuy;
+    double stopMarketPrice, stopMarketQuantity, stopLossPrice, stopLossQuantity = 0;
     Modal purchaseModal, sellModal, purcahseConfirmationModal;
     string selectedSellValue, selectedBuyValue = "100%";
     string sellError = "";
@@ -149,5 +167,17 @@
             sellModal.ToggleDisplay();
 
         }
+    }
+
+    private async Task CreateStopMarket()
+    {
+        UserMetaDataContainer user = await Auth0.GetUserMetaData(UserId);
+        await marketOrderData.CreateMarketOrder(UserId, user.Email, Coin.Id, stopMarketPrice, stopMarketQuantity, 0);
+    }
+
+    private async Task CreateStopLoss()
+    {
+        UserMetaDataContainer user = await Auth0.GetUserMetaData(UserId);
+        await marketOrderData.CreateMarketOrder(UserId, user.Email, Coin.Id, stopLossPrice, stopLossQuantity, 1);
     }
 }

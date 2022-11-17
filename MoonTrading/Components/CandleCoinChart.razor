@@ -1,5 +1,7 @@
-﻿@inject IJSRuntime js
+﻿@using MoonTrading.DataAccess.Data
+@inject IJSRuntime js
 @inject ICoinGeckoData geckoData
+@inject ICryptoWatchData cryptoWatch
 
 @using static MoonTrading.DataAccess.Data.CryptoWatchData
 
@@ -41,7 +43,7 @@
     protected async Task LoadData()
     {
         DateTimeOffset fromDate = GetOffsetFromInterval(rangeInput.Name);
-        candleData = await GetOHLCPairs(Coin.Symbol, fromDate, rangeInput.Name);
+        candleData = await cryptoWatch.GetOHLCPairs(Coin.Symbol, fromDate, rangeInput.Name);
         await js.InvokeVoidAsync("makeCandleChart", chartId, candleData);
     }
 }

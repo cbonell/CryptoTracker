@@ -68,6 +68,7 @@
     <Folder Include="Stored Procedures\ResponseCache" />
     <Folder Include="Stored Procedures\PriceAlert" />
     <Folder Include="Stored Procedures\CoinGeckoCoin" />
+    <Folder Include="Stored Procedures\MarketOrder" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\User.sql" />
@@ -116,6 +117,10 @@
     <Build Include="Stored Procedures\CoinGeckoCoin\GetTradeableCoinGeckoCoinByCoinMarketCapId.sql" />
     <Build Include="Stored Procedures\CoinGeckoCoin\GetTradeableCoinByCoinGeckoId.sql" />
     <Build Include="Stored Procedures\CoinGeckoCoin\GetTradeableCoinByCoinGeckoSymbol.sql" />
+    <Build Include="Tables\MarketOrder.sql" />
+    <Build Include="Stored Procedures\MarketOrder\GetMarketOrders.sql" />
+    <Build Include="Stored Procedures\MarketOrder\DeleteMarketOrder.sql" />
+    <Build Include="Stored Procedures\MarketOrder\CreateMarketOrder.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CryptoTracker.Db.publish.xml" />

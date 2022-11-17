@@ -62,7 +62,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             tickers = await _cryptoFacilitiesData.GetTickers();
             _memoryCache.Set(cacheKey, tickers, cacheEntryOptions);
         }
-          
+
 
         return CoinGeckoDataHandler.HandleGetCoinPriceInUSDFromSymbol(tickers, cryptoFacilitiesSymbol);
     }
@@ -80,7 +80,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/search/trending");
             RestResponse response = await client.ExecuteAsync(request);
 
-            if(!response.IsSuccessful)
+            if (!response.IsSuccessful)
             {
                 Guid corralationId = Guid.NewGuid();
                 throw new Exception("An unexpected error occured when retrieving trending coins " + corralationId.ToString());
@@ -108,7 +108,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
                             {
                                 coinGeckoMetaData = await GetMetaData(id);
                             }
-                            catch(Exception)
+                            catch (Exception)
                             {
                                 coinGeckoMetaData = new();
                             }
@@ -172,6 +172,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/coins/{geckoId}");
             RestResponse response = await client.ExecuteAsync(request);
             JObject data = JObject.Parse(response.Content!);
+
             responseData = JsonConvert.DeserializeObject<CoinGeckoMetaDataModel>(data.ToString());
             if (responseData == null)
             {

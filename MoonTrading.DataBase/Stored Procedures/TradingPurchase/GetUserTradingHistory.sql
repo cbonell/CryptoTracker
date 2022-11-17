@@ -5,7 +5,8 @@ AS
 		tp.*,
 		pt.[Name] TransactionType,
 		c.[Name] CoinName,
-		c.Id CoinGeckdId
+		c.Id CoinGeckdId,
+		c.CoinMarketCapId CoinMarketCapCoinId
 	FROM
 		TradingPurchase tp
 		INNER JOIN PurchaseType pt ON pt.Id = tp.PurchaseTypeId

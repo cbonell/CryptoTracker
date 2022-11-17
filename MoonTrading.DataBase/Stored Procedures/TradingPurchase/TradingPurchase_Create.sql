@@ -54,6 +54,6 @@ AS
 		Quantity = Quantity - (@Quantity * @PurchasePrice)
 	WHERE 
 		UserId = @UserId 
-		AND CoinGeckoId = @CoinGeckoId
+		AND CoinGeckoId = 'usd'
 
 RETURN 0
