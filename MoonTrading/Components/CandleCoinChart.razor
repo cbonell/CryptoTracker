@@ -5,17 +5,25 @@
 
 @using static MoonTrading.DataAccess.Data.CryptoWatchData
 
-<EditForm Model="rangeInput">
-    <InputRadioGroup @bind-Value="rangeInput.Name">
-        @foreach (string type in ChartUserTimeOptions)
-        {
+@if (chartsAreSupported)
+{
+    <EditForm Model="rangeInput">
+        <InputRadioGroup @bind-Value="rangeInput.Name">
+            @foreach (string type in ChartUserTimeOptions)
+            {
             <InputRadio Value="type" class="form-check-input" @onclick="LoadData" />
             <label class="form-check-label">
                 @type
             </label>
-        }
+            }
     </InputRadioGroup>
 </EditForm>
+
+}
+else
+{
+    <p>This feature is not supported for this coin</p>
+}
 
 <div id="@chartId"></div>
 
@@ -26,12 +34,14 @@
     List<OHLCPairModel> candleData;
     RangeInput rangeInput = new RangeInput();
     private static string chartId = "chartv2";
+    bool chartsAreSupported = true;
+
     public CandleCoinChart()
     {
         rangeInput = new RangeInput()
-        {
-            Name = "1h"
-        };
+            {
+                Name = "1h"
+            };
         candleData = new List<OHLCPairModel>();
     }
 
@@ -43,7 +53,14 @@
     protected async Task LoadData()
     {
         DateTimeOffset fromDate = GetOffsetFromInterval(rangeInput.Name);
-        candleData = await cryptoWatch.GetOHLCPairs(Coin.Symbol, fromDate, rangeInput.Name);
-        await js.InvokeVoidAsync("makeCandleChart", chartId, candleData);
+        try
+        {
+            candleData = await cryptoWatch.GetOHLCPairs(Coin.Symbol, fromDate, rangeInput.Name);
+            await js.InvokeVoidAsync("makeCandleChart", chartId, candleData);
+        }
+        catch(Exception e)
+        {
+            chartsAreSupported = false;
+        }
     }
 }

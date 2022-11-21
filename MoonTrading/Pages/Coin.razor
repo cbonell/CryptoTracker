@@ -203,6 +203,8 @@ else
 
     bool loading = false;
     bool isUserFavorite = false;
+    bool canUseCryptoWatch = true;
+
     CreateUserPriceAlert createUserPriceAlert;
 
     public Coin()
@@ -286,8 +288,25 @@ else
         while (await _periodicTimer.WaitForNextTickAsync())
         {
 
-            double newPrice = await cryptoWatch.GetPrice(CoinModel.Symbol);
+            double newPrice = 0;
+            if (canUseCryptoWatch)
+            {
+                try
+                {
+                    newPrice = await cryptoWatch.GetPrice(CoinModel.Symbol);
+                }
+                catch (Exception e)
+                {
+                    canUseCryptoWatch = false;
+                }
+            }
+
+            if (!canUseCryptoWatch)
+            {
+                newPrice = await coinGeckoData.GetPriceInUsd(CoinModel.Id);
+            }
             coinGeckoMetaDataModel.market_data.current_price.usd = newPrice;
+
             await InvokeAsync(StateHasChanged);
         }
     }
