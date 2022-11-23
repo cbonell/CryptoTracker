@@ -19,6 +19,14 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
         _cryptoFacilitiesData = cryptoFacilitiesData;
     }
 
+    /// <summary>
+    /// Gets the price conversion in USD based on the CoinGeckoId <paramref name="currency"/>
+    /// </summary>
+    /// <param name="currency"></param>
+    /// <param name="amount"></param>
+    /// <returns>double</returns>
+    /// <exception cref="ArgumentNullException">When currency is null</exception>
+    /// <exception cref="ArgumentOutOfRangeException">When amount is less than or equal to 0</exception>
     public async Task<double> GetPriceInUsd(string currency, double amount = 1)
     {
         if (string.IsNullOrWhiteSpace(currency))
@@ -28,7 +36,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
 
         if (amount <= 0)
         {
-            amount = 0;
+            throw new ArgumentOutOfRangeException();
         }
 
         double price;
@@ -49,23 +57,11 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
         return price * amount;
     }
 
-    public async Task<double> GetCoinPriceInUSDFromSymbol(string coinGeckoId)
-    {
-        string cryptoFacilitiesSymbol = _cryptoFacilitiesData.GetCryptoFacilitiesSymbol(coinGeckoId);
-        List<TickerModel> tickers = new List<TickerModel>();
-        string cacheKey = $"cryptofacilities-{tickers}";
-        if (!_memoryCache.TryGetValue(cacheKey, out tickers))
-        {
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetAbsoluteExpiration(TimeSpan.FromSeconds(3));
-            tickers = await _cryptoFacilitiesData.GetTickers();
-            _memoryCache.Set(cacheKey, tickers, cacheEntryOptions);
-        }
-
-
-        return CoinGeckoDataHandler.HandleGetCoinPriceInUSDFromSymbol(tickers, cryptoFacilitiesSymbol);
-    }
-
+    /// <summary>
+    /// Gets CoinGecko's top trending Coins in the last 24hrs
+    /// </summary>
+    /// <returns> <see cref="CoinGeckoTrendingModel"/> <seealso cref="List{T}"/> </returns>
+    /// <exception cref="Exception"></exception>
     public async Task<List<CoinGeckoTrendingModel>> GetTrending()
     {
         List<CoinGeckoTrendingModel> coins = new();
@@ -152,6 +148,13 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
         return coins;
     }
 
+    /// <summary>
+    /// Gets meta data associated with a particular coin
+    /// </summary>
+    /// <param name="geckoId"></param>
+    /// <returns><see cref="CoinGeckoMetaDataModel"/></returns>
+    /// <exception cref="ArgumentNullException">When <paramref name="geckoId"/> is null</exception>
+    /// <exception cref="Exception"></exception>
     public async Task<CoinGeckoMetaDataModel> GetMetaData(string geckoId)
     {
         if (string.IsNullOrWhiteSpace(geckoId))
@@ -189,6 +192,12 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
         return responseData;
     }
 
+    /// <summary>
+    /// Gets available CoinGecko markets 
+    /// </summary>
+    /// <param name="page"></param>
+    /// <returns><see cref="CoinGeckoMarketModel"/></returns>
+    /// <exception cref="Exception">When unable to retrieve specific page</exception>
     public async Task<IEnumerable<CoinGeckoMarketModel>> GetMarkets(int page = 1)
     {
         string cacheKey = "GetMarkets-" + page;
@@ -431,32 +440,3 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
         return result.FirstOrDefault() ?? new();
     }
 }
-
-//RestClient client = new RestClient();
-//RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/coins/list");
-//RestResponse response = await client.ExecuteAsync(request);
-//JArray jArray = JArray.Parse(response.Content!);
-
-//        if (jArray != null && jArray.Count > 0)
-//        {
-//            for (int i = 0; i<jArray.Count; i++)
-//            {
-//                if (jArray[i] != null)
-//                {
-//                    string? id = jArray[i]["id"]?.ToString();
-//string? sym = jArray[i]["symbol"]?.ToString();
-//string? name = jArray[i]["name"]?.ToString();
-
-//                    try
-//                    {
-//                        await _db.SaveData<dynamic>(
-//                      "[dbo].[CreatCoinGeckoCoin]",
-//                      new { Id = id, Symbol = sym, Name = name });
-//                    }
-//                    catch { }
-//                }
-//            }
-//        }
-
-
-

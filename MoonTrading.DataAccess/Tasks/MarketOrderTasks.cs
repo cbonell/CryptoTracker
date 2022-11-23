@@ -18,6 +18,10 @@ public class MarketOrderTasks
         _emailClient = emailClient;
     }
 
+    /// <summary>
+    /// Executes all live market orders that meet predefined criteria
+    /// </summary>
+    /// <returns></returns>
     public async Task ExecuteMarketOrders()
     {
         foreach (var order in await _marketOrderData.GetMarketOrders())

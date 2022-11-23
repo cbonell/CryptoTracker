@@ -13,7 +13,11 @@ public class CryptoWatchData : ICryptoWatchData
         _memoryCache = memory;
     }
 
-
+    /// <summary>
+    /// Get time offest based on CryptoWatch time interval
+    /// </summary>
+    /// <param name="interval"></param>
+    /// <returns><see cref="DateTimeOffset"/></returns>
     public static DateTimeOffset GetOffsetFromInterval(string interval)
     {
         DateTimeOffset fromDate;
@@ -57,6 +61,14 @@ public class CryptoWatchData : ICryptoWatchData
         return fromDate;
     }
 
+    /// <summary>
+    /// Gets a collection pair of price and volume for a specific coin and interval
+    /// </summary>
+    /// <param name="coinSymbol"></param>
+    /// <param name="fromDate"></param>
+    /// <param name="interval"></param>
+    /// <param name="_toDate"></param>
+    /// <returns><see cref="CoinPriceVolumePair"/></returns>
     public async Task<CoinPriceVolumePair> GetCoinPriceVolumePair(string coinSymbol, DateTimeOffset fromDate, string interval = "1h", DateTimeOffset? _toDate = null)
     {
         List<OHLCPairModel> ohlcPairs = await GetOHLCPairs(coinSymbol, fromDate, interval, _toDate);
@@ -79,6 +91,14 @@ public class CryptoWatchData : ICryptoWatchData
         return coinPriceVolumePair;
     }
 
+    /// <summary>
+    /// Gets Open High Low Close (OHLC) data for a specific coin and interval
+    /// </summary>
+    /// <param name="coinSymbol"></param>
+    /// <param name="fromDate"></param>
+    /// <param name="interval"></param>
+    /// <param name="_toDate"></param>
+    /// <returns><see cref="OHLCPairModel"/></returns>
     public async Task<List<OHLCPairModel>> GetOHLCPairs(string coinSymbol, DateTimeOffset fromDate, string interval = "1h", DateTimeOffset? _toDate = null)
     {
         string requestUrl = CryptoWatchDataHandler.GetOHLCRequestUrl(coinSymbol, fromDate, interval, _toDate ?? DateTimeOffset.UtcNow);
@@ -93,10 +113,14 @@ public class CryptoWatchData : ICryptoWatchData
             _memoryCache.Set(cacheKey, response, cacheEntryOptions);
         }
 
-
         return CryptoWatchDataHandler.HandleOHLCResponse(response);
     }
 
+    /// <summary>
+    /// Gets price for a specific coin
+    /// </summary>
+    /// <param name="coinSymbol"></param>
+    /// <returns>double</returns>
     public async Task<double> GetPrice(string coinSymbol)
     {
         string requestUrl = CryptoWatchDataHandler.GetPriceRequestUrl(coinSymbol);

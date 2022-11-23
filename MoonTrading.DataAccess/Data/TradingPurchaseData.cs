@@ -7,6 +7,17 @@ public class TradingPurchaseData : DataBase, ITradingPurchaseData
 {
     public TradingPurchaseData(ISqlDataAccess db) : base(db) { }
 
+    /// <summary>
+    /// Create a user purchase 
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="coinId"></param>
+    /// <param name="purchaseCurrencyId"></param>
+    /// <param name="quanitity"></param>
+    /// <param name="purchasePrice"></param>
+    /// <param name="purchaseDate"></param>
+    /// <returns>bool</returns>
+    /// <exception cref="Exception"></exception>
     public async Task<bool> Purchase(string userId
                                          , int coinId
                                          , int purchaseCurrencyId
@@ -42,6 +53,12 @@ public class TradingPurchaseData : DataBase, ITradingPurchaseData
         return true;
     }
 
+    /// <summary>
+    /// Get a collection of a users trading history
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public Task<IEnumerable<TradingPurchaseModel>> GetUserTradingHistory(string userId)
     {
         if (string.IsNullOrWhiteSpace(userId))
@@ -52,6 +69,16 @@ public class TradingPurchaseData : DataBase, ITradingPurchaseData
         return _db.LoadData<TradingPurchaseModel, dynamic>("[dbo].[GetUserTradingHistory]", new { UserId = userId });
     }
 
+    /// <summary>
+    /// Sell a specified amount of coin that a user holds
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="coinId"></param>
+    /// <param name="quanitity"></param>
+    /// <param name="sellPrice"></param>
+    /// <param name="purchaseDate"></param>
+    /// <returns>bool</returns>
+    /// <exception cref="Exception"></exception>
     public async Task<bool> Sell(string userId, int coinId, double quanitity, double sellPrice, DateTime? purchaseDate)
     {
         if (string.IsNullOrWhiteSpace(userId))
@@ -80,6 +107,17 @@ public class TradingPurchaseData : DataBase, ITradingPurchaseData
         return true;
     }
 
+    /// <summary>
+    /// Create a user purchase 
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="coin"></param>
+    /// <param name="quanitity"></param>
+    /// <param name="purchasePrice"></param>
+    /// <param name="purchaseDate"></param>
+    /// <param name="purchaseCurrency"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public async Task Purchase(string userId, CoinGeckCoinModel coin, double quanitity, double purchasePrice, DateTime? purchaseDate, string purchaseCurrency = "")
     {
         if (string.IsNullOrWhiteSpace(userId))
@@ -101,6 +139,16 @@ public class TradingPurchaseData : DataBase, ITradingPurchaseData
         await _db.SaveData<dynamic>("dbo.TradingPurchase_Create", parameters);
     }
 
+    /// <summary>
+    /// Sell a specified amount of coin that a user holds 
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="coin"></param>
+    /// <param name="quanitity"></param>
+    /// <param name="sellPrice"></param>
+    /// <param name="purchaseDate"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public async Task Sell(string userId, CoinGeckCoinModel coin, double quanitity, double sellPrice, DateTime? purchaseDate)
     {
         if (string.IsNullOrWhiteSpace(userId))

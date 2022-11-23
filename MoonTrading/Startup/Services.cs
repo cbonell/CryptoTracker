@@ -16,7 +16,6 @@ public static class Services
         builder.Services.AddSingleton<ICryptoFacilitiesData, CryptoFacilitiesData>();
         builder.Services.AddSingleton<ICryptoWatchData, CryptoWatchData>();
         builder.Services.AddSingleton<ICoinGeckoData, CoinGeckoData>();
-        builder.Services.AddSingleton<ICurrencyData, CurrencyData>();
         builder.Services.AddSingleton<IEmailClient, EmailClient>();
         builder.Services.AddSingleton<IMarketOrderData, MarketOrderData>();
         builder.Services.AddSingleton<IMLModelData, MLModelData>();

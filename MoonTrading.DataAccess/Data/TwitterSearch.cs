@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using RestSharp;
+﻿using RestSharp;
 using static SharedConstants.Constants;
 using MoonTrading.BusinessLogic.Actions;
 namespace MoonTrading.DataAccess.Data;
@@ -8,6 +6,13 @@ namespace MoonTrading.DataAccess.Data;
 public class TwitterSearch
 {
     private static string[] blackListWords = { "giveaway", "winner", "\"giving away\"", "won" };
+
+    /// <summary>
+    /// Search for trending tweets based a supplied hashtag
+    /// </summary>
+    /// <param name="hashTag"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></>When <paramref name="hashTag"/> is null</exception>
     public static async Task<IEnumerable<TweetSearchModel>> GetTrendingByHashTag(string hashTag)
     {
         if (string.IsNullOrEmpty(hashTag))
