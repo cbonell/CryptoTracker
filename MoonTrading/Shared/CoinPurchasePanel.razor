@@ -1,15 +1,11 @@
-﻿@using MoonTrading.DataAccess.Data
-@using MoonTrading.Pages
-@using MoonTrading.Tests.Auth0.Model
-@using static MoonTrading.Extensions.Extensions
-@using MoonTrading.Tests.Auth0
+﻿@using MoonTrading.Pages
 
 @inject ICurrencyData currencyData
 @inject ITradingPurchaseData tradingPurchaseData
 @inject IUserWalletData userWalletData
 @inject IMarketOrderData marketOrderData
-
 @inherits BasePage
+@namespace MoonTrading.Shared
 
 <Modal @ref=purchaseModal
        Title="Purchase Confirmation">
@@ -81,7 +77,7 @@
     double? numberToSell, numberToBuy;
     double stopMarketPrice, stopMarketQuantity, stopLossPrice, stopLossQuantity = 0;
     Modal purchaseModal, sellModal, purcahseConfirmationModal;
-    string selectedSellValue, selectedBuyValue = "100%";
+    string selectedSellValue = "100%", selectedBuyValue = "100%";
     string sellError = "";
     UserWalletModel userCoinWallet { get; set; }
     UserWalletModel userUSDWallet { get; set; }
@@ -90,6 +86,7 @@
     {
         purchaseModal = sellModal = purcahseConfirmationModal = new();
         userCoinWallet = new();
+        userUSDWallet = new();
         Coin = new();
     }
 
@@ -142,18 +139,15 @@
     {
         if (IsAuthenticated)
         {
-            if (true)//userWalletData.UserCanBuy(userUSDWallet, numberToBuy ?? 0, CurrentPrice))
+            if (isConfirmed)
             {
-                if (isConfirmed)
-                {
-                    await tradingPurchaseData.Purchase(UserId, Coin, numberToBuy ?? 0, CurrentPrice, DateTime.Now);
-                    await LoadData();
-                    purchaseModal.ToggleDisplay();
-                }
-                else
-                {
-                    purcahseConfirmationModal.ToggleDisplay();
-                }
+                await tradingPurchaseData.Purchase(UserId, Coin, numberToBuy ?? 0, CurrentPrice, DateTime.Now);
+                await LoadData();
+                purchaseModal.ToggleDisplay();
+            }
+            else
+            {
+                purcahseConfirmationModal.ToggleDisplay();
             }
         }
     }
@@ -171,13 +165,13 @@
 
     private async Task CreateStopMarket()
     {
-        UserMetaDataContainer user = await Auth0.GetUserMetaData(UserId);
+        UserMetaDataContainer user = await Auth0Access.GetUserMetaData(UserId);
         await marketOrderData.CreateMarketOrder(UserId, user.Email, Coin.Id, stopMarketPrice, stopMarketQuantity, 0);
     }
 
     private async Task CreateStopLoss()
     {
-        UserMetaDataContainer user = await Auth0.GetUserMetaData(UserId);
+        UserMetaDataContainer user = await Auth0Access.GetUserMetaData(UserId);
         await marketOrderData.CreateMarketOrder(UserId, user.Email, Coin.Id, stopLossPrice, stopLossQuantity, 1);
     }
 }

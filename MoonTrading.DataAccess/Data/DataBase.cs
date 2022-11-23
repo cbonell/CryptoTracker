@@ -1,7 +1,5 @@
-﻿using MoonTrading.Tests.DbAccess;
-
-namespace MoonTrading.Tests.Data;
-public class DataBase : IDataBase
+﻿namespace MoonTrading.DataAccess.Data;
+public class DataBase
 {
     internal readonly ISqlDataAccess _db;
 

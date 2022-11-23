@@ -1,7 +1,7 @@
-﻿using MoonTrading.Tests.Data.Interfaces;
+﻿using MoonTrading.DataAccess.Data.Interfaces;
 using static SharedConstants.Constants;
 
-namespace MoonTrading.Tests.Data;
+namespace MoonTrading.DataAccess.Data;
 
 public class UserFavoriteCoinData : DataBase, IUserFavoriteCoinData
 {

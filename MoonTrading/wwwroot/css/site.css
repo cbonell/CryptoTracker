@@ -172,7 +172,6 @@ input[type=radio]:not(:first-child) {
     border-width: 1vw;
     border-color: var(--tertiary-background-color);
     border-left: none;
-    /*width: 99vw;*/
     border-radius: 1em;
     margin-bottom: 1em;
 }

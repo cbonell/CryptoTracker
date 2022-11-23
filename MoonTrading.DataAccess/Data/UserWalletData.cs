@@ -1,8 +1,8 @@
-﻿using MoonTrading.Tests.Data.Interfaces;
+﻿using MoonTrading.DataAccess.Data.Interfaces;
 using static SharedConstants.Constants;
 using static MoonTrading.BusinessLogic.Validation.UserWalletDataValidation;
 
-namespace MoonTrading.Tests.Data;
+namespace MoonTrading.DataAccess.Data;
 
 public class UserWalletData : DataBase, IUserWalletData
 {

@@ -2,12 +2,11 @@
 @inject IMLModelData mlModeldata
 @inject ICryptoWatchData cryptoWatch
 @inject ICoinGeckoData geckoData
+@namespace MoonTrading.Shared
 
 @using static MoonTrading.DataAccess.Data.CryptoWatchData
 @using System.Globalization
-@using MoonTrading.DataAccess.Data
-@using MoonTrading.Tests.CoinGeckoAccess
-@using MoonTrading.Tests.MLModelAccess
+@using MoonTrading.DataAccess.MLModelAccess
 
 @if (chartsAreSupported)
 {
@@ -111,7 +110,7 @@
                     await js.InvokeVoidAsync("makeLineChart", "linechart_div", coinPriceAndVolume.DatePricePairs);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 chartsAreSupported = false;
             }

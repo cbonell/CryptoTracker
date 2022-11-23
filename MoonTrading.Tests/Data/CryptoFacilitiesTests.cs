@@ -1,6 +1,6 @@
-using MoonTrading.Tests.Data;
+using MoonTrading.DataAccess.Data;
 
-namespace MoonTrading.Tests.Data;
+namespace MoonTrading.DataAccess.Data;
 
 [TestClass]
 public class CryptoFacilitiesTests

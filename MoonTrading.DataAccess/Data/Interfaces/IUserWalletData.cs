@@ -1,9 +1,8 @@
-﻿namespace MoonTrading.Tests.Data.Interfaces
+﻿namespace MoonTrading.DataAccess.Data.Interfaces;
+
+public interface IUserWalletData
 {
-    public interface IUserWalletData
-    {
-        Task<IEnumerable<UserWalletModel>> GetUserWallet(string userId);
-        Task InitializeUserWalletForPaperTrading(string userId);
-        Task ResetUserWallet(string userId);
-    }
+    Task<IEnumerable<UserWalletModel>> GetUserWallet(string userId);
+    Task InitializeUserWalletForPaperTrading(string userId);
+    Task ResetUserWallet(string userId);
 }

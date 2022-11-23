@@ -1,10 +1,4 @@
 ﻿@page "/Coin/{CoinId}"
-@using MoonTrading.DataAccess.Data
-@using MoonTrading.Tests.MLModelAccess
-@using MoonTrading.Components
-@using System.Security.Claims
-@using MoonTrading.Tests.Auth0
-@using static MoonTrading.Extensions.Extensions
 @using static MoonTrading.DataAccess.Data.CryptoWatchData
 
 @inject IUserFavoriteCoinData favoriteCoinData
@@ -12,7 +6,6 @@
 @inject IUserFavoriteCoinData favoriteCoinData
 @inject IJSRuntime js
 @inject ICoinGeckoData coinGeckoData
-@inject IMLModelData mlModelData
 @inject ICryptoWatchData cryptoWatch
 
 @inherits BasePage
@@ -149,18 +142,18 @@ else
                 </div>
                 <div class="row row-cols-md-2">
                     <div class="col">Market Cap</div>
-                    <div class="col">@coinGeckoMetaDataModel.market_data.market_cap.usd.WithThousandsSeparator()</div>
+                    <div class="col">@coinGeckoMetaDataModel?.market_data.market_cap.usd.WithThousandsSeparator()</div>
                     <div class="col">Volume</div>
-                    <div class="col">@coinGeckoMetaDataModel.market_data.total_volume.usd.WithThousandsSeparator()</div>
+                    <div class="col">@coinGeckoMetaDataModel?.market_data.total_volume.usd.WithThousandsSeparator()</div>
 
                     <div class="col">Circulating Supply</div>
-                    <div class="col">@coinGeckoMetaDataModel.market_data.circulating_supply.WithThousandsSeparator()</div>
+                    <div class="col">@coinGeckoMetaDataModel?.market_data.circulating_supply.WithThousandsSeparator()</div>
                     <div class="col">Max Supply</div>
-                    <div class="col">@coinGeckoMetaDataModel.market_data.max_supply.WithThousandsSeparator()</div>
+                    <div class="col">@coinGeckoMetaDataModel?.market_data.max_supply.WithThousandsSeparator()</div>
                 </div>
             </div>
             <div class="col-sm-3 secondary-container">
-                <CoinPurchasePanel Coin="CoinModel" CurrentPrice="coinGeckoMetaDataModel.market_data.current_price.usd ?? 0" />
+                <CoinPurchasePanel Coin="CoinModel" CurrentPrice="coinGeckoMetaDataModel?.market_data.current_price.usd ?? 0" />
             </div>
         </div>
         <div class="col-sm-4 secondary-container">
@@ -168,14 +161,14 @@ else
 
             <div class="row row-cols-md-2">
                 <div class="col">Market Cap</div>
-                <div class="col">@coinGeckoMetaDataModel.market_data.market_cap.usd.WithThousandsSeparator()</div>
+                <div class="col">@coinGeckoMetaDataModel?.market_data.market_cap.usd.WithThousandsSeparator()</div>
                 <div class="col">Volume</div>
-                <div class="col">@coinGeckoMetaDataModel.market_data.total_volume.usd.WithThousandsSeparator()</div>
+                <div class="col">@coinGeckoMetaDataModel?.market_data.total_volume.usd.WithThousandsSeparator()</div>
 
                 <div class="col">Circulating Supply</div>
-                <div class="col">@coinGeckoMetaDataModel.market_data.circulating_supply.WithThousandsSeparator()</div>
+                <div class="col">@coinGeckoMetaDataModel?.market_data.circulating_supply.WithThousandsSeparator()</div>
                 <div class="col">Max Supply</div>
-                <div class="col">@coinGeckoMetaDataModel.market_data.max_supply.WithThousandsSeparator()</div>
+                <div class="col">@coinGeckoMetaDataModel?.market_data.max_supply.WithThousandsSeparator()</div>
             </div>
         </div>
     </div>
@@ -195,7 +188,7 @@ else
 
 @code {
     [Parameter]
-    public string CoinId { get; set; }
+    public string CoinId { get; set; } = "";
 
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromSeconds(3));
     public CoinGeckCoinModel CoinModel { get; set; }
@@ -295,7 +288,7 @@ else
                 {
                     newPrice = await cryptoWatch.GetPrice(CoinModel.Symbol);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     canUseCryptoWatch = false;
                 }

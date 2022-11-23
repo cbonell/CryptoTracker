@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using static SharedConstants.Constants;
 using MoonTrading.BusinessLogic.Actions;
-namespace MoonTrading.Tests.Data;
+namespace MoonTrading.DataAccess.Data;
 
 public class TwitterSearch
 {

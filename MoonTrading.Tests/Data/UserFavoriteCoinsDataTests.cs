@@ -1,10 +1,10 @@
-using MoonTrading.Tests.Data;
-using MoonTrading.Tests.Data.Interfaces;
-using MoonTrading.Tests.DbAccess;
+using MoonTrading.DataAccess.Data;
+using MoonTrading.DataAccess.Data.Interfaces;
+using MoonTrading.DataAccess.Data;
 using Moq;
 using static SharedConstants.Constants;
 
-namespace MoonTrading.Tests.DataAccess;
+namespace MoonTrading.DataAccess.DataAccess;
 
 [TestClass]
 public class UserFavoriteCoinsDataTests

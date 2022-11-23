@@ -1,8 +1,7 @@
 ﻿@using System.Security.Claims
-@using MoonTrading.Tests.Auth0
-
+@namespace MoonTrading.Shared
 @inject AuthenticationStateProvider AuthState
-@inject IUserData ud
+
 <AuthorizeView>
     <Authorized>
         Welcome, @Username

@@ -1,8 +1,8 @@
-﻿using MoonTrading.Tests.Data.Interfaces;
+﻿using MoonTrading.DataAccess.Data.Interfaces;
 using static SharedConstants.Constants;
 using static MoonTrading.BusinessLogic.Validation.TradingPurchaseDataValidation;
 
-namespace MoonTrading.Tests.Data;
+namespace MoonTrading.DataAccess.Data;
 public class TradingPurchaseData : DataBase, ITradingPurchaseData
 {
     public TradingPurchaseData(ISqlDataAccess db) : base(db) { }

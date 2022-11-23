@@ -1,11 +1,11 @@
-﻿using MoonTrading.Tests.Auth0.Model;
+﻿using MoonTrading.Model;
 using Newtonsoft.Json;
 using RestSharp;
 using static SharedConstants.Constants;
 
-namespace MoonTrading.Tests.Auth0;
+namespace MoonTrading.DataAccess.Data;
 
-public class Auth0
+public class Auth0Access
 {
     public static async Task<UserMetaDataContainer> GetUserMetaData(string auth0UserId)
     {

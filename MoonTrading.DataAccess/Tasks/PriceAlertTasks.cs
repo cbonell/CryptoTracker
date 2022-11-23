@@ -1,5 +1,5 @@
-﻿using MoonTrading.Tests.Data;
-using MoonTrading.Tests.Data.Interfaces;
+﻿using MoonTrading.DataAccess.Data;
+using MoonTrading.DataAccess.Data.Interfaces;
 using MoonTrading.Tools.Email;
 
 namespace MoonTrading.Tests.Tasks;

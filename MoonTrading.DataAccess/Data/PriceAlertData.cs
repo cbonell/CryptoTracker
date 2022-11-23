@@ -1,4 +1,6 @@
-﻿namespace MoonTrading.Tests.Data;
+﻿using MoonTrading.DataAccess.Data.Interfaces;
+
+namespace MoonTrading.DataAccess.Data;
 
 public enum AlertType
 {

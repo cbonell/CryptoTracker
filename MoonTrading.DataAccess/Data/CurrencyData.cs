@@ -1,8 +1,8 @@
-﻿using MoonTrading.Tests.Data.Interfaces;
+﻿using MoonTrading.DataAccess.Data.Interfaces;
 using static MoonTrading.BusinessLogic.Validation.CurrencyDataValidation;
 using static SharedConstants.Constants;
 
-namespace MoonTrading.Tests.Data;
+namespace MoonTrading.DataAccess.Data;
 
 public class CurrencyData : DataBase, ICurrencyData
 {

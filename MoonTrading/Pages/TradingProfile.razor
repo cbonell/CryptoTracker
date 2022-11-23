@@ -1,15 +1,11 @@
 ﻿@page "/MyWallet"
 @inherits BasePage
-
-@using System.Security.Claims
-@using MoonTrading.Components
 @using static MoonTrading.Extensions.Extensions
 
 @inject AuthenticationStateProvider AuthState
 @inject IUserWalletData userWallet
 
 <h2 class="large-text text-center">Wallet</h2>
-
 
 <div class="container">
     <div class="row main-container">
@@ -42,7 +38,7 @@
     </div>
     <div class="row main-container">
         <div class="col">
-            <UserPriceAlerts UserId="@UserId" />
+            <UserPriceAlerts />
         </div>
     </div>
     <div class="row main-container">

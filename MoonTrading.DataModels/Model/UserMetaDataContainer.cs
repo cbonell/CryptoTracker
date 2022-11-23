@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace MoonTrading.Tests.Auth0.Model;
+namespace MoonTrading.Model;
 
 public class UserMetaDataContainer
 {

@@ -1,7 +1,6 @@
 ﻿using static MoonTrading.BusinessLogic.Validation.CurrencyDataValidation;
-using static SharedConstants.Constants;
 
-namespace MoonTrading.Tests.Data.Interfaces;
+namespace MoonTrading.DataAccess.Data.Interfaces;
 public interface ICurrencyData
 {
     Task<IEnumerable<CurrencyModel>> GetCurrencies();

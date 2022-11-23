@@ -1,11 +1,11 @@
-﻿using MoonTrading.Tests.Data.Interfaces;
+﻿using MoonTrading.DataAccess.Data.Interfaces;
 using MoonTrading.Tools;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using static MoonTrading.BusinessLogic.Validation.CryptoFacilitiesDataValidation;
 
-namespace MoonTrading.Tests.Data;
+namespace MoonTrading.DataAccess.Data;
 public class CryptoFacilitiesData : ICryptoFacilitiesData
 {
     public CryptoFacilitiesData() { }

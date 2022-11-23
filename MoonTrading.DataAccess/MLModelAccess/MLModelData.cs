@@ -1,8 +1,8 @@
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using MoonTrading.Tests.Data;
+using MoonTrading.DataAccess.Data;
 
-namespace MoonTrading.Tests.MLModelAccess;
+namespace MoonTrading.DataAccess.MLModelAccess;
 
 public class MLModelData : IMLModelData
 {

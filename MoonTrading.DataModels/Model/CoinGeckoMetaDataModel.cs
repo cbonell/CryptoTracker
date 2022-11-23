@@ -99,10 +99,6 @@ public class MarketCap
 public class MarketData
 {
     public CurrentPrice current_price { get; set; } = new();
-    //public object total_value_locked { get; set; } = "";
-    //public object mcap_to_tvl_ratio { get; set; } = new();
-    //public object fdv_to_tvl_ratio { get; set; } = new();
-    //public object roi { get; set; } = "";
     public MarketCap market_cap { get; set; } = new();
     public int?  market_cap_rank { get; set; }
     public TotalVolume total_volume { get; set; } = new();

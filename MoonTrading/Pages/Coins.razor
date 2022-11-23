@@ -1,9 +1,8 @@
 ﻿@page "/Coins"
-@page "/"
-@using MoonTrading.Components
-@using static MoonTrading.Extensions.Extensions
-@inject ICoinGeckoData geckoData
+
 <PageTitle>Market Watch</PageTitle>
+
+@inject ICoinGeckoData geckoData
 <h3 class="text-center"> Cryptocurrency Prices by Market Cap </h3>
 @if (loading)
 {

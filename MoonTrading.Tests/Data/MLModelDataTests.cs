@@ -1,10 +1,10 @@
-﻿using MoonTrading.Tests.Data.Interfaces;
+﻿using MoonTrading.DataAccess.Data.Interfaces;
 
-using MoonTrading.Tests.MLModelAccess;
+using MoonTrading.DataAccess.MLModelAccess;
 using MoonTrading.Model;
 using Moq;
 
-namespace MoonTrading.Tests.Data;
+namespace MoonTrading.DataAccess.Data;
 
 [TestClass]
 public class MLModelDataTests

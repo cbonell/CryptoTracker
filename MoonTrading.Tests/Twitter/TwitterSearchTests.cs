@@ -1,4 +1,4 @@
-﻿using MoonTrading.Tests.Data;
+﻿using MoonTrading.DataAccess.Data;
 using Moq;
 using System;
 using System.Collections.Generic;

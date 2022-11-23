@@ -1,0 +1,47 @@
+﻿@using MoonTrading.Pages
+@namespace MoonTrading.Shared
+@inject AuthenticationStateProvider AuthState
+@inject IUserFavoriteCoinData favoriteCoinData
+@inherits BasePage
+
+<h3 class="text-center">Favorites</h3>
+<RadzenDataGrid Data="@userFavoriteCoins" TItem="UserFavoriteCoinModel" AllowPaging="true" AllowSorting="true" PageSize="15">
+    <Columns>
+        <RadzenDataGridColumn TItem="UserFavoriteCoinModel" Property="Name" Title="Coin Name" CssClass="text-center">
+            <Template Context="coin">
+                <img class="coin-img" src="@("https://s2.coinmarketcap.com/static/img/coins/32x32/" + coin.CoinMarketCapId + ".png")"> <a href="/Coin/@coin.CoinGeckoId">@coin.Name</a>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="UserFavoriteCoinModel" Property="PurchaseDate" CssClass="text-center">
+            <Template Context="coin">
+                <button class="btn btn-danger" @onclick="(async () => await RemoveFavorite(coin.CoinGeckoId))">Remove Favorite</button>
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+
+@code {
+    private IEnumerable<UserFavoriteCoinModel> userFavoriteCoins { get; set; } = Enumerable.Empty<UserFavoriteCoinModel>();
+    string userId = "";
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await LoadFavorites();
+    }
+
+    private async Task LoadFavorites()
+    {
+        if (IsAuthenticated)
+        {
+            userFavoriteCoins = await favoriteCoinData.GetUserFavoriteCoins(UserId);
+        }
+    }
+
+    private async Task RemoveFavorite(string geckoId)
+    {
+        await favoriteCoinData.RemoveUserFavoriteCoin(userId, geckoId);
+        userFavoriteCoins = userFavoriteCoins.Where(x => x.CoinGeckoId != geckoId);
+        StateHasChanged();
+    }
+}

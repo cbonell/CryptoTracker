@@ -1,14 +1,13 @@
-﻿using MoonTrading.Tests.Data;
-using MoonTrading.Tests.Data.Interfaces;
+﻿using MoonTrading.DataAccess.Data;
+using MoonTrading.DataAccess.Data.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using static SharedConstants.Constants;
-using static MoonTrading.Extensions.Extensions;
 using MoonTrading.BusinessLogic.Actions;
+using static SharedConstants.Constants;
 
-namespace MoonTrading.Tests.CoinGeckoAccess;
+namespace MoonTrading.DataAccess.Data;
 
 public class CoinGeckoData : DataBase, ICoinGeckoData
 {

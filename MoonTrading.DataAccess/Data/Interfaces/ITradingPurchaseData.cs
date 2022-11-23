@@ -1,4 +1,4 @@
-﻿namespace MoonTrading.Tests.Data.Interfaces;
+﻿namespace MoonTrading.DataAccess.Data.Interfaces;
 
 public interface ITradingPurchaseData
 {

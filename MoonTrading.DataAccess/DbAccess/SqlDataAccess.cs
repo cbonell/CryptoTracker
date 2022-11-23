@@ -3,7 +3,7 @@ using System.Data;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
 
-namespace MoonTrading.Tests.DbAccess;
+namespace MoonTrading.DataAccess.Data;
 public class SqlDataAccess : ISqlDataAccess
 {
     private readonly IConfiguration _config;

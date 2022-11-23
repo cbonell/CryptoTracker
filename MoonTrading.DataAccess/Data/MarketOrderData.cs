@@ -1,6 +1,4 @@
-﻿using MoonTrading.DataModels.Model;
-using MoonTrading.Tests.Data;
-using MoonTrading.Tools.Email;
+﻿using MoonTrading.DataAccess.Data.Interfaces;
 
 namespace MoonTrading.DataAccess.Data;
 
