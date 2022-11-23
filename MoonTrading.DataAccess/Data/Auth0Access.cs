@@ -11,8 +11,14 @@ public class Auth0Access
     /// </summary>
     /// <param name="auth0UserId"></param>
     /// <returns><see cref="UserMetaDataContainer"/>Model containing user metadata</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="auth0UserId"/></exception>
     public static async Task<UserMetaDataContainer> GetUserMetaData(string auth0UserId)
     {
+        if(string.IsNullOrWhiteSpace(auth0UserId))
+        {
+            throw new ArgumentNullException(nameof(auth0UserId));
+        }
+
         var client = new RestClient(AUTH0_API_ENDPOINT + "users/" + auth0UserId);
         var request = new RestRequest()
         {

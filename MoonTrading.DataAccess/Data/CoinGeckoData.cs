@@ -197,9 +197,15 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
     /// </summary>
     /// <param name="page"></param>
     /// <returns><see cref="CoinGeckoMarketModel"/></returns>
+    /// <exception cref="ArgumentOutOfRangeException">When page is less than 1</exception>
     /// <exception cref="Exception">When unable to retrieve specific page</exception>
     public async Task<IEnumerable<CoinGeckoMarketModel>> GetMarkets(int page = 1)
     {
+        if(page < 1)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
         string cacheKey = "GetMarkets-" + page;
         IEnumerable<CoinGeckoMarketModel>? responseData = Enumerable.Empty<CoinGeckoMarketModel>();
         if (!_memoryCache.TryGetValue(cacheKey, out responseData))

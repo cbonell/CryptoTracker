@@ -16,6 +16,7 @@ public class CryptoFacilitiesData : ICryptoFacilitiesData
     /// <param name="coinSymbol">The symbol of the coin</param>
     /// <param name="days">Number of days to be returned (deffault of 1)</param>
     /// <returns>List<OHLCPairModel></returns>
+    /// <exception cref="ArgumentException"></exception>
     public async Task<List<OHLCPairModel>> GetOHLCPairs(string coinSymbol, DateTimeOffset fromDate, string interval = "1h", DateTimeOffset? _toDate = null)
     {
         if (!IsValidCoinSymbol(coinSymbol))
