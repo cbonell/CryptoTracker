@@ -67,14 +67,14 @@ namespace MoonTrading.DataAccess.Data
                     TimeStamp = pair.TimeStamp,
                     Volume = pair.QuoteVolume
                 });
-
+                
                 coinPriceVolumePair.DatePricePairs.Add(new DatePricePairModel()
                 {
                     TimeStamp = pair.TimeStamp,
                     Price = pair.Close
                 });
             }
-
+            
             return coinPriceVolumePair;
         }
 
