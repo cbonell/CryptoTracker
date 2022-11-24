@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Net.NetworkInformation;
+using System.Reflection;
+using Newtonsoft.Json;
 
 namespace MoonTrading.Model;
 
@@ -35,10 +37,11 @@ public class TweetSearchModel
                     allWords[i] = $"<a href=\"{s}\">{allWords[i]}</a>";
                 }
             }
-
             return string.Join(" ", allWords);
         }
     }
+
+    public int? Sentiment { get; set; }
 
     [JsonProperty("source")]
     public string TweetUrl { get; set; } = "";

@@ -1,6 +1,8 @@
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using MoonTrading.Tests.Data;
+using BERTTokenizers;
+using Newtonsoft.Json;
 
 namespace MoonTrading.Tests.MLModelAccess;
 
@@ -62,7 +64,7 @@ public class MLModelData : IMLModelData
 
     public async Task<JObject> MakeRequest(List<List<List<double>>> body, int model)
     {
-        var client = new RestClient($"http://prices.eastus.azurecontainer.io:8501/v1/models/crypto/versions/{model}:predict");
+        var client = new RestClient($"http://mlmodels.eastus.azurecontainer.io:8501/v1/models/crypto/versions/{model}:predict");
         var request = new RestRequest()
         {
             Method = Method.Post
@@ -141,5 +143,86 @@ public class MLModelData : IMLModelData
             }
         }
         return predictions;
+    }
+
+    public async Task<int> GetSentiment(TweetSearchModel tweet)
+    {
+        var text = tweet.DisplayText;
+        var tokenizer = new BertBaseTokenizer();
+        var encoded = tokenizer.Encode(512, text);
+        var json = new JObject();
+        var inputIds = encoded.Select(t => t.InputIds).ToArray();
+        var tokenTypeIds = encoded.Select(t => t.TokenTypeIds).ToArray();
+        var attentionMask = encoded.Select(t => t.AttentionMask).ToArray();
+        var a = new BertInput
+        {
+            input_ids = inputIds,
+            token_type_ids = tokenTypeIds,
+            attention_mask = attentionMask,
+        };
+
+        //json.Add(new JProperty("input_ids", inputIds));
+        //json.Add(new JProperty("token_type_ids", inputIds));
+        //json.Add(new JProperty("attention_mask", inputIds));
+        List<BertInput> bert = new List<BertInput>();
+        bert.Add(a);
+        string temp = JsonConvert.SerializeObject(a, Formatting.Indented);
+
+        List<string> t = new();
+        t.Add(temp);
+
+        List<JObject> body = new();
+        body.Add(json);
+        
+        var client = new RestClient("http://mlmodels.eastus.azurecontainer.io:8501/v1/models/crypto/versions/5:predict");
+        var request = new RestRequest()
+        {
+            Method = Method.Post
+        };
+
+        request.AddHeader("content-type", "application/json");
+        request.AddJsonBody(
+            new
+            {
+                instances = t
+            });
+        RestResponse response = await client.ExecuteAsync(request);
+        JObject data = JObject.Parse(response.Content!);
+        JArray jArray = (JArray)data["predictions"]!;
+
+        var logits = jArray.ToObject<double[]>();
+        var probabilities = ConvertLogitsToProbabilities(logits!);
+
+        return GetPredictedClass(probabilities);
+    }
+
+    private double[] ConvertLogitsToProbabilities(double[] logits)
+    {
+        double eSum = 0;
+        for (int i = 0; i < logits.Length; i++)
+        {
+            eSum += Math.Exp(logits[i]);
+        }
+
+        for (int i = 0; i < logits.Length; i++)
+        {
+            logits[i] = Math.Exp(logits[i]) / eSum;
+        }
+        return logits;
+    }
+
+    private int GetPredictedClass(double[] probabilities)
+    {
+        int prediction = 0;
+        double max = 0;
+        for (int i = 0; i < probabilities.Length; i++)
+        {
+            if (max < probabilities[i])
+            {
+                max = probabilities[i];
+                prediction = i;
+            }
+        }
+        return prediction;
     }
 }

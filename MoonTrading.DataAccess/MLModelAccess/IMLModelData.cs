@@ -9,5 +9,6 @@ namespace MoonTrading.Tests.MLModelAccess
         List<List<List<double>>> Tensorize(List<OHLCPairModel> features);
         List<DatePricePairModel> convertToDPPM(JObject data, List<DatePricePairModel> predictions);
         Task<JObject> MakeRequest(List<List<List<double>>> body, int model);
+        Task<int> GetSentiment(TweetSearchModel tweet);
     }
 }

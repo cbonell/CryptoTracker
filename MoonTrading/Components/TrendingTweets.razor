@@ -1,9 +1,21 @@
-﻿<div class="container secondary-container scroll-y">
+﻿@inject IMLModelData mlModeldata
+@using MoonTrading.Tests.MLModelAccess
+
+@namespace MoonTrading.Shared
+
+<div class="container secondary-container scroll-y">
     <h3 class="">Trending #@CoinName Tweets</h3>
 
     @foreach (TweetSearchModel tweet in twitterSearchModels)
     {
         <div class="grow-sm tweet-container">
+            @if (tweet.Sentiment == 0) {
+                <div style="background-color:forestgreen"></div>
+            } else if (tweet.Sentiment == 2) {
+                        <div style="background-color:yellow"></div>
+            } else {
+                        <div style="background-color:darkred"></div>
+            }
             <div class="row">
                 <div class="col-2">
                     <a href="@tweet.User.UserUrl" target="_blank">
@@ -50,6 +62,9 @@
         if (!string.IsNullOrWhiteSpace(CoinName))
         {
             twitterSearchModels = await TwitterSearch.GetTrendingByHashTag(CoinName);
+            foreach (TweetSearchModel tweet in twitterSearchModels) {
+                tweet.Sentiment = await mlModeldata.GetSentiment(tweet);
+            }
         }
     }
 }
