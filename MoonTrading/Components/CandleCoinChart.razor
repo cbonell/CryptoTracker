@@ -43,7 +43,7 @@
     protected async Task LoadData()
     {
         DateTimeOffset fromDate = GetOffsetFromInterval(rangeInput.Name);
-        candleData = await cryptoWatch.GetOHLCPairs(Coin.Symbol, fromDate, rangeInput.Name);
-        await js.InvokeVoidAsync("makeCandleChart", chartId, candleData);
+        //candleData = await cryptoWatch.GetOHLCPairs(Coin.Symbol, fromDate, rangeInput.Name);
+        //await js.InvokeVoidAsync("makeCandleChart", chartId, candleData);
     }
 }

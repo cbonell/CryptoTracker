@@ -82,16 +82,16 @@
     protected async Task LoadData()
     {
         DateTimeOffset fromDate = GetOffsetFromInterval(rangeInput.Name);
-        CoinPriceVolumePair coinPriceAndVolume = await cryptoWatch.GetCoinPriceVolumePair(Coin.Symbol, fromDate, rangeInput.Name);
-        List<DatePricePairModel> predictionsData = new();// await mlModeldata.GetPricePrediction(Coin.Symbol);
-        await js.InvokeVoidAsync("makeBarChart", "chart_div", coinPriceAndVolume.VolumePairs);
+        //CoinPriceVolumePair coinPriceAndVolume = await cryptoWatch.GetCoinPriceVolumePair(Coin.Symbol, fromDate, rangeInput.Name);
+        List<DatePricePairModel> predictionsData = await mlModeldata.GetPricePrediction(Coin.Symbol);
+        //await js.InvokeVoidAsync("makeBarChart", "chart_div", coinPriceAndVolume.VolumePairs);
         if (predictionsData.Count > 0)
         {
-            await js.InvokeVoidAsync("makeLineChart", "linechart_div", coinPriceAndVolume.DatePricePairs, predictionsData);
+            //await js.InvokeVoidAsync("makeLineChart", "linechart_div", coinPriceAndVolume.DatePricePairs, predictionsData);
         }
         else
         {
-            await js.InvokeVoidAsync("makeLineChart", "linechart_div", coinPriceAndVolume.DatePricePairs);
+            //await js.InvokeVoidAsync("makeLineChart", "linechart_div", coinPriceAndVolume.DatePricePairs);
         }
     }
 }
