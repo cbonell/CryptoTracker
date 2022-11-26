@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using RestSharp;
 using static SharedConstants.Constants;
+using static MoonTrading.BusinessLogic.Validation.Auth0DataValidation;
 
 namespace MoonTrading.DataAccess.Data;
 
@@ -22,7 +23,7 @@ public class Auth0Access : IAuth0Access
     /// <exception cref="ArgumentNullException"><paramref name="auth0UserId"/></exception>
     public async Task<UserMetaDataContainer> GetUserMetaData(string auth0UserId)
     {
-        if (string.IsNullOrWhiteSpace(auth0UserId))
+        if(!ValidateAuth0UserId(auth0UserId))
         {
             throw new ArgumentNullException(nameof(auth0UserId));
         }

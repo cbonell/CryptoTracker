@@ -1,4 +1,4 @@
-﻿using MoonTrading.DataAccess.Data;
+﻿using MoonTrading.BusinessLogic.Validation;
 using MoonTrading.DataAccess.Data.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
@@ -29,18 +29,10 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
     /// <exception cref="ArgumentOutOfRangeException">When amount is less than or equal to 0</exception>
     public async Task<double> GetPriceInUsd(string currency, double amount = 1)
     {
-        if (string.IsNullOrWhiteSpace(currency))
-        {
-            throw new ArgumentNullException(nameof(currency));
-        }
-
-        if (amount <= 0)
-        {
-            throw new ArgumentOutOfRangeException();
-        }
+        CoinGeckoDataValidation.ValidateGetPrice(currency, amount);
 
         double price;
-        string cacheKey = $"{CacheKey.GetPriceInUsd}-{currency}";
+        string cacheKey = CoinGeckoDataHandler.GetCacheKeyForPrice(currency);
         if (!_memoryCache.TryGetValue(cacheKey, out price))
         {
             var cacheEntryOptions = new MemoryCacheEntryOptions()

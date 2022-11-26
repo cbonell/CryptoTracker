@@ -1,7 +1,9 @@
-﻿using MoonTrading.Model;
+﻿using Microsoft.Extensions.Caching.Memory;
+using MoonTrading.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using static SharedConstants.Constants;
 
 namespace MoonTrading.BusinessLogic.Actions;
 
@@ -36,4 +38,6 @@ public class CoinGeckoDataHandler
 
         return price;
     }
+
+    public static string GetCacheKeyForPrice(string currency) => $"{CacheKey.GetPriceInUsd}-{currency}";
 }
