@@ -12,19 +12,14 @@ namespace MoonTrading.Tests.Twitter;
 public class TwitterSearchTests
 {
     [TestMethod]
-    public async Task TwitterSearch_InvaidCoinName_ExpectException()
+    [ExpectedException(typeof(ArgumentNullException))]
+    public async Task TwitterSearch_InvaidHashTag_ExpectException()
     {
         // Arrange
-        Exception? exception = null;
 
         // Act
-        try
-        {
-            await TwitterSearch.GetTrendingByHashTag("!@!#!@#$@!#");
-        }
-        catch(ArgumentNullException e) { exception = e; }
+        await TwitterSearch.GetTrendingByHashTag(String.Empty);
 
         // Assert
-        Assert.IsNotNull(exception);
     }
 }
