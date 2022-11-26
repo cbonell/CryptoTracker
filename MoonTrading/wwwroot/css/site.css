@@ -200,6 +200,17 @@ input[type=radio]:not(:first-child) {
     color: var(--base-font-color);
 }
 
+.col-wrap {
+    background-color: var(--base-background-color);
+    border-width: 1vw;
+    border-color: var(--base-background-color);
+    border-left: none;
+    border-radius: 1em;
+    margin-bottom: 1em;
+    margin-top: 1em;
+    margin-left: 1em;
+}
+
 .scroll-y {
     height: 55vh;
     overflow-y: auto;
@@ -216,12 +227,6 @@ input[type=radio]:not(:first-child) {
 
 .ticker-item {
     width: 10vw;
-    flex: 0 0 150px;
-    height: 100px;
-    flex: 0 0 150px;
-    justify-content: center;
-    align-items: center;
-    /*height: 100vw;*/
 }
 
 .flex-container {
