@@ -4,7 +4,6 @@
 @inject ICoinGeckoData geckoData
 @namespace MoonTrading.Shared
 
-@using static MoonTrading.DataAccess.Data.CryptoWatchData
 @using System.Globalization
 @using MoonTrading.DataAccess.MLModelAccess
 
@@ -90,7 +89,7 @@
 
     protected async Task LoadData()
     {
-        DateTimeOffset fromDate = GetOffsetFromInterval(rangeInput.Name);
+        DateTimeOffset fromDate = cryptoWatch.GetOffsetFromInterval(rangeInput.Name);
         CoinPriceVolumePair coinPriceAndVolume = new();// = await cryptoWatch.GetCoinPriceVolumePair(Coin.Symbol, fromDate, rangeInput.Name);
         List<DatePricePairModel> predictionsData = new();// await mlModeldata.GetPricePrediction(Coin.Symbol);
         if (chartsAreSupported)

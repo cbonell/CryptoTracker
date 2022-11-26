@@ -1,6 +1,5 @@
 using MoonTrading.DataAccess.Data;
 using MoonTrading.DataAccess.Data.Interfaces;
-using MoonTrading.DataAccess.Data;
 using Moq;
 using static SharedConstants.Constants;
 

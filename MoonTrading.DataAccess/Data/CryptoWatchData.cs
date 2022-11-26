@@ -18,7 +18,7 @@ public class CryptoWatchData : ICryptoWatchData
     /// </summary>
     /// <param name="interval"></param>
     /// <returns><see cref="DateTimeOffset"/></returns>
-    public static DateTimeOffset GetOffsetFromInterval(string interval)
+    public DateTimeOffset GetOffsetFromInterval(string interval)
     {
         DateTimeOffset fromDate;
         if (interval == "1w")

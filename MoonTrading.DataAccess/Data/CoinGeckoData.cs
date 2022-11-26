@@ -421,6 +421,11 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
 
     public async Task<CoinGeckCoinModel> GetTradeableCoinByCoinMarketCapId(int coinMarketCapId)
     {
+        if(coinMarketCapId <= 0)
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
         var result = await _db.LoadData<CoinGeckCoinModel, dynamic>(
            "[dbo].[GetTradeableCoinGeckoCoinByCoinMarketCapId]",
            new { CoinMarketCapId = coinMarketCapId });
@@ -430,6 +435,11 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
 
     public async Task<CoinGeckCoinModel> GetTradeableCoinByCoinGeckoId(string coinGeckoId)
     {
+        if (string.IsNullOrWhiteSpace(coinGeckoId))
+        {
+            throw new ArgumentNullException(nameof(coinGeckoId));
+        }
+
         var result = await _db.LoadData<CoinGeckCoinModel, dynamic>(
            "[dbo].[GetTradeableCoinByCoinGeckoId]",
            new { Id = coinGeckoId });
@@ -439,6 +449,11 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
 
     public async Task<CoinGeckCoinModel> GetTradeableCoinByCoinGeckoSymbol(string coinGeckoSymbol)
     {
+        if (string.IsNullOrWhiteSpace(coinGeckoSymbol))
+        {
+            throw new ArgumentNullException(nameof(coinGeckoSymbol));
+        }
+
         var result = await _db.LoadData<CoinGeckCoinModel, dynamic>(
            "[dbo].[GetTradeableCoinByCoinGeckoSymbol]",
            new { Symbol = coinGeckoSymbol });

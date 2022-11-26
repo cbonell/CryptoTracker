@@ -142,4 +142,95 @@ public class CoinGeckoDataTests
 
         // Assert
     }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public async Task GetTradeableCoinByCoinGeckoId_InvalidCoinGeckoId_ExpectException()
+    {
+        // Arrange
+
+        // Act
+        var response = await coinGeckoData.GetTradeableCoinByCoinGeckoId(string.Empty);
+
+        // Assert
+        // throws exception
+    }
+    
+    [TestMethod]
+    public async Task GetTradeableCoinByCoinGeckoId_ValidCoinGeckoId_ExpectSuccess()
+    {
+        // Arrange
+        CoinGeckCoinModel coinGeckCoinModel;
+
+        // Act
+        coinGeckCoinModel = await coinGeckoData.GetTradeableCoinByCoinGeckoId("bitcoin");
+
+        // Assert
+        Assert.IsNotNull(coinGeckCoinModel);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public async Task GetTradeableCoinByCoinGeckoSymbol_InvalidCoinSymbol_ExpectException()
+    {
+        // Arrange
+
+        // Act
+        var response = await coinGeckoData.GetTradeableCoinByCoinGeckoSymbol(string.Empty);
+
+        // Assert
+        // throws exception
+    }
+    
+    [TestMethod]
+    public async Task GetTradeableCoinByCoinGeckoSymbol_ValidCoinSymbol_ExpectSuccess()
+    {
+        // Arrange
+        CoinGeckCoinModel coinGeckCoinModel;
+
+        // Act
+        coinGeckCoinModel = await coinGeckoData.GetTradeableCoinByCoinGeckoSymbol("btc");
+
+        // Assert
+        Assert.IsNotNull(coinGeckCoinModel);
+    }
+    
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentOutOfRangeException))]
+    public async Task GetTradeableCoinByCoinMarketCapId_InvalidIdExpectException()
+    {
+        // Arrange
+
+        // Act
+        var response = await coinGeckoData.GetTradeableCoinByCoinMarketCapId(-1);
+
+        // Assert
+        // throws exception
+    }
+    
+    [TestMethod]
+    public async Task GetTradeableCoinByCoinMarketCapId_ValidCoinId_ExpectSuccess()
+    {
+        // Arrange
+        CoinGeckCoinModel coinGeckCoinModel;
+
+        // Act
+        coinGeckCoinModel = await coinGeckoData.GetTradeableCoinByCoinMarketCapId(1);
+
+        // Assert
+        Assert.IsNotNull(coinGeckCoinModel);
+    }
+    
+    [TestMethod]
+    public async Task GetTradeableCoins_ExpectValidEnumerable()
+    {
+        // Arrange
+        IEnumerable<CoinGeckCoinModel> coinGeckCoinModels;
+
+        // Act
+        coinGeckCoinModels = await coinGeckoData.GetTradeableCoins();
+
+        // Assert
+        Assert.IsNotNull(coinGeckCoinModels);
+    }
 }
