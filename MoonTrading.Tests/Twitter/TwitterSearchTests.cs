@@ -1,4 +1,5 @@
-﻿using MoonTrading.DataAccess.Data;
+﻿using Microsoft.Extensions.Configuration;
+using MoonTrading.DataAccess.Data;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,16 @@ namespace MoonTrading.Tests.Twitter;
 [TestClass]
 public class TwitterSearchTests
 {
+    TwitterSearch _twitterSearchMock;
+    Mock<IConfiguration> _mockConfig;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        _mockConfig = new Mock<IConfiguration>();
+        _twitterSearchMock = new TwitterSearch(_mockConfig.Object);
+    }
+
     [TestMethod]
     [ExpectedException(typeof(ArgumentNullException))]
     public async Task TwitterSearch_InvaidHashTag_ExpectException()
@@ -18,7 +29,7 @@ public class TwitterSearchTests
         // Arrange
 
         // Act
-        await TwitterSearch.GetTrendingByHashTag(String.Empty);
+        await _twitterSearchMock.GetTrendingByHashTag(string.Empty);
 
         // Assert
     }

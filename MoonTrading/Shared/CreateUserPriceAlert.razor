@@ -1,5 +1,6 @@
-﻿
-@inject IPriceAlertData priceAlertData
+﻿@inject IPriceAlertData priceAlertData
+@inject IAuth0Access auth0Access
+
 <button class="btn btn-primary" @onclick="createModal.ToggleDisplay">
     <i class="fa-@(hasAlert ? "solid" : "regular") fa-bell"></i>
 </button>
@@ -40,7 +41,7 @@
 
     private async Task CreateAlert()
     {
-        UserMetaDataContainer user = await Auth0Access.GetUserMetaData(UserId);
+        UserMetaDataContainer user = await auth0Access.GetUserMetaData(UserId);
         await priceAlertData.CreatePriceAlert(UserId, CoinGeckId, user.Email, (AlertType)inputAlertType, inputAlertPrice);
         hasAlert = true;
     }

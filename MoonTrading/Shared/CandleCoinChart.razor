@@ -51,7 +51,7 @@ else
 
     protected async Task LoadData()
     {
-        DateTimeOffset fromDate = GetOffsetFromInterval(rangeInput.Name);
+        DateTimeOffset fromDate = cryptoWatch.GetOffsetFromInterval(rangeInput.Name);
         try
         {
             candleData = await cryptoWatch.GetOHLCPairs(Coin.Symbol, fromDate, rangeInput.Name);

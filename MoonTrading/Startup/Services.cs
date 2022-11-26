@@ -13,6 +13,7 @@ public static class Services
         builder.Services.AddServerSideBlazor();
         builder.Services.AddMemoryCache();
 
+        builder.Services.AddSingleton<IAuth0Access, Auth0Access>();
         builder.Services.AddSingleton<ICryptoFacilitiesData, CryptoFacilitiesData>();
         builder.Services.AddSingleton<ICryptoWatchData, CryptoWatchData>();
         builder.Services.AddSingleton<ICoinGeckoData, CoinGeckoData>();
@@ -21,6 +22,7 @@ public static class Services
         builder.Services.AddSingleton<IMLModelData, MLModelData>();
         builder.Services.AddSingleton<IPriceAlertData, PriceAlertData>();
         builder.Services.AddSingleton<ITradingPurchaseData, TradingPurchaseData>();
+        builder.Services.AddSingleton<ITwitterSearch, TwitterSearch>();
         builder.Services.AddTransient<ISqlDataAccess, SqlDataAccess>();
         builder.Services.AddSingleton<IUserWalletData, UserWalletData>();
         builder.Services.AddSingleton<IUserFavoriteCoinData, UserFavoriteCoinData>();

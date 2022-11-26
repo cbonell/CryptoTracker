@@ -1,5 +1,5 @@
 ﻿@namespace MoonTrading.Shared
-
+@inject ITwitterSearch twitterSearch
 <div class="container secondary-container scroll-y">
     <h3 class="">Trending #@CoinName Tweets</h3>
 
@@ -51,7 +51,7 @@
     {
         if (!string.IsNullOrWhiteSpace(CoinName))
         {
-            twitterSearchModels = await TwitterSearch.GetTrendingByHashTag(CoinName);
+            twitterSearchModels = await twitterSearch.GetTrendingByHashTag(CoinName);
         }
     }
 }

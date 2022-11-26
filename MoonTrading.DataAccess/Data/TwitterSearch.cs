@@ -1,11 +1,21 @@
 ﻿using RestSharp;
 using static SharedConstants.Constants;
 using MoonTrading.BusinessLogic.Actions;
+using MoonTrading.DataAccess.Data.Interfaces;
+using Microsoft.Extensions.Configuration;
+
 namespace MoonTrading.DataAccess.Data;
 
-public class TwitterSearch
+public class TwitterSearch : ITwitterSearch
 {
     private static string[] blackListWords = { "giveaway", "winner", "\"giving away\"", "won" };
+    IConfiguration _config;
+
+    public TwitterSearch(IConfiguration config)
+    {
+        _config = config;
+    }
+
 
     /// <summary>
     /// Search for trending tweets based a supplied hashtag
@@ -13,7 +23,7 @@ public class TwitterSearch
     /// <param name="hashTag"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></>When <paramref name="hashTag"/> is null</exception>
-    public static async Task<IEnumerable<TweetSearchModel>> GetTrendingByHashTag(string hashTag)
+    public async Task<IEnumerable<TweetSearchModel>> GetTrendingByHashTag(string hashTag)
     {
         if (string.IsNullOrEmpty(hashTag))
         {
@@ -25,7 +35,7 @@ public class TwitterSearch
         {
             Method = Method.Get
         };
-        request.AddHeader("authorization", $"Bearer {TwitterApiBearerToken}");
+        request.AddHeader("authorization", $"Bearer {_config.GetSection(TwitterApiBearerToken).Value}");
         request.AddHeader("content-type", "application/json");
 
         RestResponse response = await client.ExecuteAsync(request);

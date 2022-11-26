@@ -3,6 +3,7 @@
 @inject ITradingPurchaseData tradingPurchaseData
 @inject IUserWalletData userWalletData
 @inject IMarketOrderData marketOrderData
+@inject IAuth0Access auth0Access
 @inherits BasePage
 @namespace MoonTrading.Shared
 
@@ -164,13 +165,13 @@
 
     private async Task CreateStopMarket()
     {
-        UserMetaDataContainer user = await Auth0Access.GetUserMetaData(UserId);
+        UserMetaDataContainer user = await auth0Access.GetUserMetaData(UserId);
         await marketOrderData.CreateMarketOrder(UserId, user.Email, Coin.Id, stopMarketPrice, stopMarketQuantity, 0);
     }
 
     private async Task CreateStopLoss()
     {
-        UserMetaDataContainer user = await Auth0Access.GetUserMetaData(UserId);
+        UserMetaDataContainer user = await auth0Access.GetUserMetaData(UserId);
         await marketOrderData.CreateMarketOrder(UserId, user.Email, Coin.Id, stopLossPrice, stopLossQuantity, 1);
     }
 }

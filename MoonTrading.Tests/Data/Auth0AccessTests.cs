@@ -1,16 +1,22 @@
 ﻿using MoonTrading.DataAccess.Data;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace MoonTrading.Tests.Data;
 
 [TestClass]
 public class Auth0AccessTests
 {
+    Auth0Access _auth0Access;
+    Mock<IConfiguration> _mockConfig;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        _mockConfig = new Mock<IConfiguration>();
+        _auth0Access = new Auth0Access(_mockConfig.Object);
+    }
+
     [TestMethod]
     [ExpectedException(typeof(ArgumentNullException))]
     public async Task GetUserMetaData_InvalidUserId_ExpectException()
@@ -18,7 +24,7 @@ public class Auth0AccessTests
         // Arrange
 
         // Act
-        await Auth0Access.GetUserMetaData(string.Empty);
+        await _auth0Access.GetUserMetaData(string.Empty);
 
         // Assert
     }

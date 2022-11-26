@@ -1,20 +1,28 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using RestSharp;
 using static SharedConstants.Constants;
 
 namespace MoonTrading.DataAccess.Data;
 
-public class Auth0Access
+public class Auth0Access : IAuth0Access
 {
+    IConfiguration _config;
+
+    public Auth0Access(IConfiguration config)
+    {
+        _config = config;
+    }
+
     /// <summary>
     /// Retrieves user meta data based on <paramref name="auth0UserId"/>
     /// </summary>
     /// <param name="auth0UserId"></param>
     /// <returns><see cref="UserMetaDataContainer"/>Model containing user metadata</returns>
     /// <exception cref="ArgumentNullException"><paramref name="auth0UserId"/></exception>
-    public static async Task<UserMetaDataContainer> GetUserMetaData(string auth0UserId)
+    public async Task<UserMetaDataContainer> GetUserMetaData(string auth0UserId)
     {
-        if(string.IsNullOrWhiteSpace(auth0UserId))
+        if (string.IsNullOrWhiteSpace(auth0UserId))
         {
             throw new ArgumentNullException(nameof(auth0UserId));
         }
@@ -24,7 +32,7 @@ public class Auth0Access
         {
             Method = Method.Get
         };
-        request.AddHeader("authorization", "Bearer " + AUTH0_API_TOKEN);
+        request.AddHeader("authorization", "Bearer " + _config.GetSection(Auth0APIToken).Value);
         request.AddHeader("content-type", "application/json");
         RestResponse response = await client.ExecuteAsync(request);
 
