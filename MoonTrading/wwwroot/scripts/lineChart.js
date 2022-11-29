@@ -23,16 +23,19 @@
             );
         }
     }
-
+    var seriesData = [{
+        name: 'Price History',
+        data: arr
+    }];
+    if (priceData2) {
+        seriesData.push(
+            {
+                name: 'Price Predicition',
+                data: arr2
+            });
+    }
     var options = {
-        series: [{
-            name: 'Price History',
-            data: arr
-        },
-        {
-            name: 'Price Predicition',
-            data: arr2
-        }],
+        series: seriesData,
         chart: {
             type: 'area',
             stacked: false,
