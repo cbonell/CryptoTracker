@@ -1,4 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using System.Net.NetworkInformation;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace MoonTrading.Model;
 
@@ -35,10 +39,31 @@ public class TweetSearchModel
                     allWords[i] = $"<a href=\"{s}\">{allWords[i]}</a>";
                 }
             }
-
             return string.Join(" ", allWords);
         }
     }
+
+    public string SentimentText
+    {
+        get
+        {
+            var normalizedWords = Regex.Replace(Text, "\\n", " ");
+            normalizedWords = Regex.Replace(normalizedWords, "\\r\\n", " ");
+            normalizedWords = normalizedWords.Replace("  ", String.Empty);
+            normalizedWords = Regex.Replace(normalizedWords, @"[^\u0000-\u007F]+", string.Empty);
+            var allWords = normalizedWords.Split(' ');
+            for (int i = 0; i < allWords.Length; i++)
+            {
+                if (allWords[i].Contains("http"))
+                {
+                    allWords[i] = "";
+                }
+            }
+            return string.Join(" ", allWords);
+        }
+    }
+
+    public int? Sentiment { get; set; }
 
     [JsonProperty("source")]
     public string TweetUrl { get; set; } = "";

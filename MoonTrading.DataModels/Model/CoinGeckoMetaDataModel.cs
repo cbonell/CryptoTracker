@@ -102,8 +102,8 @@ public class MarketData
     public MarketCap market_cap { get; set; } = new();
     public int?  market_cap_rank { get; set; }
     public TotalVolume total_volume { get; set; } = new();
-    public High24h high_24h { get; set; } = new();
-    public Low24h low_24h { get; set; } = new();
+    public High24h? high_24h { get; set; } = new();
+    public Low24h? low_24h { get; set; } = new();
     public double? price_change_24h { get; set; }
     public double? price_change_percentage_24h { get; set; }
     public double? price_change_percentage_7d { get; set; }

@@ -1,0 +1,19 @@
+﻿.bullish {
+    border: solid 2px;
+    border-color:limegreen;
+}
+
+.neutral {
+    border: solid 2px;
+    border-color: darkkhaki;
+}
+
+.bearish {
+    border: solid 2px;
+    border-color: darkred;
+}
+
+.sentiment-img {
+    height: 48px;
+    width: 96px;
+}

@@ -10,6 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\ResetUserTradingAccount.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Components\TickerScoll.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MoonTrading.DataAccess\MoonTrading.DataAccess.csproj" />
     <ProjectReference Include="..\SharedConstants\MoonTrading.Tools.csproj" />
   </ItemGroup>
@@ -22,6 +30,18 @@
     <PackageReference Include="Hangfire.SqlServer" Version="1.7.31" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.1" />
     <PackageReference Include="Radzen.Blazor" Version="3.20.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\ResetUserTradingAccount.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\ResetUserTradingAccount.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Components\TickerScoll.razor.css" />
   </ItemGroup>
 
 </Project>

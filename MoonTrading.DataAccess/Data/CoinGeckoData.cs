@@ -209,7 +209,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page={page}&sparkline=false");
             RestResponse response = await client.ExecuteAsync(request);
             JArray data = JArray.Parse(response.Content!);
-            responseData = JsonConvert.DeserializeObject<IEnumerable<CoinGeckoMarketModel>>(data.ToString());
+            responseData = JsonConvert.DeserializeObject<IEnumerable<CoinGeckoMarketModel>>(data.ToString(), new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore});
             if (responseData == null)
             {
                 throw new Exception("Failed to retrieve markets for page " + page);
