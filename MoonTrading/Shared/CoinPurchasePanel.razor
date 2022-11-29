@@ -20,7 +20,7 @@
 <Modal @ref=purcahseConfirmationModal Title="Purchase Confirmation" OnSave="() => MakePurchase(true)">
     Are you sure that you want to purchase @numberToBuy @Coin.Name for @CurrentPrice.AsFormattedNumber()
 </Modal>
-<RadzenCard>
+@*<RadzenCard>*@
     <RadzenTabs>
         <Tabs>
             <RadzenTabsItem Text="Market Order">
@@ -61,7 +61,7 @@
             </RadzenTabsItem>
         </Tabs>
     </RadzenTabs>
-</RadzenCard>
+@*</RadzenCard>*@
 
 @code {
     [Parameter]

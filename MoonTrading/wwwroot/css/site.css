@@ -374,10 +374,18 @@ tr.rz-datatable-odd td.text-center {
     background-color: var(--tertiary-background-color);
 }
 
+.rz-grid-table-striped tbody tr:not(.rz-expanded-row-content):nth-child(2n) > td {
+    background-color: var(--tertiary-background-color);
+}
+
+.rz-grid-table-striped tbody tr:not(.rz-expanded-row-content):nth-child(2n+1) > td {
+    background-color: var(--secondary-background-color);
+}
+
 /*radzen paginator*/
 .rz-paginator.rz-unselectable-text.rz-helper-clearfix.rz-align-justify {
     color: red;
-    background: var(--tertiary-background-color)
+    background: var(--secondary-background-color)
 }
 
 .rz-paginator-page.rz-paginator-element.rz-state-active {

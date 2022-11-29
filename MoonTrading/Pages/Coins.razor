@@ -36,7 +36,7 @@ else
                     <span>$@(coin.total_volume.AsFormattedNumber())</span>
                 </Template>
             </RadzenDataGridColumn>
-             <RadzenDataGridColumn TItem="CoinGeckoMarketModel" Property="Price_predictions" Title="Price Prediction" CssClass="text-center">
+             <RadzenDataGridColumn TItem="CoinGeckoMarketModel" Property="Price_predictions" Title="Price Prediction" CssClass="text-center" Filterable="false">
                 <Template Context="coin">
                     <img class="sentiment-img" src="@(coin.Name == "Bitcoin" ? "/price_predictions.png" : coin.Name == "Ethereum" ? "/price_predictions.png" : coin.Name == "XRP" ? "/price_predictions.png" : "/not_supported.png")">
                 </Template>
