@@ -171,10 +171,10 @@ public class MLModelDataTests
 
         List<List<List<double>>> tensors = mlModelData.Tensorize(OHLC);
 
-        // Verify that dimensions of the data 1 x tuples x 3 (#Features ={high, low, close})
+        // Verify that dimensions of the data 1 x tuples x #Features(18))
         Assert.AreEqual(tensors.Count, 1);
         Assert.AreEqual(tensors[0].Count, 4);
-        Assert.AreEqual(tensors[0][0].Count, 3);
+        Assert.AreEqual(tensors[0][0].Count, 18);
     }
 
     [TestMethod]
@@ -195,5 +195,69 @@ public class MLModelDataTests
         double[] probabilities = { 0.15062834871739389, 0.3146394270482894, 0.53473222423431666 };
         var predictedClass = mlModelData.GetPredictedClass(probabilities);
         Assert.AreEqual(predictedClass, 2);
+    }
+
+    [TestMethod]
+    public void RemoveExtraTuplesTest()
+    {
+        List<OHLCPairModel> OHLC = new List<OHLCPairModel>();
+        OHLCPairModel btcTuple1;
+
+        for (int i = 0; i < 336; i++)
+        {
+            btcTuple1 = new OHLCPairModel();
+            btcTuple1.TimeStamp = DateTime.Now;
+            btcTuple1.Close = 50000.0;
+            btcTuple1.Low = btcTuple1.Close - 1000;
+            btcTuple1.High = btcTuple1.Close + 1000;
+            OHLC.Add(btcTuple1);
+        }
+
+        int originalHalfLength = OHLC.Count() / 2;
+        OHLC = MLModelData.RemoveExtraTuples(OHLC);
+        Assert.AreEqual(OHLC.Count(), originalHalfLength);
+    }
+
+    [TestMethod]
+    public void Calculate7dAndIncreasedFeaturesTest()
+    {
+        List<OHLCPairModel> OHLC = new();
+        OHLCPairModel tuple;
+
+        for (int i = 0; i < 4; i++)
+        {
+            tuple = new OHLCPairModel();
+            tuple.Open = i + 1;
+            tuple.High = i + 1;
+            tuple.Low = i + 1;
+            tuple.Close = i + 1;
+            OHLC.Add(tuple);
+        }
+
+        OHLC = MLModelData.Calculate7dAndIncreasedFeatures(OHLC);
+        Assert.AreEqual(OHLC[3].Open7dAvg, 2.5);
+        Assert.AreEqual(OHLC[3].Open7dIncrease, 1);
+        Assert.AreEqual(OHLC[3].OpenIncrease, 1.0/3);
+    }
+
+    [TestMethod]
+    public void CalculateStdDevsTest()
+    {
+        List<OHLCPairModel> OHLC = new();
+        OHLCPairModel tuple;
+
+        for (int i = 0; i < 4; i++)
+        {
+            tuple = new OHLCPairModel();
+            tuple.Open = i + 10;
+            tuple.High = i + 20;
+            tuple.Low = i + 30;
+            tuple.Close = i + 40;
+            OHLC.Add(tuple);
+        }
+
+        OHLC = MLModelData.calculateStdDevs(OHLC);
+        Assert.AreEqual(OHLC[3].RowStdev, 11.180339887498949);
+        Assert.AreEqual(OHLC[3].Close7dStdev, .5);
     }
 }

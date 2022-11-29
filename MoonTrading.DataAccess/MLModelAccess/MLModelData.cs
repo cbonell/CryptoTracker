@@ -10,15 +10,15 @@ public class MLModelData : IMLModelData
 {
     public Dictionary<string, int> supportedModels = new Dictionary<string, int> {
         { "btc", 2 },
-        { "xrp", 3 },
-        { "eth", 4 }
+        { "eth", 3 },
+        { "xrp", 4 }
     };
 
     public Dictionary<string, double> normalizationValues = new Dictionary<string, double>
     {
         {"btc-openMax", 68635.05 },
         {"btc-openMin", 3139.76 },
-        {"btc-highMax", 69000.0},
+        {"btc-highMax", 69000.0 },
         {"btc-highMin", 3158.34 },
         {"btc-lowMax", 68447.0 },
         {"btc-lowMin", 3122.28 },
@@ -52,6 +52,80 @@ public class MLModelData : IMLModelData
         {"btc-rowStdevMin", 0 },
         {"btc-close7dStdevMax", 4170.395703 },
         {"btc-close7dStdevMin", 0 },
+
+        {"eth-openMax", 4850.0 },
+        {"eth-openMin", 81.27 },
+        {"eth-highMax", 4868.79 },
+        {"eth-highMin", 82.05 },
+        {"eth-lowMax", 4835.42 },
+        {"eth-lowMin", 80.9 },
+        {"eth-closeMax", 4849.06 },
+        {"eth-closeMin", 81.27 },
+        {"eth-open7dAvgMax", 4699.5909520000005 },
+        {"eth-open7dAvgMin", 86.18523809999999 },
+        {"eth-high7dAvgMax", 4718.608155 },
+        {"eth-high7dAvgMin", 86.67904762 },
+        {"eth-low7dAvgMax", 4677.744286 },
+        {"eth-low7dAvgMin", 85.66035714 },
+        {"eth-close7dAvgMax", 4699.247083 },
+        {"eth-close7dAvgMin", 86.18523809999999 },
+        {"eth-openIncreaseMax", 0.207070707 },
+        {"eth-openIncreaseMin", -0.140525134 },
+        {"eth-highIncreaseMax", 0.144609924 },
+        {"eth-highIncreaseMin", -0.219683816 },
+        {"eth-lowIncreaseMax", 0.381637226 },
+        {"eth-lowIncreaseMin", -0.229694323 },
+        {"eth-closeIncreaseMax", 0.207070707 },
+        {"eth-closeIncreaseMin", -0.140525134 },
+        {"eth-open7dIncreaseMax", 1.298160989 },
+        {"eth-open7dIncreaseMin", -0.439141448 },
+        {"eth-high7dIncreaseMax", 1.089530555 },
+        {"eth-high7dIncreaseMin", -0.443189325 },
+        {"eth-low7dIncreaseMax", 1.592857143 },
+        {"eth-low7dIncreaseMin", -0.43316013200000003 },
+        {"eth-close7dIncreaseMax", 1.298160989 },
+        {"eth-close7dIncreaseMin", -0.439141448 },
+        {"eth-rowStdevMax", 325.4027212 },
+        {"eth-rowStdevMin", 0 },
+        {"eth-close7dStdevMax", 495.2230526000001 },
+        {"eth-close7dStdevMin", 0.9111194690000001 },
+
+        {"xrp-openMax", 1.93609 },
+        {"xrp-openMin", 0.1248 },
+        {"xrp-highMax", 1.96695 },
+        {"xrp-highMin", 0.1335 },
+        {"xrp-lowMax", 1.9137400000000002 },
+        {"xrp-lowMin", 0.114 },
+        {"xrp-closeMax", 1.9409299999999998 },
+        {"xrp-closeMin", 0.1248 },
+        {"xrp-open7dAvgMax", 1.6041351190000002 },
+        {"xrp-open7dAvgMin", 0.148820238 },
+        {"xrp-high7dAvgMax", 1.6359154169999999 },
+        {"xrp-high7dAvgMin", 0.15179881 },
+        {"xrp-low7dAvgMax", 1.570975298 },
+        {"xrp-low7dAvgMin", 0.14625654800000001 },
+        {"xrp-close7dAvgMax", 1.60379744 },
+        {"xrp-close7dAvgMin", 0.148820238 },
+        {"xrp-openIncreaseMax", 0.25130559399999997 },
+        {"xrp-openIncreaseMin", -0.216517568 },
+        {"xrp-highIncreaseMax", 0.342539317 },
+        {"xrp-highIncreaseMin", -0.264248705 },
+        {"xrp-lowIncreaseMax", 0.328754324 },
+        {"xrp-lowIncreaseMin", -0.191296505 },
+        {"xrp-closeIncreaseMax", 0.252640524 },
+        {"xrp-closeIncreaseMin", -0.216357584 },
+        {"xrp-open7dIncreaseMax", 1.686720716 },
+        {"xrp-open7dIncreaseMin", -0.622031308 },
+        {"xrp-high7dIncreaseMax", 1.5705813830000002 },
+        {"xrp-high7dIncreaseMin", -0.640633176 },
+        {"xrp-low7dIncreaseMax", 1.7156470590000001 },
+        {"xrp-low7dIncreaseMin", -0.590402931 },
+        {"xrp-close7dIncreaseMax", 1.6820593000000001 },
+        {"xrp-close7dIncreaseMin", -0.622334131 },
+        {"xrp-rowStdevMax", 0.14297317199999998 },
+        {"xrp-rowStdevMin", 0.0 },
+        {"xrp-close7dStdevMax", 0.296589242 },
+        {"xrp-close7dStdevMin", 0.0009896389999999998 },
     };
 
     public async Task<List<DatePricePairModel>> GetPricePrediction(string coinSymbol)
@@ -83,7 +157,7 @@ public class MLModelData : IMLModelData
 
     public async Task<JObject> MakeRequest(List<List<List<double>>> body, int model)
     {
-        var client = new RestClient($"http://prices.eastus.azurecontainer.io:8501/v1/models/crypto/versions/{model}:predict");
+        var client = new RestClient($"http://models.eastus.azurecontainer.io:8501/v1/models/crypto/versions/{model}:predict");
         var request = new RestRequest()
         {
             Method = Method.Post
@@ -135,6 +209,11 @@ public class MLModelData : IMLModelData
                 features[i].LowIncrease = (features[i].Low - features[i - 1].Low) / features[i - 1].Low;
                 features[i].CloseIncrease = (features[i].Close - features[i - 1].Close) / features[i - 1].Close;
 
+                open7dAvgSum += features[i].Open;
+                high7dAvgSum += features[i].High;
+                low7dAvgSum += features[i].Low;
+                close7dAvgSum += features[i].Close;
+
                 open7dAvgSum -= features[lastIndex].Open;
                 high7dAvgSum -= features[lastIndex].High;
                 low7dAvgSum -= features[lastIndex].Low;
@@ -148,7 +227,8 @@ public class MLModelData : IMLModelData
 
     public static List<OHLCPairModel> RemoveExtraTuples(List<OHLCPairModel> features)
     {
-        for (int i = 0; i < features.Count() / 2; i++)
+        int featuresLen = features.Count() / 2;
+        for (int i = 0; i < featuresLen; i++)
         {
             features.RemoveAt(0);
         }
@@ -158,27 +238,27 @@ public class MLModelData : IMLModelData
 
     public static List<OHLCPairModel> calculateStdDevs(List<OHLCPairModel> features)
     {
-        List<double?> closeValues = new();
+        List<double> closeValues = new();
 
         int lastIndex = 0;
-        double? avg;
-        double? sumOfSquaresOfDifferences;
-        double? sd;
-        double? sum7d = 0;
+        double avg;
+        double sumOfSquaresOfDifferences;
+        double sd;
+        double sum7d = 0;
         int halfListCount = features.Count() / 2;
 
         for (int i = 0; i < features.Count(); i++)
         {
             if (i < halfListCount)
             {
-                closeValues.Add(features[i].Close);
-                sum7d += features[i].Close;
+                closeValues.Add((double)features[i].Close);
+                sum7d += (double)features[i].Close;
             }
             else
             {
                 avg = sum7d / halfListCount;
-                sumOfSquaresOfDifferences = closeValues.Select(val => (val - avg) * (val - avg)).Sum();
-                sd = Math.Sqrt((double)sumOfSquaresOfDifferences / halfListCount);
+                sumOfSquaresOfDifferences = closeValues.Sum(val => Math.Pow((val - avg), 2)) / halfListCount;
+                sd = Math.Sqrt((double)sumOfSquaresOfDifferences);
                 features[i].Close7dStdev = sd;
 
                 List<double?> tupleValues = new();
@@ -186,14 +266,16 @@ public class MLModelData : IMLModelData
                 tupleValues.Add(features[i].High);
                 tupleValues.Add(features[i].Low);
                 tupleValues.Add(features[i].Close);
-                avg = (features[i].Open + features[i].High + features[i].Low + features[i].Close) / 4;
-                sumOfSquaresOfDifferences = tupleValues.Select(val => (val - avg) * (val - avg)).Sum();
-                sd = Math.Sqrt((double)sumOfSquaresOfDifferences / halfListCount);
+
+                avg = (double)(features[i].Open + features[i].High + features[i].Low + features[i].Close) / 4.0;
+                sumOfSquaresOfDifferences = tupleValues.Sum(val => Math.Pow((double)(val - avg), 2)) / 4.0;
+                sd = Math.Sqrt((double)sumOfSquaresOfDifferences);
                 features[i].RowStdev = sd;
 
-                closeValues.Add(features[i].Close);
-                closeValues.Remove(0);
-                sum7d -= features[lastIndex].Close;
+                closeValues.Add((double)features[i].Close);
+                closeValues.RemoveAt(0);
+                sum7d += (double)features[i].Close;
+                sum7d -= (double)features[lastIndex].Close;
                 lastIndex++;
             }
         }
@@ -344,7 +426,7 @@ public class MLModelData : IMLModelData
         };
         var body = new[] { payload }.ToList();
 
-        var client = new RestClient("http://mlmodels.eastus.azurecontainer.io:8501/v1/models/crypto/versions/5:predict");
+        var client = new RestClient("http://models.eastus.azurecontainer.io:8501/v1/models/crypto/versions/5:predict");
         var request = new RestRequest()
         {
             Method = Method.Post

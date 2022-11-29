@@ -104,7 +104,6 @@
                 catch (Exception) { }
 
                 coinPriceAndVolume = await cryptoWatch.GetCoinPriceVolumePair(Coin.Symbol, fromDate, rangeInput.Name);
-                predictionsData = new();
 
                 await js.InvokeVoidAsync("makeBarChart", "chart_div", coinPriceAndVolume.VolumePairs);
                 if (predictionsData.Count > 0)
