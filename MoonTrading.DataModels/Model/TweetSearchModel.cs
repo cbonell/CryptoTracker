@@ -20,13 +20,13 @@ public class TwitterUser
 public class TweetSearchModel
 {
     [JsonProperty("text")]
-    private string Text { get; set; } = "";
+    public string RawText { get; private set; } = "";
 
     public string DisplayText
     {
         get
         {
-            var allWords = Text.Split(' ');
+            var allWords = RawText.Split(' ');
             for(int i = 0; i < allWords.Length; i++)
             {
                 if (allWords[i].Contains('#'))
@@ -54,4 +54,6 @@ public class TweetSearchModel
 
     [JsonProperty("user")]
     public TwitterUser User { get; set; } = new();
+
+    public int? Sentiment { get; set; }
 }

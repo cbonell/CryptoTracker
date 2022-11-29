@@ -21,8 +21,7 @@ else
         <div class="row justify-content-center">
             <div class="col-6 col-wrap">
                 <div class="row">
-                     <div class="col-1">
-                        
+                    <div class="col-1">
                     </div>
                     <div class="col">
                         24hr
@@ -44,8 +43,7 @@ else
                     </div>
                 </div>
                 <div class="row">
-                     <div class="col-1">
-                        
+                    <div class="col-1">
                     </div>
                     <div class="col">
                         <span class="@(GetPriceArrowClass(coinGeckoMetaDataModel.market_data.price_change_percentage_24h?? 0))"></span>
@@ -155,10 +153,12 @@ else
                     <div class="col">@coinGeckoMetaDataModel?.market_data.max_supply.WithThousandsSeparator()</div>
                 </div>
             </div>
-            <div class="col-sm-3 secondary-container">
-                <CoinPurchasePanel Coin="CoinModel" CurrentPrice="coinGeckoMetaDataModel?.market_data.current_price.usd ?? 0" />
-            </div>
-
+            @if (IsAuthenticated)
+            {
+                <div class="col-sm-3 secondary-container">
+                    <CoinPurchasePanel Coin="CoinModel" CurrentPrice="coinGeckoMetaDataModel?.market_data.current_price.usd ?? 0" />
+                </div>
+            }
         </div>
     </div>
 

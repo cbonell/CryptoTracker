@@ -24,6 +24,11 @@
 
 
 <div class="chartWrapper">
+    @*    @if (isLoading)
+    {
+    <LoadingSpinner />
+    }*@
+
     @if (chartsAreSupported)
     {
         <EditForm Model="rangeInput">
@@ -37,6 +42,7 @@
                 }
         </InputRadioGroup>
     </EditForm>
+
     }
     else
     {
@@ -55,6 +61,7 @@
 
     RangeInput rangeInput;
     bool chartsAreSupported = true;
+    bool isLoading = false;
 
     public CoinPriceChart()
     {
@@ -90,14 +97,20 @@
     protected async Task LoadData()
     {
         DateTimeOffset fromDate = cryptoWatch.GetOffsetFromInterval(rangeInput.Name);
-        CoinPriceVolumePair coinPriceAndVolume = new();// = await cryptoWatch.GetCoinPriceVolumePair(Coin.Symbol, fromDate, rangeInput.Name);
-        List<DatePricePairModel> predictionsData = new();// await mlModeldata.GetPricePrediction(Coin.Symbol);
+        CoinPriceVolumePair coinPriceAndVolume = new();
+        isLoading = true;
         if (chartsAreSupported)
         {
             try
             {
+                List<DatePricePairModel> predictionsData = new();
+                try
+                {
+                    predictionsData = await mlModeldata.GetPricePrediction(Coin.Symbol);
+                }
+                catch (Exception) { predictionsData = new(); }
+
                 coinPriceAndVolume = await cryptoWatch.GetCoinPriceVolumePair(Coin.Symbol, fromDate, rangeInput.Name);
-                predictionsData = new();
 
                 await js.InvokeVoidAsync("makeBarChart", "chart_div", coinPriceAndVolume.VolumePairs);
                 if (predictionsData.Count > 0)
@@ -114,5 +127,6 @@
                 chartsAreSupported = false;
             }
         }
+        isLoading = false;
     }
 }

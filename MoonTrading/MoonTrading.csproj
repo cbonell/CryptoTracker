@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Vocabularies\base_cased.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MoonTrading.DataAccess\MoonTrading.DataAccess.csproj" />
     <ProjectReference Include="..\SharedConstants\MoonTrading.Tools.csproj" />
   </ItemGroup>
