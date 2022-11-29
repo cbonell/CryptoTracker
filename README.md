@@ -18,14 +18,23 @@ It is recomended that you use Visual Studio 2022 IDE which can be downloaded fro
  
  ## Project Details
  
- ### CryptoTracker.DataAccess
- Class Library which serves as the data access layer that uses the Dapper library to perform all SQL access.  Additionally, RestClient library is used to call the CoinMarketCap API endpoints.
+ ### MoonTrading
+UI for the project which utilizes [Blazor Server](https://docs.microsoft.com/en-us/aspnet/core/blazor/hosting-models?view=aspnetcore-6.0)
  
- ### CryptoTracker.Db
- A [SQL Server Database Project](https://stackoverflow.com/a/63044068) used to easily manage schema of the database used by the app. Additionally, it provides the ability to keep schema changes within source control
+ ### MoonTrading.BusinessLogic
+Serves as the source for a majority of logic contained in the application.
 
-### CryptoTracker.Tests
+ ### MoonTrading.DataAccess
+ Class Library which serves as the data access layer that uses the Dapper library to perform all SQL access.  Additionally, access to external API's are handled within this project.
+ 
+  ### MoonTrading.DataBase
+ A [SQL Server Database Project](https://stackoverflow.com/a/63044068) used to easily manage schema of the database used by the app. Additionally, it provides the ability to keep schema changes within source control
+ 
+ ### MoonTrading.DataModels
+ Class Library which holds all models for the database and external api data.
+ 
+### MoonTrading.Tests
 Project to contain all [Unit Tests](https://docs.microsoft.com/en-us/visualstudio/test/walkthrough-creating-and-running-unit-tests-for-managed-code?view=vs-2022) within the application
 
-### CryptoTracker.Web
-UI for the project which utilizes [Blazor Server](https://docs.microsoft.com/en-us/aspnet/core/blazor/hosting-models?view=aspnetcore-6.0)
+### MoonTrading.Tools
+Contains tools used throughout the application such constants and extension methods.
