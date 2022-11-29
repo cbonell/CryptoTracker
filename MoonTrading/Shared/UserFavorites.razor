@@ -23,7 +23,6 @@
 
 @code {
     private IEnumerable<UserFavoriteCoinModel> userFavoriteCoins { get; set; } = Enumerable.Empty<UserFavoriteCoinModel>();
-    string userId = "";
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -40,7 +39,7 @@
 
     private async Task RemoveFavorite(string geckoId)
     {
-        await favoriteCoinData.RemoveUserFavoriteCoin(userId, geckoId);
+        await favoriteCoinData.RemoveUserFavoriteCoin(UserId, geckoId);
         userFavoriteCoins = userFavoriteCoins.Where(x => x.CoinGeckoId != geckoId);
         StateHasChanged();
     }
