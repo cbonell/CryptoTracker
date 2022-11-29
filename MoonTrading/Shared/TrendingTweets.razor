@@ -76,7 +76,14 @@
         {
             foreach (TweetSearchModel tweet in twitterSearchModels)
             {
-                tweet.Sentiment = await mlData.GetSentiment(tweet.RawText);
+                try
+                {
+                    tweet.Sentiment = await mlData.GetSentiment(tweet.RawText);
+                }
+                catch(Exception)
+                {
+                    tweet.Sentiment = 1;
+                }
             }
         }
     }
