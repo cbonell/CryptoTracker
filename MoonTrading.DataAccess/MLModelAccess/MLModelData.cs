@@ -3,11 +3,13 @@ using RestSharp;
 using MoonTrading.DataAccess.Data;
 using BERTTokenizers;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace MoonTrading.DataAccess.MLModelAccess;
 
 public class MLModelData : IMLModelData
 {
+    IMemoryCache _cacheEntry;
     public Dictionary<string, int> supportedModels = new Dictionary<string, int> {
         { "btc", 2 },
         { "eth", 3 },
@@ -128,29 +130,42 @@ public class MLModelData : IMLModelData
         {"xrp-close7dStdevMin", 0.0009896389999999998 },
     };
 
+    public MLModelData(IMemoryCache cacheEntry)
+    {
+        _cacheEntry = cacheEntry;
+    }
+
     public async Task<List<DatePricePairModel>> GetPricePrediction(string coinSymbol)
     {
         coinSymbol = coinSymbol.ToLower();
+        string cacheKey = "PricePrediction-" + coinSymbol;
 
         List<DatePricePairModel> predictions = new List<DatePricePairModel>();
         if (supportedModels.ContainsKey(coinSymbol))
         {
-            int model = supportedModels[coinSymbol];
-            CryptoFacilitiesData cryptoFacilitiesData = new CryptoFacilitiesData();
-            List<OHLCPairModel> features = await cryptoFacilitiesData.GetOHLCPairs(coinSymbol, DateTimeOffset.UtcNow.AddDays(-14));
-            features = Calculate7dAndIncreasedFeatures(features);
-            features = calculateStdDevs(features);
-            features = RemoveExtraTuples(features);
-            features = MinMaxNormalize(features, coinSymbol, normalizationValues);
-            List<List<List<double>>> body = Tensorize(features);
-
-            JObject data = await MakeRequest(body, model);
-
-            if (data != null)
+            if (!_cacheEntry.TryGetValue(cacheKey, out predictions))
             {
-                predictions = convertToDPPM(data, predictions);
-                return predictions;
+                 var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromHours(1));
+
+                int model = supportedModels[coinSymbol];
+                CryptoFacilitiesData cryptoFacilitiesData = new CryptoFacilitiesData();
+                List<OHLCPairModel> features = await cryptoFacilitiesData.GetOHLCPairs(coinSymbol, DateTimeOffset.UtcNow.AddDays(-14));
+                features = Calculate7dAndIncreasedFeatures(features);
+                features = calculateStdDevs(features);
+                features = RemoveExtraTuples(features);
+                features = MinMaxNormalize(features, coinSymbol, normalizationValues);
+                List<List<List<double>>> body = Tensorize(features);
+
+                JObject data = await MakeRequest(body, model);
+
+                if (data != null)
+                {
+                    predictions = ConvertToDPPM(data);
+                    _cacheEntry.Set(cacheKey, predictions);
+                }
             }
+
         }
         return predictions;
     }
@@ -382,8 +397,9 @@ public class MLModelData : IMLModelData
         return body;
     }
 
-    public List<DatePricePairModel> convertToDPPM(JObject data, List<DatePricePairModel> predictions)
+    public List<DatePricePairModel> ConvertToDPPM(JObject data)
     {
+        List<DatePricePairModel> predictions = new();
         JArray jArray = (JArray)data["predictions"]!;
         if (jArray != null && jArray.Count > 0)
         {
@@ -454,7 +470,7 @@ public class MLModelData : IMLModelData
 
     private string FixTextForSentiment(string text)
     {
-        if(string.IsNullOrEmpty(text))
+        if (string.IsNullOrEmpty(text))
         {
             return "";
         }

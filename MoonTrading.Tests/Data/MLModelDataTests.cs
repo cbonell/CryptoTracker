@@ -1,5 +1,5 @@
-﻿using MoonTrading.DataAccess.Data.Interfaces;
-
+﻿using Microsoft.Extensions.Caching.Memory;
+using MoonTrading.DataAccess.Data.Interfaces;
 using MoonTrading.DataAccess.MLModelAccess;
 using MoonTrading.Model;
 using Moq;
@@ -10,9 +10,12 @@ namespace MoonTrading.DataAccess.Data;
 public class MLModelDataTests
 {
     Mock<ICryptoFacilitiesData> _cryptoFacilitiesData;
+    Mock<IMemoryCache> _memoryCache;
+
     [TestInitialize]
-    public void Setup()
+    public void SetUp()
     {
+        _memoryCache = new Mock<IMemoryCache>();
         _cryptoFacilitiesData = new Mock<ICryptoFacilitiesData>();
     }
 
@@ -24,6 +27,11 @@ public class MLModelDataTests
             a => a.GetOHLCPairs("btc", DateTimeOffset.UtcNow.AddDays(-7), "1h", null))
             .ReturnsAsync(returned);
 
+        string n = "";
+        var mockCacheEntry = new Mock<ICacheEntry>();
+        _memoryCache.Setup(mc => mc.CreateEntry(It.IsAny<object>()))
+        .Callback((object k) => n = (string)k)
+        .Returns(mockCacheEntry.Object);
         Random rnd = new Random();
 
         for (int i = 0; i < 168; i++)
@@ -43,7 +51,7 @@ public class MLModelDataTests
             a => a.GetOHLCPairs("btc", DateTimeOffset.UtcNow.AddDays(-7), "1h", null))
             .ReturnsAsync(returned);
 
-        var mlModelData = new MLModelData();
+        var mlModelData = new MLModelData(_memoryCache.Object);
 
         string supported = "btc";
 
@@ -79,7 +87,7 @@ public class MLModelDataTests
             a => a.GetOHLCPairs("btc", DateTimeOffset.UtcNow.AddDays(-7), "1h", null))
             .ReturnsAsync(returned);
 
-        var mlModelData = new MLModelData();
+        var mlModelData = new MLModelData(_memoryCache.Object);
 
         string notSupported = "x";
 
@@ -92,7 +100,7 @@ public class MLModelDataTests
     [TestMethod]
     public void MinMaxNormalizeTest()
     {
-        var mlModelData = new MLModelData();
+        var mlModelData = new MLModelData(_memoryCache.Object);
 
         List<OHLCPairModel> OHLC = new List<OHLCPairModel>();
 
@@ -136,7 +144,7 @@ public class MLModelDataTests
     [TestMethod]
     public void TensorizeTest()
     {
-        var mlModelData = new MLModelData();
+        var mlModelData = new MLModelData(_memoryCache.Object);
         List<OHLCPairModel> OHLC = new List<OHLCPairModel>();
 
         OHLCPairModel btcTuple1 = new OHLCPairModel();
@@ -180,7 +188,7 @@ public class MLModelDataTests
     [TestMethod]
     public void ConvertLogitsToProbabilitiesTest()
     {
-        var mlModelData = new MLModelData();
+        var mlModelData = new MLModelData(_memoryCache.Object);
         double[] logits = { -0.57095057, 0.165661201, 0.696 };
         double[] expectedProbabilities = { 0.15062834871739389, 0.3146394270482894, 0.53473222423431666 };
         logits = mlModelData.ConvertLogitsToProbabilities(logits);
@@ -191,7 +199,7 @@ public class MLModelDataTests
     [TestMethod]
     public void GetPredictedClassTest()
     {
-        var mlModelData = new MLModelData();
+        var mlModelData = new MLModelData(_memoryCache.Object);
         double[] probabilities = { 0.15062834871739389, 0.3146394270482894, 0.53473222423431666 };
         var predictedClass = mlModelData.GetPredictedClass(probabilities);
         Assert.AreEqual(predictedClass, 2);

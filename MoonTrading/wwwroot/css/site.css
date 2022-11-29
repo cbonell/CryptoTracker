@@ -31,7 +31,10 @@
 }
 
 :root[color-mode="light"] {
+    --base-background-color: #FEFCF3;
+    --tertiary-background-color: #DEF5E5;
     --secondary-font-color: #9BA0B3;
+    --base-font-color: #101014;
     --green-color: #00cc00;
     --red-color: #cc0000;
     --small-font-size: 0.75em;
