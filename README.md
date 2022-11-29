@@ -1,7 +1,7 @@
-# Welcome to CryptoTracker!
+# Welcome to MoonTrading!
 
 ## Description
-Desctiption text
+MoonTrading is a platform that aims to assist users with understanding how to trade in the crypto market through paper-trading. Allowing users to perform paper trades with imaginary currency to prevent actual money loss during the learning phase. Moon Trading has complimentary Machine Learning price prediction models to assist with trading decisions. 
 
 ## Setup
 It is recomended that you use Visual Studio 2022 IDE which can be downloaded from [here](https://visualstudio.microsoft.com/vs/)
