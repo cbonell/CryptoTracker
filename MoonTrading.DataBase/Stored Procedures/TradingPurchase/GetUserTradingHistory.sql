@@ -13,4 +13,6 @@ AS
 		INNER JOIN CoinGeckoCoin c ON c.Id = tp.CoinId
 	WHERE
 		tp.UserId = @UserId
+	ORDER BY
+		tp.PurchaseDate DESC
 RETURN 0
