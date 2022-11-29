@@ -86,6 +86,7 @@ public class MLModelDataTests
         List<DatePricePairModel> notSupportedPairs = await mlModelData.GetPricePrediction(notSupported);
 
         Assert.IsNotNull(notSupportedPairs);
+        Assert.AreEqual(notSupportedPairs.Count(), 0);
     }
 
     [TestMethod]
@@ -174,5 +175,25 @@ public class MLModelDataTests
         Assert.AreEqual(tensors.Count, 1);
         Assert.AreEqual(tensors[0].Count, 4);
         Assert.AreEqual(tensors[0][0].Count, 3);
+    }
+
+    [TestMethod]
+    public void ConvertLogitsToProbabilitiesTest()
+    {
+        var mlModelData = new MLModelData();
+        double[] logits = { -0.57095057, 0.165661201, 0.696 };
+        double[] expectedProbabilities = { 0.15062834871739389, 0.3146394270482894, 0.53473222423431666 };
+        logits = mlModelData.ConvertLogitsToProbabilities(logits);
+        Assert.AreEqual(expectedProbabilities.Length, logits.Length);
+        CollectionAssert.AreEqual(expectedProbabilities, logits);
+    }
+
+    [TestMethod]
+    public void GetPredictedClassTest()
+    {
+        var mlModelData = new MLModelData();
+        double[] probabilities = { 0.15062834871739389, 0.3146394270482894, 0.53473222423431666 };
+        var predictedClass = mlModelData.GetPredictedClass(probabilities);
+        Assert.AreEqual(predictedClass, 2);
     }
 }

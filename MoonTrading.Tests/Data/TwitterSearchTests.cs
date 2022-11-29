@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MoonTrading.Tests.Twitter;
+namespace MoonTrading.Tests.Data;
 
 [TestClass]
 public class TwitterSearchTests

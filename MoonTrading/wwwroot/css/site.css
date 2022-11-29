@@ -1,4 +1,4 @@
-@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 :root[color-mode="dark"] {
     --base-background-color: #101014;
@@ -121,6 +121,26 @@ input[type=radio]:not(:first-child) {
 
 .usd {
     color: #009a56;
+}
+
+﻿.bullish {
+    border: solid 2px;
+    border-color: limegreen;
+}
+
+.neutral {
+    border: solid 2px;
+    border-color: darkkhaki;
+}
+
+.bearish {
+    border: solid 2px;
+    border-color: darkred;
+}
+
+.sentiment-img {
+    height: 48px;
+    width: 96px;
 }
 
 .arrow-down {

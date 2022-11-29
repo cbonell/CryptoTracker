@@ -1,11 +1,14 @@
 ﻿@namespace MoonTrading.Shared
+@using MoonTrading.DataAccess.MLModelAccess
+
 @inject ITwitterSearch twitterSearch
+@inject IMLModelData mlData
 <div class="container secondary-container scroll-y">
     <h3 class="">Trending #@CoinName Tweets</h3>
 
     @foreach (TweetSearchModel tweet in twitterSearchModels)
     {
-        <div class="grow-sm tweet-container">
+        <div class="grow-sm tweet-container @(tweet.Sentiment == 0 ? "bullish" : tweet.Sentiment == 1 ? "neutral" : "bearish")">
             <div class="row">
                 <div class="col-2">
                     <a href="@tweet.User.UserUrl" target="_blank">
@@ -23,9 +26,6 @@
                         @@<span>@tweet.User.ScreenName</span>
                     </small>
                 </div>
-                @*<div class="col-1">
-            @tweet.CreatedAt
-            </div>*@
             </div>
             <div class="row">
                 <p class="text-center">@((MarkupString)tweet.DisplayText)</p>
@@ -33,6 +33,9 @@
             <div class="row justify-content-center">
                 <div class="col-md-3">@tweet.RetweetCount Retweets</div>
                 <div class="col-md-3">@tweet.FavoriteCount Quote Tweets</div>
+            </div>
+            <div class="row">
+                <img class="sentiment-img" src="@(tweet.Sentiment == 0 ? "/bullish.png" : tweet.Sentiment == 1 ? "/neutral.png" : "/bearish.png")" />
             </div>
         </div>
     }
@@ -49,9 +52,32 @@
     private IEnumerable<TweetSearchModel> twitterSearchModels { get; set; } = Enumerable.Empty<TweetSearchModel>();
     protected override async Task OnParametersSetAsync()
     {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        await GetTweets();
+        StateHasChanged();
+        await GetTweetsSentiment();
+    }
+
+    private async Task GetTweets()
+    {
         if (!string.IsNullOrWhiteSpace(CoinName))
         {
             twitterSearchModels = await twitterSearch.GetTrendingByHashTag(CoinName);
+        }
+    }
+
+    private async Task GetTweetsSentiment()
+    {
+        if (!string.IsNullOrWhiteSpace(CoinName))
+        {
+            foreach (TweetSearchModel tweet in twitterSearchModels)
+            {
+                tweet.Sentiment = await mlData.GetSentiment(tweet.RawText);
+            }
         }
     }
 }
