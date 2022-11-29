@@ -12,7 +12,7 @@ function onUrlChange() {
     let url = lastUrl.slice(lastUrl.lastIndexOf('/') + 1);
 
     if (url != 'Coin') {
-        setIcon('/Coin.ico');
+        setIcon('/moon.png');
     }
 }
 
