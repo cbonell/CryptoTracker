@@ -84,6 +84,68 @@ else
                 </div>
             </div>
         </div>
+        <div class="row justify-content-center">
+            <div class="col-4 secondary-container h-auto">
+                <div class="row row-cols-2 ">
+                    <div class="col">
+                        <div class="row row-cols-1">
+                            <div class="col">
+                                <Pill>Rank #@(coinGeckoMetaDataModel.market_data.market_cap_rank)</Pill>
+                            </div>
+                            <div class="col">
+                                <img src="@coinGeckoMetaDataModel.image.thumb" /> @CoinModel.Name (@CoinModel.Symbol)
+                            </div>
+                            <div class="col large-text">
+                                $@coinGeckoMetaDataModel?.market_data.current_price.usd?.AsFormattedNumber()
+                                <span class="@(GetPriceArrowClass(coinGeckoMetaDataModel?.market_data.price_change_percentage_24h ?? 0))"></span>
+                                <span class="@(GetPriceColorClass(coinGeckoMetaDataModel?.market_data.price_change_percentage_24h ?? 0))">
+                                    @( Math.Abs(Math.Round(coinGeckoMetaDataModel?.market_data.price_change_percentage_24h ?? 0, 2)))%
+                                </span>
+                            </div>
+                            @if (CoinModel.Symbol != "BTC")
+                            {
+                                <div class="col small-text">
+                                   @(Math.Abs(coinGeckoMetaDataModel?.market_data.price_change_24h_in_currency.btc ?? 0)) BTC = 1 @CoinModel.Symbol
+                                </div>
+                            }
+                            @if (CoinModel.Symbol != "ETH")
+                            {
+                                <div class="col small-text">
+                                    @(Math.Abs(coinGeckoMetaDataModel?.market_data.price_change_24h_in_currency.eth ?? 0)) ETH = 1 @CoinModel.Symbol
+                                </div>
+                            }
+                            @if (IsAuthenticated)
+                            {
+                                <div class="col">
+                                    <CreateUserPriceAlert @ref="createUserPriceAlert" CoinGeckId="@CoinModel.Id" UserId="@UserId" />
+                                    <StarInput ticked="@isUserFavorite" OnToggle="HandleFavoriteToggle" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="col text-center">
+                        <h3 class="">Price Statistics</h3>
+                        <div class="row row-cols-md-2">
+                            <div class="col">Market Cap</div>
+                            <div class="col">@coinGeckoMetaDataModel?.market_data.market_cap.usd.WithThousandsSeparator()</div>
+                            <div class="col">Volume</div>
+                            <div class="col">@coinGeckoMetaDataModel?.market_data.total_volume.usd.WithThousandsSeparator()</div>
+
+                            <div class="col">Circulating Supply</div>
+                            <div class="col">@coinGeckoMetaDataModel?.market_data.circulating_supply.WithThousandsSeparator()</div>
+                            <div class="col">Max Supply</div>
+                            <div class="col">@coinGeckoMetaDataModel?.market_data.max_supply.WithThousandsSeparator()</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (IsAuthenticated)
+            {
+                <div class="col-sm-3 secondary-container">
+                    <CoinPurchasePanel Coin="CoinModel" CurrentPrice="coinGeckoMetaDataModel?.market_data.current_price.usd ?? 0" />
+                </div>
+            }
+        </div>
         <div class="container-fluid main-container">
             <div class="row">
                 <div class="col-11 secondary-container">
@@ -107,58 +169,6 @@ else
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-4 secondary-container">
-                <div class="row row-cols-1">
-                    <div class="col">
-                        <Pill>Rank #@(coinGeckoMetaDataModel.market_data.market_cap_rank)</Pill>
-                    </div>
-                    <div class="col">
-                        <img src="@coinGeckoMetaDataModel.image.thumb" /> @CoinModel.Name (@CoinModel.Symbol)
-                    </div>
-                    <div class="col large-text">
-                        $@coinGeckoMetaDataModel?.market_data.current_price.usd?.AsFormattedNumber()
-                        <span class="@(GetPriceArrowClass(coinGeckoMetaDataModel?.market_data.price_change_percentage_24h ?? 0))"></span>
-                        <span class="@(GetPriceColorClass(coinGeckoMetaDataModel?.market_data.price_change_percentage_24h ?? 0))">
-                            @( Math.Abs(Math.Round(coinGeckoMetaDataModel?.market_data.price_change_percentage_24h ?? 0, 2)))%
-                        </span>
-                    </div>
-                    <div class="col small-text">
-                        @coinGeckoMetaDataModel?.market_data.price_change_24h_in_currency.btc BTC
-                    </div>
-                    <div class="col small-text">
-                        @coinGeckoMetaDataModel?.market_data.price_change_24h_in_currency.eth ETH
-                    </div>
-                    @if (IsAuthenticated)
-                    {
-                        <div class="col">
-                            <CreateUserPriceAlert @ref="createUserPriceAlert" CoinGeckId="@CoinModel.Id" UserId="@UserId" />
-                            <StarInput ticked="@isUserFavorite" OnToggle="HandleFavoriteToggle" />
-                        </div>
-                    }
-
-                </div>
-
-                <h3>Price Statistics</h3>
-                <div class="row row-cols-md-2">
-                    <div class="col">Market Cap</div>
-                    <div class="col">@coinGeckoMetaDataModel?.market_data.market_cap.usd.WithThousandsSeparator()</div>
-                    <div class="col">Volume</div>
-                    <div class="col">@coinGeckoMetaDataModel?.market_data.total_volume.usd.WithThousandsSeparator()</div>
-
-                    <div class="col">Circulating Supply</div>
-                    <div class="col">@coinGeckoMetaDataModel?.market_data.circulating_supply.WithThousandsSeparator()</div>
-                    <div class="col">Max Supply</div>
-                    <div class="col">@coinGeckoMetaDataModel?.market_data.max_supply.WithThousandsSeparator()</div>
-                </div>
-            </div>
-            @if (IsAuthenticated)
-            {
-                <div class="col-sm-3 secondary-container">
-                    <CoinPurchasePanel Coin="CoinModel" CurrentPrice="coinGeckoMetaDataModel?.market_data.current_price.usd ?? 0" />
-                </div>
-            }
         </div>
     </div>
 
