@@ -254,7 +254,6 @@ input[type=radio]:not(:first-child) {
 
 .flex-container {
     list-style: none;
-    padding: 0;
     margin: 12px;
     white-space: nowrap;
     display: flex;

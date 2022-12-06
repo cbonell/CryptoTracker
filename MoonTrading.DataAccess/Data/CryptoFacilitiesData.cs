@@ -158,11 +158,11 @@ public class CryptoFacilitiesData : ICryptoFacilitiesData
         }
         else if (interval == "30m")
         {
-            fromDate = DateTimeOffset.UtcNow.AddHours(-168 / 2);
+            fromDate = DateTimeOffset.UtcNow.AddHours(-168 / (double)2);
         }
         else if (interval == "15m")
         {
-            fromDate = DateTimeOffset.UtcNow.AddHours(-168 / 4);
+            fromDate = DateTimeOffset.UtcNow.AddHours(-168 / (double)4);
         }
         else if (interval == "5m")
         {

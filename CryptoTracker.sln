@@ -13,9 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonTrading.Tests", "MoonTr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonTrading.Tools", "SharedConstants\MoonTrading.Tools.csproj", "{57399399-DDD3-4B1C-A756-0E45EE702776}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoonTrading.BusinessLogic", "MoonTrading.BusinessLogic\MoonTrading.BusinessLogic.csproj", "{099CEF5D-3F16-4EFF-8076-1027BE7FA602}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonTrading.BusinessLogic", "MoonTrading.BusinessLogic\MoonTrading.BusinessLogic.csproj", "{099CEF5D-3F16-4EFF-8076-1027BE7FA602}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoonTrading.DataModels", "MoonTrading.DataModels\MoonTrading.DataModels.csproj", "{CE4731E2-B603-4A81-BD4D-64BA73408B2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonTrading.DataModels", "MoonTrading.DataModels\MoonTrading.DataModels.csproj", "{CE4731E2-B603-4A81-BD4D-64BA73408B2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,8 +42,8 @@ Global
 		{84A6F788-C029-4DA1-9E49-4953B05A8332}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84A6F788-C029-4DA1-9E49-4953B05A8332}.Release|Any CPU.Build.0 = Release|Any CPU
 		{84A6F788-C029-4DA1-9E49-4953B05A8332}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{84A6F788-C029-4DA1-9E49-4953B05A8332}.ReleaseBuild|Any CPU.ActiveCfg = ReleaseBuild|Any CPU
-		{84A6F788-C029-4DA1-9E49-4953B05A8332}.ReleaseBuild|Any CPU.Deploy.0 = ReleaseBuild|Any CPU
+		{84A6F788-C029-4DA1-9E49-4953B05A8332}.ReleaseBuild|Any CPU.ActiveCfg = Release|Any CPU
+		{84A6F788-C029-4DA1-9E49-4953B05A8332}.ReleaseBuild|Any CPU.Deploy.0 = Release|Any CPU
 		{27DCFCC4-EB88-422D-8FC4-D93D1A8A775A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{27DCFCC4-EB88-422D-8FC4-D93D1A8A775A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27DCFCC4-EB88-422D-8FC4-D93D1A8A775A}.Release|Any CPU.ActiveCfg = Release|Any CPU

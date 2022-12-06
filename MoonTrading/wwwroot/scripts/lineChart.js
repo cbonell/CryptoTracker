@@ -78,14 +78,12 @@
             title: {
                 text: 'Price'
             },
-        },
-        xaxis: {
-            type: 'datetime',
-        },
-        yaxis: {
             tooltip: {
                 enabled: true
             }
+        },
+        xaxis: {
+            type: 'datetime',
         }
     };
 
