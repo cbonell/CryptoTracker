@@ -8,7 +8,7 @@
 
     @foreach (TweetSearchModel tweet in twitterSearchModels)
     {
-        <div class="grow-sm tweet-container @(tweet.Sentiment == 0 ? "bullish" : tweet.Sentiment == 1 ? "neutral" : "bearish")">
+        <div class="grow-sm tweet-container @(tweet.Sentiment == 0 ? "bullish" : tweet.Sentiment == 1 ? "neutral" : "bearish-border")">
             <div class="row">
                 <div class="col-2">
                     <a href="@tweet.User.UserUrl" target="_blank">

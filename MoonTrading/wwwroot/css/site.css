@@ -137,7 +137,7 @@ input[type=number]:not(:first-child) {
     border-color: darkkhaki;
 }
 
-.bearish {
+.bearish-border {
     border: solid 2px;
     border-color: darkred;
 }
