@@ -81,7 +81,7 @@ html, body {
 input[type=number] {
     background-color: var(--input-area-color);
     border-color: var(--input-area-color);
-    margin-bottom:1em;
+    margin-bottom: 1em;
 }
 
 input[type=radio] {
@@ -89,22 +89,23 @@ input[type=radio] {
     border-color: var(--input-area-color);
 }
 
-input[type=radio]:checked {
-    background-color: red;
-    color: red;
-}
-
-input[type=radio]:not(:first-child) {
-    padding-left:1em;
-}
-
-    input[type=number]:not(:first-child) {
-        border-top:1em;
+    input[type=radio]:checked {
+        background-color: red;
+        color: red;
     }
 
-    .container-fluid {
-        margin:1em;
+    input[type=radio]:not(:first-child) {
+        padding-left: 1em;
     }
+
+input[type=number]:not(:first-child) {
+    border-top: 1em;
+}
+
+.container-fluid {
+    margin: 1em;
+}
+
 #h2canvas {
     background-color: var(--base-background-color);
     border-color: var(--base-background-color);
