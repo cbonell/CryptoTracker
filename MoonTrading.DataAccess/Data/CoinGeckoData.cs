@@ -56,7 +56,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
     /// <exception cref="Exception"></exception>
     public async Task<List<CoinGeckoTrendingModel>> GetTrending()
     {
-        List<CoinGeckoTrendingModel> coins;// = new();
+        List<CoinGeckoTrendingModel> coins;
         if (!_memoryCache.TryGetValue(CacheKey.CoinGeckoGetTrending, out coins))
         {
             coins = new();
