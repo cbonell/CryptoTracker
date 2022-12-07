@@ -6,7 +6,6 @@
 		<Nullable>enable</Nullable>
 
 		<IsPackable>false</IsPackable>
-		<SonarQubeTestProject>false</SonarQubeTestProject>
 		<Configurations>Debug;Release;ReleaseBuild</Configurations>
 	</PropertyGroup>
 

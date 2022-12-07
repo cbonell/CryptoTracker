@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 namespace MoonTrading.BusinessLogic.Actions;
 
-public class TweetSearchDataHandler
+public static class TweetSearchDataHandler
 {
     public static IEnumerable<TweetSearchModel> HandleTwitterReponse(RestResponse response)
     {

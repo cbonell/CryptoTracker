@@ -7,7 +7,7 @@ using static SharedConstants.Constants;
 
 namespace MoonTrading.BusinessLogic.Actions;
 
-public class CoinGeckoDataHandler
+public static class CoinGeckoDataHandler
 {
     public static double HandleGetPriceInUsdResponse(RestResponse response)
     {

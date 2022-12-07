@@ -7,7 +7,7 @@ using static MoonTrading.Extensions.Extensions;
 
 namespace MoonTrading.BusinessLogic.Actions;
 
-public class CryptoWatchDataHandler
+public static class CryptoWatchDataHandler
 {
     private static readonly Dictionary<string, int> PeriodValues = new Dictionary<string, int>()
     {
