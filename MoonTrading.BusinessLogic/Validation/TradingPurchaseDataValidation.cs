@@ -2,7 +2,7 @@
 
 namespace MoonTrading.BusinessLogic.Validation;
 
-public class TradingPurchaseDataValidation
+public static class TradingPurchaseDataValidation
 {
     public static bool TryValidatePurchase(string userId
                                          , int coinId

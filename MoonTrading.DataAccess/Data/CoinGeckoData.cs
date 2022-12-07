@@ -43,7 +43,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             RestResponse response = await client.ExecuteAsync(request);
             price = CoinGeckoDataHandler.HandleGetPriceInUsdResponse(response);
 
-            _memoryCache.Set(cacheKey, price);
+            _memoryCache.Set(cacheKey, price, cacheEntryOptions);
         }
 
         return price * amount;
@@ -56,7 +56,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
     /// <exception cref="Exception"></exception>
     public async Task<List<CoinGeckoTrendingModel>> GetTrending()
     {
-        List<CoinGeckoTrendingModel> coins = new();
+        List<CoinGeckoTrendingModel> coins;// = new();
         if (!_memoryCache.TryGetValue(CacheKey.CoinGeckoGetTrending, out coins))
         {
             coins = new();
@@ -137,7 +137,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             _memoryCache.Set(CacheKey.CoinGeckoGetTrending, coins.OrderByDescending(x => x.Id), cacheEntryOptions);
         }
 
-        return coins;
+        return coins ?? new();
     }
 
     /// <summary>
@@ -155,7 +155,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
         }
 
         string cacheKey = "GetGeckoMetaData-" + geckoId;
-        CoinGeckoMetaDataModel? responseData = new();
+        CoinGeckoMetaDataModel? responseData;
         if (!_memoryCache.TryGetValue(cacheKey, out responseData))
         {
             responseData = new();
@@ -181,7 +181,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
             throw new Exception("Failed to retrieve metadata for " + geckoId);
         }
 
-        return responseData;
+        return responseData ?? new();
     }
 
     /// <summary>
@@ -195,7 +195,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
     {
         if(page < 1)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException(nameof(page));
         }
 
         string cacheKey = "GetMarkets-" + page;
@@ -226,186 +226,6 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
         return responseData;
     }
 
-    /// <summary>
-    /// Returns OHLC pairs in 30 minute intervals
-    /// </summary>
-    /// <param name="coinName">Name of the coin</param>
-    /// <param name="days">Number of days to be returned (deffault of 1)</param>
-    /// <returns>List<OHLCPairModel></returns>
-    //public async Task<List<OHLCPairModel>> GetOHLCPairs(string coinName, string searchTerm = "7d")
-    //{
-    //    if (string.IsNullOrEmpty(coinName) || string.IsNullOrEmpty(searchTerm))
-    //    {
-    //        throw new ArgumentException();
-    //    }
-    //    coinName = coinName.ToLower();
-
-    //    string cacheKey = $"GetOHLCPairs-{coinName}-{searchTerm}";
-    //    List<OHLCPairModel> responseData = new();
-    //    if (!_memoryCache.TryGetValue(cacheKey, out responseData))
-    //    {
-    //        responseData = new();
-    //        var cacheEntryOptions = new MemoryCacheEntryOptions()
-    //            .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
-
-    //        int days = 1;
-    //        int? hours = null;
-    //        if (searchTerm.Contains("d"))
-    //        {
-    //            days = int.Parse(searchTerm.Replace("d", "")); ;
-    //        }
-    //        else if (searchTerm.Contains("hr"))
-    //        {
-    //            hours = int.Parse(searchTerm.Replace("hr", ""));
-    //            days = 1;
-    //        }
-
-    //        RestClient client = new RestClient();
-    //        string searchParams = "vs_currency=usd&days=" + days;
-    //        RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/coins/{coinName}/ohlc?{searchParams}");
-    //        RestResponse response = await client.ExecuteAsync(request);
-    //        JArray jArray = JArray.Parse(response.Content!);
-
-    //        if (jArray != null && jArray.Count > 0)
-    //        {
-    //            for (int i = 0; i < jArray.Count; i++)
-    //            {
-    //                if (jArray[i] != null)
-    //                {
-    //                    string? time = jArray[i][0]?.ToString();
-    //                    string? open = jArray[i][1]?.ToString();
-    //                    string? high = jArray[i][2]?.ToString();
-    //                    string? low = jArray[i][3]?.ToString();
-    //                    string? close = jArray[i][4]?.ToString();
-
-
-    //                    if (hours.HasValue)
-    //                    {
-    //                        DateTime timeVal = long.Parse(time).DateTimeFromUnixTimeStampMillis();
-    //                        if ((DateTime.Now - timeVal).TotalHours <= hours + 1)
-    //                        {
-    //                            responseData.Add(new OHLCPairModel()
-    //                            {
-    //                                //TimeStamp = timeVal,
-    //                                Open = double.Parse(open),
-    //                                High = double.Parse(high),
-    //                                Low = double.Parse(low),
-    //                                Close = double.Parse(close),
-    //                            });
-    //                        }
-    //                    }
-    //                    else
-    //                    {
-    //                        responseData.Add(new OHLCPairModel()
-    //                        {
-    //                            //TimeStamp = long.Parse(time).DateTimeFromUnixTimeStampMillis(),
-    //                            Open = double.Parse(open),
-    //                            High = double.Parse(high),
-    //                            Low = double.Parse(low),
-    //                            Close = double.Parse(close),
-    //                        });
-    //                    }
-
-
-    //                }
-    //            }
-    //        }
-
-
-    //        _memoryCache.Set(CacheKey.CoinGeckoGetTrending, responseData, cacheEntryOptions);
-    //    }
-
-    //    return responseData;
-    //}
-
-    /// <summary>
-    /// Returns OHLC pairs in 30 minute intervals
-    /// </summary>
-    /// <param name="coinName">Name of the coin</param>
-    /// <param name="days">Number of days to be returned (deffault of 1)</param>
-    /// <returns>List<VolumePairModel></returns>
-    //public async Task<List<VolumePairModel>> GetCoinVolume(string coinName, string searchTerm)
-    //{
-    //    if (string.IsNullOrEmpty(coinName) || string.IsNullOrEmpty(searchTerm))
-    //    {
-    //        throw new ArgumentException();
-    //    }
-
-    //    coinName = coinName.ToLower();
-
-    //    string cacheKey = $"GetCoinVolume-{coinName}-{searchTerm}";
-    //    List<VolumePairModel> responseData = new();
-    //    if (!_memoryCache.TryGetValue(cacheKey, out responseData))
-    //    {
-    //        responseData = new();
-    //        var cacheEntryOptions = new MemoryCacheEntryOptions()
-    //            .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
-
-    //        int days = 1;
-    //        int? hours = null;
-    //        string interval = "hourly";
-    //        if (searchTerm.Contains("d"))
-    //        {
-    //            days = int.Parse(searchTerm.Replace("d", "")); ;
-    //        }
-    //        else if (searchTerm.Contains("hr"))
-    //        {
-    //            hours = int.Parse(searchTerm.Replace("hr", ""));
-    //            days = 1;
-    //        }
-
-    //        RestClient client = new RestClient();
-    //        RestRequest request = new RestRequest($"https://api.coingecko.com/api/v3/coins/{coinName}/market_chart?vs_currency=usd&days={days}&interval={interval}");
-    //        RestResponse response = await client.ExecuteAsync(request);
-    //        JObject data = JObject.Parse(response.Content!);
-    //        if (data != null)
-    //        {
-    //            JToken token = JObject.Parse(response?.Content)["total_volumes"];
-    //            JArray jArray = JArray.Parse(token.ToString());
-    //            if (jArray != null && jArray.Count > 0)
-    //            {
-    //                for (int i = 0; i < jArray.Count; i++)
-    //                {
-    //                    if (jArray[i] != null)
-    //                    {
-    //                        string? time = jArray[i][0]?.ToString();
-    //                        string? volume = jArray[i][1]?.ToString();
-
-    //                        if (time != null && volume != null)
-    //                        {
-
-    //                            if (hours.HasValue)
-    //                            {
-    //                                DateTime timeVal = long.Parse(time).DateTimeFromUnixTimeStampMillis();
-    //                                if ((DateTime.Now - timeVal).TotalHours <= hours + 1)
-    //                                {
-    //                                    responseData.Add(new VolumePairModel()
-    //                                    {
-    //                                        TimeStamp = timeVal,
-    //                                        Volume = double.Parse(volume)
-    //                                    });
-    //                                }
-    //                            }
-    //                            else
-    //                            {
-    //                                responseData.Add(new VolumePairModel()
-    //                                {
-    //                                    TimeStamp = long.Parse(time).DateTimeFromUnixTimeStampMillis(),
-    //                                    Volume = double.Parse(volume)
-    //                                });
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-
-    //        _memoryCache.Set(CacheKey.CoinGeckoGetTrending, responseData, cacheEntryOptions);
-    //    }
-
-    //    return responseData;
-    //}
-
     public async Task<IEnumerable<CoinGeckCoinModel>> GetTradeableCoins() =>
         await _db.LoadData<CoinGeckCoinModel, dynamic>(
                     "[dbo].[GetTradeableCoinGeckoCoins]",
@@ -415,7 +235,7 @@ public class CoinGeckoData : DataBase, ICoinGeckoData
     {
         if(coinMarketCapId <= 0)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException(nameof(coinMarketCapId));
         }
 
         var result = await _db.LoadData<CoinGeckCoinModel, dynamic>(

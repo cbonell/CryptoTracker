@@ -5,7 +5,7 @@ public class TradingPurchaseModel
     public int Id { get; set; }
     public string UserId { get; set; } = "";
     public int PurchaseCurrencyId { get; set; }
-    public string CoinId { get; set; }
+    public string CoinId { get; set; } = "";
     public double Quantity { get; set; }
     public double PurchasePrice { get; set; }
     public DateTime PurchaseDate { get; set; }

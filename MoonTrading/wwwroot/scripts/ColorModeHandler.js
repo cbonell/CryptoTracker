@@ -1,7 +1,7 @@
 ﻿let darkMode = localStorage.getItem("color-mode");
 
 window.addEventListener('click', function (e) {
-    var toggleColorButton = document.getElementById('darkmode-toggle');
+    let toggleColorButton = document.getElementById('darkmode-toggle');
 
     if (toggleColorButton) {
         if (toggleColorButton.contains(e.target)) {

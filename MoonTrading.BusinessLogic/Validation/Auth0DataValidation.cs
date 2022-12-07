@@ -1,6 +1,6 @@
 ﻿namespace MoonTrading.BusinessLogic.Validation;
 
-public class Auth0DataValidation
+public static class Auth0DataValidation
 {    
     public static bool ValidateAuth0UserId(string userId)
     {

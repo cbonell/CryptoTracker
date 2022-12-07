@@ -3,7 +3,7 @@ using static SharedConstants.Constants;
 
 namespace MoonTrading.BusinessLogic.Validation;
 
-public class CryptoFacilitiesDataValidation
+public static class CryptoFacilitiesDataValidation
 {
     public static bool IsValidCoinSymbol(string symbol) => !string.IsNullOrWhiteSpace(symbol);
     public static bool IsValidChartTimeOption(string interval) => ChartUserTimeOptions.Contains(interval);

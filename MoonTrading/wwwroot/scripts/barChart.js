@@ -1,10 +1,9 @@
 ﻿window.makeBarChart = (canvasId, json) => {
-    var canvas = document.getElementById(canvasId);
+    let canvas = document.getElementById(canvasId);
     canvas.innerHTML = '';
 
-    var dataArr = [];
-    for (var i = 0; i < json.length; i++) {
-        var date = new Date(json[i]['timeStamp']);
+    let dataArr = [];
+    for (let i = 0; i < json.length; i++) {
         dataArr.push(
             {
                 x: json[i]['timeStamp'],
@@ -13,7 +12,7 @@
         );
     }
 
-    var options = {
+    let options = {
         series: [{
             data: dataArr,
         }],
@@ -45,7 +44,7 @@
         }
     };
 
-    var chart = new ApexCharts(canvas, options);
+    let chart = new ApexCharts(canvas, options);
     chart.render();
 }
 

@@ -201,7 +201,7 @@ public class MLModelDataTests
     {
         var mlModelData = new MLModelData(_memoryCache.Object);
         double[] probabilities = { 0.15062834871739389, 0.3146394270482894, 0.53473222423431666 };
-        var predictedClass = mlModelData.GetPredictedClass(probabilities);
+        var predictedClass = MLModelData.GetPredictedClass(probabilities);
         Assert.AreEqual(predictedClass, 2);
     }
 

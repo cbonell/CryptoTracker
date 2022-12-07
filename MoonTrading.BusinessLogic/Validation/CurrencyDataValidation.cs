@@ -2,7 +2,7 @@
 
 namespace MoonTrading.BusinessLogic.Validation;
 
-public class CurrencyDataValidation
+public static class CurrencyDataValidation
 {
     public enum CurrencyType
     {

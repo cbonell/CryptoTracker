@@ -45,7 +45,7 @@ public class CryptoFacilitiesData : ICryptoFacilitiesData
 
         JObject responseJsonObject = JObject.Parse(response.Content!);
         var tempCandlObj = responseJsonObject["candles"];
-        if (tempCandlObj != null && tempCandlObj.Count() == 0)
+        if (tempCandlObj != null && tempCandlObj.Any())
         {
             request = new RestRequest($"https://www.cryptofacilities.com/api/charts/v1/trade/{GetCryptoFacilitiesSymbol2(coinSymbol)}/{interval}?from={from}&to={to}");
             response = await client.ExecuteAsync(request);

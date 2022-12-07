@@ -1,10 +1,9 @@
 ﻿window.makeCandleChart = (canvasId, chartData) => {
-    var canvas = document.getElementById(canvasId);
-    //canvas.innerHTML = '';
+    let canvas = document.getElementById(canvasId);
     canvas.innerHTML = '';
 
-    var dataArr = [];
-    for (var i = 0; i < chartData.length; i++) {
+    let dataArr = [];
+    for (let i = 0; i < chartData.length; i++) {
         dataArr.push(
             {
                 x: chartData[i]['timeStamp'],
@@ -13,7 +12,7 @@
         );
     }
 
-    var options = {
+    let options = {
         series: [{
             data: dataArr,
         }],
@@ -35,6 +34,6 @@
         }
     };
 
-    var chart = new ApexCharts(canvas, options);
+    let chart = new ApexCharts(canvas, options);
     chart.render();
 }

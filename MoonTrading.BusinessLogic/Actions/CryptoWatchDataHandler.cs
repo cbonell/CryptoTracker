@@ -60,7 +60,7 @@ public static class CryptoWatchDataHandler
 
         if (response == null)
         {
-            throw new ArgumentNullException("OHLC RestResponse");
+            throw new ArgumentNullException(nameof(response));
         }
 
         if (!response.IsSuccessful)
@@ -115,7 +115,7 @@ public static class CryptoWatchDataHandler
 
         if (response == null)
         {
-            throw new ArgumentNullException("Price RestResponse");
+            throw new ArgumentNullException(nameof(response));
         }
 
         if (!response.IsSuccessful)

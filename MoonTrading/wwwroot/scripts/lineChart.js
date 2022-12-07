@@ -1,9 +1,9 @@
 ﻿window.makeLineChart = (id, priceData1, priceData2) => {
-    var canvas = document.getElementById(id);
+    let canvas = document.getElementById(id);
     canvas.innerHTML = '';
 
-    var arr = [];
-    for (var i = 0; i < priceData1.length; i++) {
+    let arr = [];
+    for (let i = 0; i < priceData1.length; i++) {
         arr.push(
             {
                 x: priceData1[i]['timeStamp'],
@@ -12,9 +12,9 @@
         );
     }
 
-    var arr2 = [];
+    let arr2 = [];
     if (priceData2) {
-        for (var i = 0; i < priceData2.length; i++) {
+        for (let i = 0; i < priceData2.length; i++) {
             arr2.push(
                 {
                     x: priceData2[i]['timeStamp'],
@@ -23,7 +23,7 @@
             );
         }
     }
-    var seriesData = [{
+    let seriesData = [{
         name: 'Price History',
         data: arr
     }];
@@ -34,7 +34,7 @@
                 data: arr2
             });
     }
-    var options = {
+    let options = {
         series: seriesData,
         chart: {
             type: 'area',
@@ -87,6 +87,6 @@
         }
     };
 
-    var chart = new ApexCharts(canvas, options);
+    let chart = new ApexCharts(canvas, options);
     chart.render();
 }

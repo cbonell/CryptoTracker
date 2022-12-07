@@ -124,7 +124,7 @@ public class CryptoWatchData : ICryptoWatchData
     public async Task<double> GetPrice(string coinSymbol)
     {
         string requestUrl = CryptoWatchDataHandler.GetPriceRequestUrl(coinSymbol);
-        RestResponse response;//= await ExecuteRequest(requestUrl);
+        RestResponse response;
         string cacheKey = $"cryptoWatchData-Price-{coinSymbol}";
         if (!_memoryCache.TryGetValue(cacheKey, out response))
         {

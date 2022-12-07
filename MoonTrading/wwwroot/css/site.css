@@ -397,6 +397,7 @@ tr.rz-datatable-odd td.text-center {
 /*radzen card*/
 .rz-tabview-panel {
     background-color: var(--base-background-color) !important;
+    border: none;
 }
 
 div.rz-card.card {
@@ -422,11 +423,6 @@ div.rz-tabview-panel, div.rz-tabview-panels {
 /*class="rz-axis rz-category-axis"*/
 g.rz-axis.rz-category-axis {
     display: none;
-}
-/*radzen tab*/
-.rz-tabview-panel {
-    background-color: var(--tertiary-background-color);
-    border: none;
 }
 
 a:hover {

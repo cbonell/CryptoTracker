@@ -17,7 +17,7 @@ public class CoinGeckoDataValidation
 
         if (amount <= 0)
         {
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException(nameof(amount));
         }
     }
 }

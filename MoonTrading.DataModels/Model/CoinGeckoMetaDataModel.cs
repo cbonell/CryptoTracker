@@ -4,10 +4,8 @@ namespace MoonTrading.Model;
 
 public class CoinGeckoMetaDataModel : CoinGeckCoinModel
 {
-    //public object asset_platform_id { get; set; } = "";
     public int?  block_time_in_minutes { get; set; } = new();
     public string hashing_algorithm { get; set; } = "";
-    //public List<object> additional_notices { get; set; } = new();
     public Description description { get; set; } = new();
     public Links links { get; set; } = new();
     public Image image { get; set; } = new();

@@ -8,6 +8,7 @@ public static class TweetSearchDataHandler
 {
     public static IEnumerable<TweetSearchModel> HandleTwitterReponse(RestResponse response)
     {
+        IEnumerable<TweetSearchModel>? responseData = null;
         if (response.IsSuccessful)
         {
             try
@@ -19,14 +20,16 @@ public static class TweetSearchDataHandler
                     JToken? token = data.First;
                     if (token != null && token.First != null)
                     {
-                        return JsonConvert.DeserializeObject<IEnumerable<TweetSearchModel>>(token.First.ToString());
+                        responseData = JsonConvert.DeserializeObject<IEnumerable<TweetSearchModel>>(token.First.ToString());
                     }
                 }
             }
             catch (Exception)
-            { }
+            {
+                responseData = null;
+            }
         }
 
-        return Enumerable.Empty<TweetSearchModel>();
+        return responseData ?? Enumerable.Empty<TweetSearchModel>();
     }
 }

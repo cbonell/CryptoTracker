@@ -9,7 +9,7 @@ namespace MoonTrading.DataAccess.Data;
 public class TwitterSearch : ITwitterSearch
 {
     private static string[] blackListWords = { "giveaway", "winner", "\"giving away\"", "won" };
-    IConfiguration _config;
+    readonly IConfiguration _config;
 
     public TwitterSearch(IConfiguration config)
     {

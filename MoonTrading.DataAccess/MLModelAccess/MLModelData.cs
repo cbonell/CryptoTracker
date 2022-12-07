@@ -9,7 +9,7 @@ namespace MoonTrading.DataAccess.MLModelAccess;
 
 public class MLModelData : IMLModelData
 {
-    IMemoryCache _cacheEntry;
+    readonly IMemoryCache _cacheEntry;
     public Dictionary<string, int> supportedModels = new Dictionary<string, int> {
         { "btc", 2 },
         { "eth", 3 },
@@ -196,9 +196,9 @@ public class MLModelData : IMLModelData
         double? high7dAvgSum = 0;
         double? low7dAvgSum = 0;
         double? close7dAvgSum = 0;
-        int halfListCount = features.Count() / 2;
+        int halfListCount = features.Count / 2;
 
-        for (int i = 0; i < features.Count(); i++)
+        for (int i = 0; i < features.Count; i++)
         {
             if (i < halfListCount)
             {
@@ -242,7 +242,7 @@ public class MLModelData : IMLModelData
 
     public static List<OHLCPairModel> RemoveExtraTuples(List<OHLCPairModel> features)
     {
-        int featuresLen = features.Count() / 2;
+        int featuresLen = features.Count / 2;
         for (int i = 0; i < featuresLen; i++)
         {
             features.RemoveAt(0);
@@ -260,14 +260,14 @@ public class MLModelData : IMLModelData
         double sumOfSquaresOfDifferences;
         double sd;
         double sum7d = 0;
-        int halfListCount = features.Count() / 2;
+        int halfListCount = features.Count / 2;
 
-        for (int i = 0; i < features.Count(); i++)
+        for (int i = 0; i < features.Count; i++)
         {
             if (i < halfListCount)
             {
-                closeValues.Add((double)features[i].Close);
-                sum7d += (double)features[i].Close;
+                closeValues.Add(features[i].Close ?? 0);
+                sum7d += features[i].Close ?? 0;
             }
             else
             {
@@ -282,15 +282,15 @@ public class MLModelData : IMLModelData
                 tupleValues.Add(features[i].Low);
                 tupleValues.Add(features[i].Close);
 
-                avg = (double)(features[i].Open + features[i].High + features[i].Low + features[i].Close) / 4.0;
-                sumOfSquaresOfDifferences = tupleValues.Sum(val => Math.Pow((double)(val - avg), 2)) / 4.0;
+                avg = (features[i].Open + features[i].High + features[i].Low + features[i].Close) ?? 0 / 4.0;
+                sumOfSquaresOfDifferences = tupleValues.Sum(val => Math.Pow((val - avg) ?? 0, 2)) / 4.0;
                 sd = Math.Sqrt((double)sumOfSquaresOfDifferences);
                 features[i].RowStdev = sd;
 
-                closeValues.Add((double)features[i].Close);
+                closeValues.Add(features[i].Close ?? 0);
                 closeValues.RemoveAt(0);
-                sum7d += (double)features[i].Close;
-                sum7d -= (double)features[lastIndex].Close;
+                sum7d += features[i].Close ?? 0;
+                sum7d -= features[lastIndex].Close ?? 0;
                 lastIndex++;
             }
         }
@@ -501,7 +501,7 @@ public class MLModelData : IMLModelData
         return logits;
     }
 
-    public int GetPredictedClass(double[] probabilities)
+    public static int GetPredictedClass(double[] probabilities)
     {
         int prediction = 0;
         double max = 0;

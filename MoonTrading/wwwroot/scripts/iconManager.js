@@ -17,6 +17,6 @@ function onUrlChange() {
 }
 
 window.setIcon = (path) => {
-    var link = document.querySelector("link[rel~='icon']");
+    let link = document.querySelector("link[rel~='icon']");
     link.href = path;
 }

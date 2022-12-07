@@ -5,10 +5,10 @@ namespace MoonTrading.DataAccess.Tasks;
 
 public class MarketOrderTasks
 {
-    IMarketOrderData _marketOrderData;
-    ICryptoWatchData _cryptoWatchData;
-    ITradingPurchaseData _tradingData;
-    IEmailClient _emailClient;
+    readonly IMarketOrderData _marketOrderData;
+    readonly ICryptoWatchData _cryptoWatchData;
+    readonly ITradingPurchaseData _tradingData;
+    readonly IEmailClient _emailClient;
 
     public MarketOrderTasks(IMarketOrderData marketOrderData, ICryptoWatchData cryptoWatchData, ITradingPurchaseData tradingData, IEmailClient emailClient)
     {

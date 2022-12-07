@@ -6,9 +6,9 @@ namespace MoonTrading.Tests.Tasks;
 
 public class PriceAlertTasks
 {
-    IPriceAlertData _priceAlertData;
-    ICoinGeckoData _coinGeckoData;
-    IEmailClient _emailClient;
+    readonly IPriceAlertData _priceAlertData;
+    readonly ICoinGeckoData _coinGeckoData;
+    readonly IEmailClient _emailClient;
 
     public PriceAlertTasks(IPriceAlertData priceAlertData, ICoinGeckoData coinGeckoData, IEmailClient emailClient)
     {

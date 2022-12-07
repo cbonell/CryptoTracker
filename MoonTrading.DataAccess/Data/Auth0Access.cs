@@ -8,7 +8,7 @@ namespace MoonTrading.DataAccess.Data;
 
 public class Auth0Access : IAuth0Access
 {
-    IConfiguration _config;
+    readonly IConfiguration _config;
 
     public Auth0Access(IConfiguration config)
     {
